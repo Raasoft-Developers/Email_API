@@ -1,7 +1,7 @@
 [
   {
-    "name": "FORGOT_PASSWORD_NOTIFICATION",
-    "emailBodyTemplate": "Hi {Recipient}, We have receieved your request to reset the password. Please click this link to reset your password. {PasswordResetLink}",
-    "subjectTemplate": "{Recipient} Forgot password link"
+    "name": "DEFAULT_EMAIL_NOTIFICATION",
+    "emailBodyTemplate": "Hi {User}, We have receieved your request. {Content}",
+    "subjectTemplate": "{User} - {Subject}"
   }
 ]

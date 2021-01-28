@@ -23,11 +23,9 @@ namespace Nvg.EmailBackgroundTask.Models
         public string TenantID { get; internal set; }
         public string FacilityID { get; internal set; }
 
-
         public string GetEmail(IEmailTemplateInteractor emailTemplateInteractor)
         {
             var template = emailTemplateInteractor.GetEmailTemplate(TemplateName, TenantID, FacilityID);
-
             var msg = template.EmailBodyTemplate;
             foreach (var item in EmailParts)
             {
@@ -35,6 +33,7 @@ namespace Nvg.EmailBackgroundTask.Models
             }
             return msg;
         }
+
         public string GetSubject(IEmailTemplateInteractor emailTemplateInteractor)
         {
             var template = emailTemplateInteractor.GetEmailTemplate(TemplateName, TenantID, FacilityID);

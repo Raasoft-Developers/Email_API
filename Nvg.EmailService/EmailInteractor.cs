@@ -18,17 +18,20 @@ namespace Nvg.EmailService
 
         public void SendMail(EmailDto emailInputs)
         {
+            string user = (!string.IsNullOrEmpty(emailInputs.Username) ? emailInputs.Username : emailInputs.To);
             var sendEmailEvent = new SendEmailEvent();
-            sendEmailEvent.TemplateName = "FORGOT_PASSWORD_NOTIFICATION";
+            sendEmailEvent.TemplateName = emailInputs.Template;
             sendEmailEvent.Recipients = emailInputs.To;
-            sendEmailEvent.TenantID = emailInputs.TenantID;
             sendEmailEvent.EmailParts = new Dictionary<string, string> {
-                    { "Recipient", emailInputs.To},
-                    { "PasswordResetLink", emailInputs.ResetPasswordLink}
-                };
+                { "User", user},
+                { "Content", emailInputs.Content}
+            };
             sendEmailEvent.SubjectParts = new Dictionary<string, string> {
-                    { "Recipient", emailInputs.To}
-                };
+                { "User", user},
+                { "Subject", emailInputs.Subject}
+            };
+            sendEmailEvent.TenantID = emailInputs.TenantID;
+            sendEmailEvent.FacilityID = emailInputs.FacilityID;
             _eventBus.Publish(sendEmailEvent);
         }
     }
