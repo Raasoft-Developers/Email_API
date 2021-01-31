@@ -39,7 +39,7 @@ namespace Nvg.EmailService.Data
             if(emailTemplate == null)
                 emailTemplate = _context.EmailTemplate.FirstOrDefault(t => t.Name == defaultTemplate);
 
-            _logger.LogDebug($"Template used : {emailTemplate.Name}");
+            _logger.LogDebug($"Template used : {emailTemplate?.Name}");
 
             return emailTemplate;
         }
