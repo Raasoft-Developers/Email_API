@@ -17,7 +17,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             _emailProviderCS = emailProviderConnectionString;
         }
 
-        public async Task<string> SendEmail(string recipients, string message, string subject, string htmlContent, string sender = "")
+        public async Task<string> SendEmail(string recipients, string message, string sender = "")
         {
             if (!string.IsNullOrEmpty(_emailProviderCS.Sender))
                 sender = _emailProviderCS.Sender;
@@ -28,9 +28,9 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             var email = MailHelper.CreateSingleEmail(
                 from,
                 to,
-                subject,
+                "subject", //TODO: check this part
                 message,
-                htmlContent
+                "htmlContent"
             );
             var apiResponse = await client.SendEmailAsync(email);
             return apiResponse.ToString();

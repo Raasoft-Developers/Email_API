@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
+
+namespace Nvg.EmailService.Data.Entities
+{
+    [Table("EmailTemplate")]
+    public class EmailTemplateTable
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string ID { get; set; }
+        public string Name { get; set; }        
+        public string Variant { get; set; }
+        public string Sender { get; set; }
+        public string EmailPoolID { get; set; }
+        [ForeignKey("EmailChannelID")]
+        public EmailChannelTable EmailChannel { get; set; }
+        public string MessageTemplate { get; set; }
+    }
+}

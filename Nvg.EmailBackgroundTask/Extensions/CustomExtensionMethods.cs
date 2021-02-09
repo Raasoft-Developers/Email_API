@@ -13,6 +13,7 @@ using Serilog;
 using Nvg.EmailBackgroundTask;
 using Nvg.EmailBackgroundTask.EmailProvider;
 using EventBusRabbitMQ;
+using Nvg.EmailService.EmailProvider;
 
 namespace Nvg.EmailBackgroundTask.Extensions
 {
@@ -102,13 +103,16 @@ namespace Nvg.EmailBackgroundTask.Extensions
             return builder;
         }
 
-        public static void AddEmailBackgroundTask(this IServiceCollection services)
+        public static void AddEmailBackgroundTask(this IServiceCollection services, string channelKey)
         {
             services.AddScoped<EmailManager>();
             services.AddScoped<IEmailProvider>(provider =>
             {
                 var cs = provider.GetService<EmailProviderConnectionString>();
-                if (cs.Provider.ToLowerInvariant() == "sendgrid")
+
+                var emailProviderService = provider.GetService<IEmailProviderInteractor>();
+                var emailProviderConfiguration = emailProviderService.GetEmailProviderByChannel(channelKey)?.Result;
+                if (emailProviderConfiguration != null)
                 {
                     return new SendGridProvider(cs);
                 }

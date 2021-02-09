@@ -4,47 +4,25 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nvg.EmailService.Dtos
+namespace Nvg.EmailService.DTOS
 {
     public class EmailDto
     {
-        public string To { get; set; }
+        public string ChannelKey { get; set; }
+        public string TemplateName { get; set; }
+        public string Variant { get; set; }
+        public string Sender { get; set; }
+        public string Recipients { get; set; }
         public string Content { get; set; }
-        public string Template { get; set; }
-        public string Subject { get; set; }
-        public string TenantID { get; set; }
-        public string FacilityID { get; set; }
         public string Username { get; set; }
+        public string Tag { get; set; }
     }
 
-    public class EmailTemplateDto
+    public class EmailResponseDto<T>
     {
-        public long ID { get; set; }
-        public string TenantID { get; set; }
-        public string FacilityID { get; set; }
-        public string Name { get; set; }
-        public string EmailBodyTemplate { get; set; }
-        public string SubjectTemplate { get; set; }
-    }
-
-    public class EmailHistoryDto
-    {
-        public long ID { get; set; }
-        public string TenantID { get; set; }
-        public string FacilityID { get; set; }
-        public string ToEmailID { get; set; }
-        public string MailBody { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime SentOn { get; set; }
-        public string Status { get; set; }
-    }
-
-    public class EmailCounterDto
-    {
-        public long ID { get; set; }
-        public string TenantID { get; set; }
-        public int Count { get; set; }
-        public string FacilityID { get; set; }
+        public bool Status { get; set; }
+        public string Message { get; set; }
+        public T Result { get; set; }
     }
 
 
@@ -52,9 +30,7 @@ namespace Nvg.EmailService.Dtos
     {
         public EmailDTOProfile()
         {
-            CreateMap<EmailTemplateModel, EmailTemplateDto>().ReverseMap();
-            CreateMap<EmailHistoryModel, EmailHistoryDto>().ReverseMap();
-            CreateMap<EmailCounterDto, EmailCounterModel>().ReverseMap();
+            
         }
     }
 

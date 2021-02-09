@@ -1,0 +1,8 @@
+[
+  {
+    "id": "default-channel",
+    "key": "MasterEmailChannel",
+    "emailProviderID": "default-provider",
+    "emailPoolID": "default-pool"
+  }
+]

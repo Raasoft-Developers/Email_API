@@ -2,6 +2,19 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Nvg.EmailService.Data;
+using Nvg.EmailService.Data.EmailChannel;
+using Nvg.EmailService.Data.EmailHistory;
+using Nvg.EmailService.Data.EmailPool;
+using Nvg.EmailService.Data.EmailProvider;
+using Nvg.EmailService.Data.EmailQuota;
+using Nvg.EmailService.Data.EmailTemplate;
+using Nvg.EmailService.Email;
+using Nvg.EmailService.EmailChannel;
+using Nvg.EmailService.EmailHistory;
+using Nvg.EmailService.EmailPool;
+using Nvg.EmailService.EmailProvider;
+using Nvg.EmailService.EmailQuota;
+using Nvg.EmailService.EmailTemplate;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -13,13 +26,29 @@ namespace Nvg.EmailService
     {
         public static void AddEmailServices(this IServiceCollection services, string microservice)
         {
+            services.AddScoped<IEmailEventInteractor, EmailEventInteractor>();
+
             services.AddScoped<IEmailInteractor, EmailInteractor>();
-            services.AddScoped<IEmailCounterInteractor, EmailCounterInteractor>();
-            services.AddScoped<IEmailCounterRepository, EmailCounterRepository>();
-            services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
-            services.AddScoped<IEmailTemplateInteractor, EmailTemplateInteractor>();
+
+            services.AddScoped<IEmailChannelRepository, EmailChannelRepository>();
+            services.AddScoped<IEmailChannelInteractor, EmailChannelInteractor>(); 
+            
             services.AddScoped<IEmailHistoryRepository, EmailHistoryRepository>();
             services.AddScoped<IEmailHistoryInteractor, EmailHistoryInteractor>();
+
+            services.AddScoped<IEmailPoolRepository, EmailPoolRepository>();
+            services.AddScoped<IEmailPoolInteractor, EmailPoolInteractor>();
+
+            services.AddScoped<IEmailProviderRepository, EmailProviderRepository>();
+            services.AddScoped<IEmailProviderInteractor, EmailProviderInteractor>();
+
+            services.AddScoped<IEmailQuotaRepository, EmailQuotaRepository>();
+            services.AddScoped<IEmailQuotaInteractor, EmailQuotaInteractor>();
+
+            services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
+            services.AddScoped<IEmailTemplateInteractor, EmailTemplateInteractor>();
+            
+            
 
             services.AddScoped<EmailDbContext>(provider =>
             {

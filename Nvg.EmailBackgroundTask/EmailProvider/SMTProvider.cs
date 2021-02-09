@@ -18,7 +18,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             _emailProviderCS = emailProviderConnectionString;
         }
 
-        public async Task<string> SendEmail(string recipients, string message, string subject, string htmlContent, string sender = "")
+        public async Task<string> SendEmail(string recipients, string message, string sender = null)
         {
             if (!string.IsNullOrEmpty(_emailProviderCS.Sender))
                 sender = _emailProviderCS.Sender;
@@ -34,8 +34,8 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             MailMessage emailMessage = new MailMessage();
             emailMessage.To.Add(new MailAddress(recipients));
             emailMessage.From = new MailAddress(sender);
-            emailMessage.Subject = subject;
-            emailMessage.Body = message + ", " + htmlContent;
+            emailMessage.Subject = "subject"; //TODO: check this part
+            emailMessage.Body = message + ", " + "htmlContent";
             emailMessage.IsBodyHtml = true;
 
             await SendAsync(emailMessage, sender);

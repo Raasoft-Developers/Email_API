@@ -7,6 +7,6 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
 {
     public interface IEmailProvider
     {
-        public Task<string> SendEmail(string recipients, string message, string subject, string htmlContent, string sender = "");
+        public Task<string> SendEmail(string recipients, string message, string sender = null);
     }
 }

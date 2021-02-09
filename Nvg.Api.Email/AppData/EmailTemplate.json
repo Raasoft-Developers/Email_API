@@ -1,7 +1,10 @@
 [
   {
-    "name": "DEFAULT_EMAIL_NOTIFICATION",
-    "emailBodyTemplate": "Hi {User}, We have receieved your request. {Content}",
-    "subjectTemplate": "{User} - {Subject}"
+    "id": "default-template",
+    "name": "MasterEmailTemplate",
+    "variant": "",
+    "sender": "",
+    "emailPoolID": "default-pool",
+    "messageTemplate": "Hi {User}, We have received your request. {Content}."
   }
 ]

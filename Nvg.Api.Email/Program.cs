@@ -42,9 +42,15 @@ namespace Nvg.Api.Email
                 host.MigrateDbContext<EmailDbContext>((context, services) =>
                 {
                     var emailTemplateDataFromJson = File.ReadAllText(Path.Combine(path, "AppData", "EmailTemplate.json"));
-                    dynamic emailData = JsonConvert.DeserializeObject<object>(emailTemplateDataFromJson);
+                    dynamic templateData = JsonConvert.DeserializeObject<object>(emailTemplateDataFromJson);
+                    var emailChannelDataFromJson = File.ReadAllText(Path.Combine(path, "AppData", "EmailChannel.json"));
+                    dynamic channelData = JsonConvert.DeserializeObject<object>(emailChannelDataFromJson);
+                    var emailPoolDataFromJson = File.ReadAllText(Path.Combine(path, "AppData", "EmailPool.json"));
+                    dynamic poolData = JsonConvert.DeserializeObject<object>(emailPoolDataFromJson);
+                    var emailProviderDataFromJson = File.ReadAllText(Path.Combine(path, "AppData", "EmailProvider.json"));
+                    dynamic providerData = JsonConvert.DeserializeObject<object>(emailProviderDataFromJson);
                     new EmailDbContextSeed()
-                        .SeedAsync(context, configuration, emailData)
+                        .SeedAsync(context, configuration, channelData, poolData, providerData, templateData)
                         .Wait();
                 });
                 Log.Information("Starting web host ({ApplicationContext})...", AppName);

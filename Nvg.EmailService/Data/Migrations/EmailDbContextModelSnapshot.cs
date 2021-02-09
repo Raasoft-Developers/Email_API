@@ -20,41 +20,50 @@ namespace Nvg.EmailService.Data.Migrations
                 .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailCounterModel", b =>
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailChannelTable", b =>
                 {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Count")
+                    b.Property<string>("ID")
                         .HasColumnType("text");
 
-                    b.Property<string>("FacilityID")
+                    b.Property<string>("EmailPoolID")
                         .HasColumnType("text");
 
-                    b.Property<string>("TenantID")
+                    b.Property<string>("EmailProviderID")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Key")
                         .HasColumnType("text");
 
                     b.HasKey("ID");
 
-                    b.ToTable("EmailCounter");
+                    b.HasIndex("EmailPoolID");
+
+                    b.HasIndex("EmailProviderID");
+
+                    b.ToTable("EmailChannel");
                 });
 
-            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailHistoryModel", b =>
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailHistoryTable", b =>
                 {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("FacilityID")
+                    b.Property<string>("ID")
                         .HasColumnType("text");
 
-                    b.Property<string>("MailBody")
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EmailChannelID")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmailProviderID")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MesssageSent")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Recipients")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Sender")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("SentOn")
@@ -63,42 +72,161 @@ namespace Nvg.EmailService.Data.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("text");
 
-                    b.Property<string>("TenantID")
+                    b.Property<string>("Tags")
                         .HasColumnType("text");
 
-                    b.Property<string>("ToEmailID")
+                    b.Property<string>("TemplateName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TemplateVariant")
                         .HasColumnType("text");
 
                     b.HasKey("ID");
 
+                    b.HasIndex("EmailChannelID");
+
+                    b.HasIndex("EmailProviderID");
+
                     b.ToTable("EmailHistory");
                 });
 
-            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailTemplateModel", b =>
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailPoolTable", b =>
+                {
+                    b.Property<string>("ID")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("EmailPool");
+                });
+
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailProviderSettingsTable", b =>
+                {
+                    b.Property<string>("ID")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Configuration")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmailPoolID")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmailPoolID");
+
+                    b.ToTable("EmailProviderSettings");
+                });
+
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailQuotaTable", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("EmailBodyTemplate")
+                    b.Property<string>("EmailChannelID")
                         .HasColumnType("text");
 
-                    b.Property<string>("FacilityID")
+                    b.Property<int>("MonthlyConsumption")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MonthlyQuota")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalConsumption")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmailChannelID");
+
+                    b.ToTable("EmailQuota");
+                });
+
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailTemplateTable", b =>
+                {
+                    b.Property<string>("ID")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmailChannelID")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmailPoolID")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MessageTemplate")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<string>("SubjectTemplate")
+                    b.Property<string>("Sender")
                         .HasColumnType("text");
 
-                    b.Property<string>("TenantID")
+                    b.Property<string>("Variant")
                         .HasColumnType("text");
 
                     b.HasKey("ID");
 
+                    b.HasIndex("EmailChannelID");
+
                     b.ToTable("EmailTemplate");
+                });
+
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailChannelTable", b =>
+                {
+                    b.HasOne("Nvg.EmailService.Data.Entities.EmailPoolTable", "EmailPool")
+                        .WithMany()
+                        .HasForeignKey("EmailPoolID");
+
+                    b.HasOne("Nvg.EmailService.Data.Entities.EmailProviderSettingsTable", "EmailProvider")
+                        .WithMany()
+                        .HasForeignKey("EmailProviderID");
+                });
+
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailHistoryTable", b =>
+                {
+                    b.HasOne("Nvg.EmailService.Data.Entities.EmailChannelTable", "EmailChannel")
+                        .WithMany()
+                        .HasForeignKey("EmailChannelID");
+
+                    b.HasOne("Nvg.EmailService.Data.Entities.EmailProviderSettingsTable", "EmailProvider")
+                        .WithMany()
+                        .HasForeignKey("EmailProviderID");
+                });
+
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailProviderSettingsTable", b =>
+                {
+                    b.HasOne("Nvg.EmailService.Data.Entities.EmailPoolTable", "EmailPool")
+                        .WithMany()
+                        .HasForeignKey("EmailPoolID");
+                });
+
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailQuotaTable", b =>
+                {
+                    b.HasOne("Nvg.EmailService.Data.Entities.EmailChannelTable", "EmailChannel")
+                        .WithMany()
+                        .HasForeignKey("EmailChannelID");
+                });
+
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailTemplateTable", b =>
+                {
+                    b.HasOne("Nvg.EmailService.Data.Entities.EmailChannelTable", "EmailChannel")
+                        .WithMany()
+                        .HasForeignKey("EmailChannelID");
                 });
 #pragma warning restore 612, 618
         }

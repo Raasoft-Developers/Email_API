@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nvg.EmailService;
-using Nvg.EmailService.Dtos;
+using Nvg.EmailService.Email;
+using Nvg.EmailService.DTOS;
+using System.Net;
 
 namespace Nvg.Api.Email.Controllers
 {
@@ -21,15 +23,83 @@ namespace Nvg.Api.Email.Controllers
         }
 
         [HttpPost]
-        public ActionResult SendMail(EmailDto emailInputs)
+        public ActionResult AddEmailPool(EmailPoolDto poolInput)
         {
-            CustomeResponse<string> response = new CustomeResponse<string>();
-            //bool sent = _emailProvider.SendEmail(email.To, email.MailBody, email.Subject, email.HtmlContent, email.Sender).Result;
-            _emailInteractor.SendMail(emailInputs);
-            response.Status = true;
-            response.Message = $"Email is sent successfully to {emailInputs.To} ";
-            response.Result = "SENT";
-            return Ok(response);
+            var poolResponse = _emailInteractor.AddEmailPool(poolInput);
+            if (poolResponse.Status)
+                return Ok(poolResponse);
+            else
+                return StatusCode((int)HttpStatusCode.PreconditionFailed, poolResponse);
+        }
+
+        [HttpPost]
+        public ActionResult AddEmailProvider(EmailProviderSettingsDto providerInput)
+        {
+            var providerResponse = _emailInteractor.AddEmailProvider(providerInput);
+            if (providerResponse.Status)
+                return Ok(providerResponse);
+            else
+                return StatusCode((int)HttpStatusCode.PreconditionFailed, providerResponse);
+        }
+
+        [HttpPost]
+        public ActionResult AddEmailChannel(EmailChannelDto channelInput)
+        {
+            var channelResponse = _emailInteractor.AddEmailChannel(channelInput);
+            if (channelResponse.Status)
+                return Ok(channelResponse);
+            else
+                return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+        }
+
+        [HttpPost]
+        public ActionResult AddEmailTemplate(EmailTemplateDto templateInput)
+        {
+            var templateResponse = _emailInteractor.AddEmailTemplate(templateInput);
+            if (templateResponse.Status)
+                return Ok(templateResponse);
+            else
+                return StatusCode((int)HttpStatusCode.PreconditionFailed, templateResponse);
+        }
+
+        [HttpGet]
+        public ActionResult GetEmailChannelByKey(string channelKey)
+        {
+            var channelResponse = _emailInteractor.GetEmailChannelByKey(channelKey);
+            if (channelResponse.Status)
+                return Ok(channelResponse);
+            else
+                return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+        }
+
+        [HttpGet]
+        public ActionResult GetEmailProvidersByPool(string poolName, string providerName)
+        {
+            var poolResponse = _emailInteractor.GetEmailProvidersByPool(poolName, providerName);
+            if (poolResponse.Status)
+                return Ok(poolResponse);
+            else
+                return StatusCode((int)HttpStatusCode.PreconditionFailed, poolResponse);
+        }
+
+        [HttpGet]
+        public ActionResult GetEmailHistories(string channelKey, string tag = null)
+        {
+            var historiesResponse = _emailInteractor.GetEmailHistoriesByTag(channelKey, tag);
+            if (historiesResponse.Status)
+                return Ok(historiesResponse);
+            else
+                return StatusCode((int)HttpStatusCode.PreconditionFailed, historiesResponse);
+        }
+
+        [HttpPost]
+        public ActionResult SendMail(EmailDto emailInputs)
+        {            
+            var emailResponse = _emailInteractor.SendMail(emailInputs);
+            if (emailResponse.Status)
+                return Ok(emailResponse);
+            else
+                return StatusCode((int)HttpStatusCode.PreconditionFailed, emailResponse);
         }
     }
 }

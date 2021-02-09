@@ -14,6 +14,8 @@ using Nvg.EmailBackgroundTask.Events;
 using Nvg.EmailService;
 using Nvg.EmailService.Data;
 using Nvg.EmailBackgroundTask.Models;
+using Nvg.EmailService.EmailQuota;
+using Nvg.EmailService.EmailProvider;
 
 namespace Nvg.EmailBackgroundTask.EventHandler
 {
@@ -31,27 +33,27 @@ namespace Nvg.EmailBackgroundTask.EventHandler
             _logger.LogDebug($"Subscriber received a SendEmailEvent notification.");
             if (@event.Id != Guid.Empty)
             {
-                using IServiceScope scope = GetScope(@event.TenantID, @event.FacilityID);
+                using IServiceScope scope = GetScope(@event.ChannelKey);
                 var emailManager = scope.ServiceProvider.GetService<EmailManager>();
 
-                var emailCounterInteractor = scope.ServiceProvider.GetService<IEmailCounterInteractor>();
-                var emailCount = emailCounterInteractor.GetEmailCounter(@event.TenantID, @event.FacilityID);
+                var emailQuotaInteractor = scope.ServiceProvider.GetService<IEmailQuotaInteractor>();
+                var emailQuota = emailQuotaInteractor.GetEmailQuota(@event.ChannelKey)?.Result;
 
-                //var emailSettings = scope.ServiceProvider.GetService<EmailSettings>();
-                var emailSettings = scope.ServiceProvider.GetService<EmailProviderConnectionString>();
-                _logger.LogDebug($"Enable Email Info: {emailSettings}");
+                var emailProviderService = scope.ServiceProvider.GetService<IEmailProviderInteractor>();
+                var providerName = emailProviderService.GetEmailProviderByChannel(@event.ChannelKey)?.Result?.Name;
 
                 /*if (emailSettings.EnableEmail)
                 {*/
                 var email = new Email
                 {
-                    FacilityID = @event.FacilityID,
-                    EmailParts = @event.EmailParts,
-                    Subject = @event.SubjectParts,
-                    Sender = emailSettings.Sender,
+                    Recipients = @event.Recipients,
+                    Sender = @event.Sender,
                     TemplateName = @event.TemplateName,
-                    TenantID = @event.TenantID,
-                    To = @event.Recipients
+                    Variant = @event.Variant,
+                    ChannelKey = @event.ChannelKey,
+                    MessageParts = @event.MessageParts,
+                    ProviderName = providerName,
+                    Tag = @event.Tag
                 };
                 emailManager.SendEmail(email);
                 /*}
@@ -62,34 +64,31 @@ namespace Nvg.EmailBackgroundTask.EventHandler
             return Task.FromResult(true);
         }
 
-        private IServiceScope GetScope(string tenantID, string facilityID)
+        private IServiceScope GetScope(string channelKey)
         {
-            _logger.LogDebug($"GetScope() : TENANTID - {tenantID}, FACILITYID - {facilityID}");
-
-            var serviceProvider = new ServiceCollection();
-
+            var services = new ServiceCollection();
             var configuration = Program.GetConfiguration();
-            serviceProvider.AddScoped(_ => configuration);
-            serviceProvider.AddLogging();
-            serviceProvider.AddEmailBackgroundTask();
-            serviceProvider.AddEmailServices(Program.AppName);
-            serviceProvider.AddHttpContextAccessor();
+            services.AddScoped(_ => configuration);
+            services.AddLogging();
+            services.AddEmailBackgroundTask(channelKey);
+            services.AddEmailServices(Program.AppName);
 
-            serviceProvider.AddScoped<EmailDBInfo>(provider =>
+            services.AddScoped<EmailDBInfo>(provider =>
             {
                 string microservice = Program.AppName;
                 string connectionString = configuration.GetSection("ConnectionString")?.Value;
                 return new EmailDBInfo(connectionString);
             });
 
-            serviceProvider.AddScoped<EmailProviderConnectionString>(provider =>
+            services.AddScoped<EmailProviderConnectionString>(provider =>
             {
-                string emailGatewayProvider = configuration.GetSection("EmailGatewayProvider")?.Value;
-                _logger.LogDebug($"EmailGatewayProvider : {emailGatewayProvider}");
-                return new EmailProviderConnectionString(emailGatewayProvider);
+                var emailProviderService = provider.GetService<IEmailProviderInteractor>();
+                var emailProviderConfiguration = emailProviderService.GetEmailProviderByChannel(channelKey)?.Result?.Configuration;
+
+                return new EmailProviderConnectionString(emailProviderConfiguration);
             });
-            
-            var scope = serviceProvider.BuildServiceProvider().CreateScope();
+
+            var scope = services.BuildServiceProvider().CreateScope();
             return scope;
         }
     }

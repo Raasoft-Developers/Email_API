@@ -8,9 +8,12 @@ namespace Nvg.EmailService.Data
 {
     public class EmailDbContext : DbContext
     {
-        public virtual DbSet<EmailTemplateModel> EmailTemplate { get; set; }
-        public virtual DbSet<EmailHistoryModel> EmailHistory { get; set; }
-        public virtual DbSet<EmailCounterModel> EmailCounter { get; set; }
+        public virtual DbSet<EmailChannelTable> EmailChannels { get; set; }       
+        public virtual DbSet<EmailHistoryTable> EmailHistories { get; set; }
+        public virtual DbSet<EmailPoolTable> EmailPools { get; set; }
+        public virtual DbSet<EmailProviderSettingsTable> EmailProviders { get; set; }
+        public virtual DbSet<EmailQuotaTable> EmailQuotas { get; set; }
+        public virtual DbSet<EmailTemplateTable> EmailTemplates { get; set; }
 
         public string _schema { get; set; }
 
@@ -27,6 +30,10 @@ namespace Nvg.EmailService.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(_schema);
+
+            modelBuilder.Entity<EmailPoolTable>()
+                .HasIndex(p =>  p.Name)
+                .IsUnique(true);
         }
     }
 }
