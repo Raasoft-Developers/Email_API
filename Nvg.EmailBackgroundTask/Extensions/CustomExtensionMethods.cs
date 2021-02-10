@@ -112,7 +112,7 @@ namespace Nvg.EmailBackgroundTask.Extensions
 
                 var emailProviderService = provider.GetService<IEmailProviderInteractor>();
                 var emailProviderConfiguration = emailProviderService.GetEmailProviderByChannel(channelKey)?.Result;
-                if (emailProviderConfiguration != null)
+                if (emailProviderConfiguration != null && emailProviderConfiguration.Type.ToLowerInvariant().Equals("sendgrid"))
                 {
                     return new SendGridProvider(cs);
                 }

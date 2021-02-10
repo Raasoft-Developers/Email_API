@@ -25,9 +25,10 @@ namespace Nvg.EmailService.Email
             sendEmailEvent.Variant = emailInputs.Variant;
             sendEmailEvent.Sender = emailInputs.Sender;
             sendEmailEvent.Recipients = emailInputs.Recipients;
+            sendEmailEvent.Subject = emailInputs.Subject;
             sendEmailEvent.MessageParts = new Dictionary<string, string> {
-                { "user", user},
-                { "content", emailInputs.Content}
+                { "User", user},
+                { "Body", emailInputs.Body}
             };
             sendEmailEvent.Tag = emailInputs.Tag;
             _eventBus.Publish(sendEmailEvent);

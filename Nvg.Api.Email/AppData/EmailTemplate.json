@@ -5,6 +5,6 @@
     "variant": "",
     "sender": "",
     "emailPoolID": "default-pool",
-    "messageTemplate": "Hi {User}, We have received your request. {Content}."
+    "messageTemplate": "Hi {User}, We have received your request. {Body}."
   }
 ]

@@ -13,6 +13,7 @@ namespace Nvg.EmailBackgroundTask.Events
         public string Sender { get; set; }
         public string Recipients { get; set; }
         public string TemplateName { get; set; }
+        public string Subject { get; set; }
         public string Tag { get; set; }
         public Dictionary<string, string> MessageParts { get; set; }
 

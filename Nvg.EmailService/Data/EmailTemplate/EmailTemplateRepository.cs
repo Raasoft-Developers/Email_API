@@ -83,12 +83,11 @@ namespace Nvg.EmailService.Data.EmailTemplate
             var emailQry = (from t in _context.EmailTemplates
                           join c in _context.EmailChannels on t.EmailPoolID equals c.EmailPoolID
                           where c.Key.ToLower().Equals(channelKey.ToLower()) &&
-                          (t.Name.Equals(templateName) && string.IsNullOrEmpty(t.Variant) ||
-                           t.Name.Equals(templateName) && t.Variant.ToLower().Equals(variant.ToLower()))
-                          select t);
+                          (t.Name.Equals(templateName) && string.IsNullOrEmpty(variant) || !string.IsNullOrEmpty(variant) && t.Name.Equals(templateName) && t.Variant.ToLower().Equals(variant.ToLower()))
+                          select t).ToList();
 
             if (!string.IsNullOrEmpty(variant))
-                emailTemplate = emailQry.ToList().FirstOrDefault(st => !string.IsNullOrEmpty(st.Variant));
+                emailTemplate = emailQry.FirstOrDefault(st => !string.IsNullOrEmpty(st.Variant));
             else
                 emailTemplate = emailQry.FirstOrDefault();
 

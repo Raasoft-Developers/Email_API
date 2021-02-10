@@ -36,9 +36,9 @@ namespace Nvg.EmailBackgroundTask
                 sender = email.Sender;
 
             if (string.IsNullOrEmpty(sender))
-                sender = _emailProviderConnectionString.Sender;
+                sender = _emailProviderConnectionString.Fields["Sender"];
 
-            string emailResponseStatus = _emailProvider.SendEmail(email.Recipients, message, sender).Result;
+            string emailResponseStatus = _emailProvider.SendEmail(email.Recipients, message, email.Subject, sender).Result;
 
             var emailObj = new EmailHistoryDto()
             {

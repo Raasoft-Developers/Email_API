@@ -13,7 +13,8 @@ namespace Nvg.EmailService.DTOS
         public string Variant { get; set; }
         public string Sender { get; set; }
         public string Recipients { get; set; }
-        public string Content { get; set; }
+        public string Subject { get; set; }
+        public string Body { get; set; }
         public string Username { get; set; }
         public string Tag { get; set; }
     }

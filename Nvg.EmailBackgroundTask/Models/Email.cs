@@ -15,6 +15,7 @@ namespace Nvg.EmailBackgroundTask.Models
         public string Recipients { get; set; }
         public string Sender { get; set; }
         public string TemplateName { get; set; }
+        public string Subject { get; set; }
         public Dictionary<string, string> MessageParts { get; set; }
         public string Variant { get; internal set; }
         public string ChannelKey { get; internal set; }
@@ -27,6 +28,7 @@ namespace Nvg.EmailBackgroundTask.Models
             var msg = template?.MessageTemplate;
             foreach (var item in MessageParts)
                 msg = msg.Replace($"{{{item.Key}}}", item.Value);
+
             return msg;
         }
 

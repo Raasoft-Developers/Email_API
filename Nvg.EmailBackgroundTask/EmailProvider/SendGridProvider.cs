@@ -17,10 +17,11 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             _emailProviderCS = emailProviderConnectionString;
         }
 
-        public async Task<string> SendEmail(string recipients, string message, string sender = "")
+        public async Task<string> SendEmail(string recipients, string message, string subject, string sender = "")
         {
-            if (!string.IsNullOrEmpty(_emailProviderCS.Sender))
-                sender = _emailProviderCS.Sender;
+            if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
+                sender = _emailProviderCS.Fields["Sender"];
+
             var APIKey = _emailProviderCS.Fields["ApiKey"];
             var client = new SendGridClient(APIKey);
             var from = new EmailAddress(sender);
@@ -28,9 +29,9 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             var email = MailHelper.CreateSingleEmail(
                 from,
                 to,
-                "subject", //TODO: check this part
+                subject, 
                 message,
-                "htmlContent"
+                null
             );
             var apiResponse = await client.SendEmailAsync(email);
             return apiResponse.ToString();

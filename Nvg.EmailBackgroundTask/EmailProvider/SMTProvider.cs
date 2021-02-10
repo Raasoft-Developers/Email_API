@@ -1,11 +1,6 @@
-﻿using MimeKit;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using MailKit.Net.Smtp;
-using Microsoft.Azure.Amqp.Framing;
+﻿using System;
 using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace Nvg.EmailBackgroundTask.EmailProvider
 {
@@ -18,10 +13,10 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             _emailProviderCS = emailProviderConnectionString;
         }
 
-        public async Task<string> SendEmail(string recipients, string message, string sender = null)
+        public async Task<string> SendEmail(string recipients, string message, string subject, string sender = null)
         {
-            if (!string.IsNullOrEmpty(_emailProviderCS.Sender))
-                sender = _emailProviderCS.Sender;
+            if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
+                sender = _emailProviderCS.Fields["Sender"];
             /*
             // Gmail SMTP implementation
             var emailMessage = new MimeMessage();
@@ -34,8 +29,8 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             MailMessage emailMessage = new MailMessage();
             emailMessage.To.Add(new MailAddress(recipients));
             emailMessage.From = new MailAddress(sender);
-            emailMessage.Subject = "subject"; //TODO: check this part
-            emailMessage.Body = message + ", " + "htmlContent";
+            emailMessage.Subject = subject;
+            emailMessage.Body = message;
             emailMessage.IsBodyHtml = true;
 
             await SendAsync(emailMessage, sender);

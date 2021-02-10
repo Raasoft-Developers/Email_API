@@ -11,7 +11,7 @@ namespace Nvg.EmailService.Data.Entities
     {
         [Key]
         public string ID { get; set; }
-        public string MesssageSent { get; set; }
+        public string MessageSent { get; set; }
         public string Sender { get; set; }
         public string Recipients { get; set; }
         public DateTime SentOn { get; set; }

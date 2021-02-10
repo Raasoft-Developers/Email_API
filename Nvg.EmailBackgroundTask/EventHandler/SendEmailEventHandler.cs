@@ -36,8 +36,8 @@ namespace Nvg.EmailBackgroundTask.EventHandler
                 using IServiceScope scope = GetScope(@event.ChannelKey);
                 var emailManager = scope.ServiceProvider.GetService<EmailManager>();
 
-                var emailQuotaInteractor = scope.ServiceProvider.GetService<IEmailQuotaInteractor>();
-                var emailQuota = emailQuotaInteractor.GetEmailQuota(@event.ChannelKey)?.Result;
+                //var emailQuotaInteractor = scope.ServiceProvider.GetService<IEmailQuotaInteractor>();
+                //var emailQuota = emailQuotaInteractor.GetEmailQuota(@event.ChannelKey)?.Result;
 
                 var emailProviderService = scope.ServiceProvider.GetService<IEmailProviderInteractor>();
                 var providerName = emailProviderService.GetEmailProviderByChannel(@event.ChannelKey)?.Result?.Name;
@@ -53,6 +53,7 @@ namespace Nvg.EmailBackgroundTask.EventHandler
                     ChannelKey = @event.ChannelKey,
                     MessageParts = @event.MessageParts,
                     ProviderName = providerName,
+                    Subject= @event.Subject,
                     Tag = @event.Tag
                 };
                 emailManager.SendEmail(email);
