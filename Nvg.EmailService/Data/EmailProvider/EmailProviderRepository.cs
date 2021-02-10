@@ -115,7 +115,7 @@ namespace Nvg.EmailService.Data.EmailProvider
                 if (emailProviders.Count != 0)
                 {
                     if (!string.IsNullOrEmpty(providerName))
-                        emailProviders = emailProviders.Where(s => s.Name.ToLower().Equals(providerName)).ToList();
+                        emailProviders = emailProviders.Where(s => s.Name.ToLower().Equals(providerName.ToLower())).ToList();
                     response.Status = true;
                 }
                 else

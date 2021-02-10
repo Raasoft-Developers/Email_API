@@ -15,7 +15,7 @@ namespace Nvg.EmailService.EmailChannel
         EmailResponseDto<EmailChannelDto> AddEmailChannel(EmailChannelDto channelInput);
 
         /// <summary>
-        /// /Gets the email channel by channel key.
+        /// Gets the email channel by channel key.
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
         /// <returns><see cref="EmailResponseDto{EmailChannelDto}"/></returns>

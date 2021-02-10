@@ -31,7 +31,7 @@ namespace Nvg.EmailService.DTOS
         {
             CreateMap<EmailHistoryDto, EmailHistoryTable>().ReverseMap();
             CreateMap<EmailResponseDto<EmailHistoryTable>, EmailResponseDto<EmailHistoryDto>>();
-
+            CreateMap<EmailResponseDto<List<EmailHistoryTable>>, EmailResponseDto<List<EmailHistoryDto>>>();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Nvg.EmailService.Data;
@@ -9,9 +10,10 @@ using Nvg.EmailService.Data;
 namespace Nvg.EmailService.Data.Migrations
 {
     [DbContext(typeof(EmailDbContext))]
-    partial class EmailDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210210114400_fixforeignkeyTemplateTable")]
+    partial class fixforeignkeyTemplateTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,7 +223,7 @@ namespace Nvg.EmailService.Data.Migrations
 
             modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailTemplateTable", b =>
                 {
-                    b.HasOne("Nvg.EmailService.Data.Entities.EmailPoolTable", "EmailPool")
+                    b.HasOne("Nvg.EmailService.Data.Entities.EmailChannelTable", "EmailChannel")
                         .WithMany()
                         .HasForeignKey("EmailPoolID");
                 });

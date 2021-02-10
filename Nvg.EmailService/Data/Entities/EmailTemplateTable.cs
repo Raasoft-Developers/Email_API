@@ -16,8 +16,8 @@ namespace Nvg.EmailService.Data.Entities
         public string Variant { get; set; }
         public string Sender { get; set; }
         public string EmailPoolID { get; set; }
-        [ForeignKey("EmailChannelID")]
-        public EmailChannelTable EmailChannel { get; set; }
+        [ForeignKey("EmailPoolID")]
+        public EmailPoolTable EmailPool { get; set; }
         public string MessageTemplate { get; set; }
     }
 }
