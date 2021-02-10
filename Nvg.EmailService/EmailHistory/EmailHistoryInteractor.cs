@@ -41,8 +41,8 @@ namespace Nvg.EmailService.EmailHistory
                 if (string.IsNullOrEmpty(historyInput.EmailChannelID))
                     historyInput.EmailChannelID = _emailChannelRepository.GetEmailChannelByKey(historyInput.ChannelKey)?.Result?.ID;
             }
-            var mappedSMSInput = _mapper.Map<EmailHistoryTable>(historyInput);
-            var mappedResponse = _emailHistoryRepository.AddEmailHistory(mappedSMSInput);
+            var mappedEmailInput = _mapper.Map<EmailHistoryTable>(historyInput);
+            var mappedResponse = _emailHistoryRepository.AddEmailHistory(mappedEmailInput);
             response = _mapper.Map<EmailResponseDto<EmailHistoryDto>>(mappedResponse);
             return response;
         }

@@ -21,13 +21,13 @@ namespace Nvg.EmailService.Data.EmailQuota
             var response = new EmailResponseDto<EmailQuotaTable>();
             try
             {
-                var smsQuota = (from q in _context.EmailQuotas
+                var emailQuota = (from q in _context.EmailQuotas
                                 join c in _context.EmailChannels on q.EmailChannelID equals c.ID
                                 where c.Key.ToLower().Equals(channelKey.ToLower())
                                 select q).FirstOrDefault();
                 response.Status = true;
                 response.Message = $"Retrieved Email Quota";
-                response.Result = smsQuota;
+                response.Result = emailQuota;
                 return response;
             }
             catch (Exception ex)

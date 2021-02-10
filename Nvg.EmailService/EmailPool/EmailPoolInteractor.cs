@@ -23,8 +23,8 @@ namespace Nvg.EmailService.EmailPool
         {
             var mappedEmailInput = _mapper.Map<EmailPoolTable>(emailPoolInput);
             var response = _emailPoolRepository.AddEmailPool(mappedEmailInput);
-            var mappedSMSResponse = _mapper.Map<EmailResponseDto<EmailPoolDto>>(response);
-            return mappedSMSResponse;
+            var mappedEmailResponse = _mapper.Map<EmailResponseDto<EmailPoolDto>>(response);
+            return mappedEmailResponse;
         }
     }
 }

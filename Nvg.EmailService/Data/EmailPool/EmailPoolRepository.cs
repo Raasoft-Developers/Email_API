@@ -60,8 +60,8 @@ namespace Nvg.EmailService.Data.EmailPool
             var response = new EmailResponseDto<EmailPoolTable>();
             try
             {
-                var smsPool = _context.EmailPools.FirstOrDefault(sp => sp.Name.ToLower().Equals(poolName.ToLower()));
-                if (smsPool != null)
+                var emailPool = _context.EmailPools.FirstOrDefault(sp => sp.Name.ToLower().Equals(poolName.ToLower()));
+                if (emailPool != null)
                 {
                     response.Status = true;
                     response.Message = $"Retrieved Email pool data for {poolName}";
@@ -71,7 +71,7 @@ namespace Nvg.EmailService.Data.EmailPool
                     response.Status = false;
                     response.Message = $"Email pool data for {poolName} is not available";
                 }
-                response.Result = smsPool;
+                response.Result = emailPool;
                 return response;
             }
             catch (Exception ex)

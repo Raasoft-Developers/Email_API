@@ -69,8 +69,8 @@ namespace Nvg.EmailService.EmailChannel
             else
                 channelInput.EmailProviderID = _emailProviderRepository.GetEmailProviderByName(defaultEmailProvider)?.Result?.ID;
 
-            var mappedSMSInput = _mapper.Map<EmailChannelTable>(channelInput);
-            var mappedResponse = _emailChannelRepository.AddEmailChannel(mappedSMSInput);
+            var mappedEmailInput = _mapper.Map<EmailChannelTable>(channelInput);
+            var mappedResponse = _emailChannelRepository.AddEmailChannel(mappedEmailInput);
             response = _mapper.Map<EmailResponseDto<EmailChannelDto>>(mappedResponse);
             return response;
         }

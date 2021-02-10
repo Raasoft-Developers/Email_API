@@ -50,8 +50,8 @@ namespace Nvg.EmailService.Data.EmailProvider
             var response = new EmailResponseDto<EmailProviderSettingsTable>();
             try
             {
-                var smsProvider = _context.EmailProviders.FirstOrDefault(sp => sp.Name.ToLower().Equals(providerName.ToLower()));
-                if (smsProvider != null)
+                var emailProvider = _context.EmailProviders.FirstOrDefault(sp => sp.Name.ToLower().Equals(providerName.ToLower()));
+                if (emailProvider != null)
                 {
                     response.Status = true;
                     response.Message = $"Retrieved Email provider data for {providerName}";
@@ -61,7 +61,7 @@ namespace Nvg.EmailService.Data.EmailProvider
                     response.Status = false;
                     response.Message = $"Email provider data for {providerName} is not available";
                 }
-                response.Result = smsProvider;
+                response.Result = emailProvider;
                 return response;
             }
             catch (Exception ex)
