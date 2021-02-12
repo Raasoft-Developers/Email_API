@@ -26,20 +26,41 @@ namespace Nvg.EmailService.Data.EmailChannel
             var response = new EmailResponseDto<EmailChannelTable>();
             try
             {
-                channelInput.ID = Guid.NewGuid().ToString();
-                _context.EmailChannels.Add(channelInput);
-                if (_context.SaveChanges() == 1)
+                var channel = _context.EmailChannels.FirstOrDefault(sp => sp.Key.Equals(channelInput.Key) && sp.EmailPoolID.Equals(channelInput.EmailPoolID));
+                if (channel != null)
                 {
-                    response.Status = true;
-                    response.Message = "Added";
-                    response.Result = channelInput;
+                    channel.EmailProviderID = channelInput.EmailProviderID;
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = "Updated";
+                        response.Result = channelInput;
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Failed To Update";
+                        response.Result = channelInput;
+                    }
                 }
                 else
                 {
-                    response.Status = false;
-                    response.Message = "Not Added";
-                    response.Result = channelInput;
+                    channelInput.ID = Guid.NewGuid().ToString();
+                    _context.EmailChannels.Add(channelInput);
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = "Added";
+                        response.Result = channelInput;
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Not Added";
+                        response.Result = channelInput;
+                    }
                 }
+                
                 return response;
             }
             catch (Exception ex)
@@ -61,8 +82,16 @@ namespace Nvg.EmailService.Data.EmailChannel
             try
             {
                 var emailChannel = _context.EmailChannels.FirstOrDefault(sp => sp.Key.ToLower().Equals(channelKey.ToLower()));
-                response.Status = true;
-                response.Message = $"Retrieved Email channel data for {channelKey}";
+                if (emailChannel != null)
+                {
+                    response.Status = true;
+                    response.Message = $"Retrieved Email channel data for {channelKey}";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Email Channel Data Unavailable for {channelKey}";
+                }
                 response.Result = emailChannel;
                 return response;
             }

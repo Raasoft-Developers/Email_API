@@ -25,20 +25,44 @@ namespace Nvg.EmailService.Data.EmailTemplate
             var response = new EmailResponseDto<EmailTemplateTable>();
             try
             {
-                templateInput.ID = Guid.NewGuid().ToString();
-                _context.EmailTemplates.Add(templateInput);
-                if (_context.SaveChanges() == 1)
+                var template = _context.EmailTemplates.FirstOrDefault(st => st.Name.ToLower().Equals(templateInput.Name.ToLower()) &&
+                st.EmailPoolID.Equals(templateInput.EmailPoolID) &&
+                st.Variant.ToLower().Equals(templateInput.Variant.ToLower()));
+                if (template != null)
                 {
-                    response.Status = true;
-                    response.Message = "Added";
-                    response.Result = templateInput;
+                    template.MessageTemplate = templateInput.MessageTemplate;
+                    template.Sender = templateInput.Sender;
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = "Updated";
+                        response.Result = templateInput;
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Failed To Update";
+                        response.Result = templateInput;
+                    }
                 }
                 else
                 {
-                    response.Status = false;
-                    response.Message = "Not Added";
-                    response.Result = templateInput;
+                    templateInput.ID = Guid.NewGuid().ToString();
+                    _context.EmailTemplates.Add(templateInput);
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = "Added";
+                        response.Result = templateInput;
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Not Added";
+                        response.Result = templateInput;
+                    }
                 }
+                  
                 return response;
             }
             catch (Exception ex)
