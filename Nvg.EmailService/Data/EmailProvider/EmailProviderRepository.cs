@@ -99,9 +99,9 @@ namespace Nvg.EmailService.Data.EmailProvider
             try
             {
                 var emailProvider = (from p in _context.EmailProviders
-                                   join c in _context.EmailChannels on p.EmailPoolID equals c.EmailPoolID
-                                   where c.Key.ToLower().Equals(channelKey.ToLower())
-                                   select p).FirstOrDefault();
+                                     join c in _context.EmailChannels on new { PoolID = p.EmailPoolID, ProviderID = p.ID } equals new { PoolID = c.EmailPoolID, ProviderID = c.EmailProviderID }
+                                     where c.Key.ToLower().Equals(channelKey.ToLower())
+                                     select p).FirstOrDefault();
                 if (emailProvider != null)
                 {
                     response.Status = true;
