@@ -19,14 +19,17 @@ namespace Nvg.Api.Email.Helpers
     {
         public static void AddEmailService(this IServiceCollection services, string microservice, IConfiguration configuration)
         {
+            string databaseProviderMain = configuration.GetSection("DatabaseProvider")?.Value;
             services.AddScoped<EmailDBInfo>(provider =>
             {
                 var logger = provider.GetService<ILogger<EmailDBInfo>>();
                 logger.LogDebug($"RESOLVING EmailDBInfo");
+                
                 string connectionString = configuration.GetSection("ConnectionString")?.Value;
-                return new EmailDBInfo(connectionString);
+                string databaseProvider = configuration.GetSection("DatabaseProvider")?.Value;
+                return new EmailDBInfo(connectionString, databaseProvider);
             });
-            EmailServiceExtension.AddEmailServices(services, microservice);
+            EmailServiceExtension.AddEmailServices(services, microservice, databaseProviderMain);
         }
 
         public static void RegisterEventBus(this IServiceCollection services, IConfiguration configuration)

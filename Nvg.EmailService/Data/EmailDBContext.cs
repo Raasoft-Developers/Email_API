@@ -17,23 +17,16 @@ namespace Nvg.EmailService.Data
 
         public string _schema { get; set; }
 
-        public EmailDbContext(DbContextOptions<EmailDbContext> options) : base(options)
+        public EmailDbContext(DbContextOptions options) : base(options)
         {
 
         }
 
-        public EmailDbContext(DbContextOptions<EmailDbContext> options, string schema) : base(options)
+        public EmailDbContext(DbContextOptions options, string schema) : base(options)
         {
             _schema = schema;
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.HasDefaultSchema(_schema);
-
-            modelBuilder.Entity<EmailPoolTable>()
-                .HasIndex(p =>  p.Name)
-                .IsUnique(true);
-        }
+        
     }
 }
