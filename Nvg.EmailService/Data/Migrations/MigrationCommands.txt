@@ -1,0 +1,7 @@
+﻿dotnet ef migrations add InitialMigrationPgSql --context EmailPgSqlDBContext --output-dir data/Migrations/PgSqlMigrations
+
+dotnet ef migrations remove --context EmailPgSqlDBContext
+
+dotnet ef migrations add InitialMigrationSql --context EmailSqlServerDBContext --ouput-dir data/Migrations/SqlServerMigrations
+
+dotnet ef migrations remove --context EmailSqlServerDBContext

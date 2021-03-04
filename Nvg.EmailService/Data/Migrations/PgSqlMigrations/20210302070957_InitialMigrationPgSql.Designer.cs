@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Nvg.EmailService.Data;
 
-namespace Nvg.EmailService.Data.Migrations
+namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
 {
-    [DbContext(typeof(EmailDbContext))]
-    [Migration("20210210115108_FixTemplateTableProperty")]
-    partial class FixTemplateTableProperty
+    [DbContext(typeof(EmailPgSqlDBContext))]
+    [Migration("20210302070957_InitialMigrationPgSql")]
+    partial class InitialMigrationPgSql
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -24,15 +24,15 @@ namespace Nvg.EmailService
 {
     public static class EmailServiceExtension
     {
-        public static void AddEmailServices(this IServiceCollection services, string microservice)
+        public static void AddEmailServices(this IServiceCollection services, string microservice, string databaseProvider)
         {
             services.AddScoped<IEmailEventInteractor, EmailEventInteractor>();
 
             services.AddScoped<IEmailInteractor, EmailInteractor>();
 
             services.AddScoped<IEmailChannelRepository, EmailChannelRepository>();
-            services.AddScoped<IEmailChannelInteractor, EmailChannelInteractor>(); 
-            
+            services.AddScoped<IEmailChannelInteractor, EmailChannelInteractor>();
+
             services.AddScoped<IEmailHistoryRepository, EmailHistoryRepository>();
             services.AddScoped<IEmailHistoryInteractor, EmailHistoryInteractor>();
 
@@ -47,17 +47,54 @@ namespace Nvg.EmailService
 
             services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
             services.AddScoped<IEmailTemplateInteractor, EmailTemplateInteractor>();
-            
-            
-
-            services.AddScoped<EmailDbContext>(provider =>
+            databaseProvider ??= string.Empty;
+            switch (databaseProvider.ToLower())
             {
-                var dbInfo = provider.GetService<EmailDBInfo>();
-                var builder = new DbContextOptionsBuilder<EmailDbContext>();
-                builder.UseNpgsql(dbInfo.ConnectionString,
+                case "postgresql":
+                    services.AddScoped<EmailDbContext, EmailPgSqlDBContext>(provider =>
+                    {
+                        var dbInfo = provider.GetService<EmailDBInfo>();
+                        var builder = new DbContextOptionsBuilder<EmailPgSqlDBContext>();
+                        builder.UseNpgsql(dbInfo.ConnectionString,
                                   x => x.MigrationsHistoryTable("__MyMigrationsHistory", microservice));
-                return new EmailDbContext(builder.Options, microservice);
-            });
+
+                        return new EmailPgSqlDBContext(builder.Options, microservice);
+                    });
+                    break;
+                case "mssql":
+                    services.AddScoped<EmailDbContext, EmailSqlServerDBContext>(provider =>
+                    {
+                        var dbInfo = provider.GetService<EmailDBInfo>();
+                        var builder = new DbContextOptionsBuilder<EmailSqlServerDBContext>();
+                        builder.UseSqlServer(dbInfo.ConnectionString,
+                                  x => x.MigrationsHistoryTable("__MyMigrationsHistory", microservice));
+
+                        return new EmailSqlServerDBContext(builder.Options, microservice);
+                    });
+                    break;
+                case "oracle":
+                    services.AddScoped<EmailDbContext, EmailOracleDBContext>(provider =>
+                    {
+                        var dbInfo = provider.GetService<EmailDBInfo>();
+                        var builder = new DbContextOptionsBuilder<EmailOracleDBContext>();
+                        builder.UseOracle(dbInfo.ConnectionString,
+                                  x => x.MigrationsHistoryTable("__MyMigrationsHistory", microservice));
+
+                        return new EmailOracleDBContext(builder.Options, microservice);
+                    });
+                    break;
+                default:
+                    services.AddScoped<EmailDbContext, EmailSqlServerDBContext>(provider =>
+                    {
+                        var dbInfo = provider.GetService<EmailDBInfo>();
+                        var builder = new DbContextOptionsBuilder<EmailSqlServerDBContext>();
+                        builder.UseSqlServer(dbInfo.ConnectionString,
+                                  x => x.MigrationsHistoryTable("__MyMigrationsHistory", microservice));
+
+                        return new EmailSqlServerDBContext(builder.Options, microservice);
+                    });
+                    break;
+            }
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
         }
 

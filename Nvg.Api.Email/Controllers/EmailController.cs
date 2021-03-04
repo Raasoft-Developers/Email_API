@@ -87,8 +87,7 @@ namespace Nvg.Api.Email.Controllers
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
         /// <returns><see cref="EmailResponseDto{EmailChannelDto}"/></returns>
-        [HttpGet]
-        [Route("{channelKey}")]
+        [HttpGet("{channelKey}")]
         public ActionResult GetEmailChannelByKey(string channelKey)
         {
             var channelResponse = _emailInteractor.GetEmailChannelByKey(channelKey);
@@ -104,8 +103,7 @@ namespace Nvg.Api.Email.Controllers
         /// <param name="poolName">Pool Name</param>
         /// <param name="providerName">Providers Name</param>
         /// <returns><see cref="EmailResponseDto{List{EmailProviderSettingsDto}}"/></returns>
-        [HttpGet]
-        [Route("{poolName}/{providerName}")]
+        [HttpGet("{poolName}/{providerName}")]
         public ActionResult GetEmailProvidersByPool(string poolName, string providerName)
         {
             var poolResponse = _emailInteractor.GetEmailProvidersByPool(poolName, providerName);
@@ -121,8 +119,7 @@ namespace Nvg.Api.Email.Controllers
         /// <param name="channelKey">Channel Key</param>
         /// <param name="tag">Tag</param>
         /// <returns><see cref="EmailResponseDto{List{EmailHistoryDto}}"/></returns>
-        [HttpGet]
-        [Route("{channelKey}/{tag?}")]
+        [HttpGet("{channelKey}/{tag?}")]
         public ActionResult GetEmailHistories(string channelKey, string tag = null)
         {
             var historiesResponse = _emailInteractor.GetEmailHistoriesByTag(channelKey, tag);

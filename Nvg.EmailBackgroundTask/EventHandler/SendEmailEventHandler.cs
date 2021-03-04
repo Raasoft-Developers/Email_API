@@ -69,16 +69,18 @@ namespace Nvg.EmailBackgroundTask.EventHandler
         {
             var services = new ServiceCollection();
             var configuration = Program.GetConfiguration();
+            string databaseProvider = configuration.GetSection("DatabaseProvider")?.Value;
             services.AddScoped(_ => configuration);
             services.AddLogging();
             services.AddEmailBackgroundTask(channelKey);
-            services.AddEmailServices(Program.AppName);
+            services.AddEmailServices(Program.AppName, databaseProvider);
 
             services.AddScoped<EmailDBInfo>(provider =>
             {
                 string microservice = Program.AppName;
                 string connectionString = configuration.GetSection("ConnectionString")?.Value;
-                return new EmailDBInfo(connectionString);
+                string databaseProvider = configuration.GetSection("DatabaseProvider")?.Value;
+                return new EmailDBInfo(connectionString, databaseProvider);
             });
 
             services.AddScoped<EmailProviderConnectionString>(provider =>

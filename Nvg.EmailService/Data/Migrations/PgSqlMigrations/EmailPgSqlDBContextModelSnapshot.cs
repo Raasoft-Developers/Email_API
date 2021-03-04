@@ -2,18 +2,16 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Nvg.EmailService.Data;
 
-namespace Nvg.EmailService.Data.Migrations
+namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
 {
-    [DbContext(typeof(EmailDbContext))]
-    [Migration("20210209122710_2TablesRenamed")]
-    partial class _2TablesRenamed
+    [DbContext(typeof(EmailPgSqlDBContext))]
+    partial class EmailPgSqlDBContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,7 +57,7 @@ namespace Nvg.EmailService.Data.Migrations
                     b.Property<string>("EmailProviderID")
                         .HasColumnType("text");
 
-                    b.Property<string>("MesssageSent")
+                    b.Property<string>("MessageSent")
                         .HasColumnType("text");
 
                     b.Property<string>("Recipients")
@@ -163,9 +161,6 @@ namespace Nvg.EmailService.Data.Migrations
                     b.Property<string>("ID")
                         .HasColumnType("text");
 
-                    b.Property<string>("EmailChannelID")
-                        .HasColumnType("text");
-
                     b.Property<string>("EmailPoolID")
                         .HasColumnType("text");
 
@@ -183,7 +178,7 @@ namespace Nvg.EmailService.Data.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("EmailChannelID");
+                    b.HasIndex("EmailPoolID");
 
                     b.ToTable("EmailTemplate");
                 });
@@ -226,9 +221,9 @@ namespace Nvg.EmailService.Data.Migrations
 
             modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailTemplateTable", b =>
                 {
-                    b.HasOne("Nvg.EmailService.Data.Entities.EmailChannelTable", "EmailChannel")
+                    b.HasOne("Nvg.EmailService.Data.Entities.EmailPoolTable", "EmailPool")
                         .WithMany()
-                        .HasForeignKey("EmailChannelID");
+                        .HasForeignKey("EmailPoolID");
                 });
 #pragma warning restore 612, 618
         }
