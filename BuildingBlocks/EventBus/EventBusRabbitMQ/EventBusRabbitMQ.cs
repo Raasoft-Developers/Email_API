@@ -138,8 +138,7 @@ namespace EventBusRabbitMQ
                 var message = JsonConvert.SerializeObject(@event);
                 var body = Encoding.UTF8.GetBytes(message);
 
-                string replyQueueName = channel.QueueDeclare().QueueName;
-                _logger.LogDebug("ReplyQueueName: {replyQueueName}", replyQueueName);
+                string replyQueueName = "";
 
                 policy.Execute(() =>
                 {
@@ -151,6 +150,8 @@ namespace EventBusRabbitMQ
                     properties.CorrelationId = @event.CorrelationId;
                     if (isResponse)
                     {
+                        replyQueueName = channel.QueueDeclare().QueueName;
+                        _logger.LogDebug("ReplyQueueName: {replyQueueName}", replyQueueName);
                         properties.CorrelationId = guidId;
                         properties.ReplyTo = replyQueueName;
                     }
@@ -161,7 +162,7 @@ namespace EventBusRabbitMQ
                         basicProperties: properties,
                         body: body);
                 });
-                if(isResponse)
+                if (isResponse)
                     SubscribeResponse(replyQueueName, guidId);
             }
         }
@@ -259,7 +260,7 @@ namespace EventBusRabbitMQ
                                     type: _xchangeType);
 
             channel.QueueDeclare(queue: _queueName,
-                                 durable: false,
+                                 durable: true,
                                  exclusive: false,
                                  autoDelete: false,
                                  arguments: null);

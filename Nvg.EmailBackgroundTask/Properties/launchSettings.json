@@ -2,6 +2,9 @@
   "profiles": {
     "Nvg.EmailBackgroundTask": {
       "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
     }
   }
 }
