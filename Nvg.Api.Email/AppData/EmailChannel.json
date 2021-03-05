@@ -3,6 +3,6 @@
     "id": "default-channel",
     "key": "MasterEmailChannel",
     "emailProviderID": "default-provider",
-    "emailPoolID": "default-pool"
+    "emailPoolID": "f6aee3d2-5b17-4a4d-be0e-71f8bf81bda0"
   }
 ]
