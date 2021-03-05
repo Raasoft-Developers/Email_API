@@ -73,16 +73,16 @@ namespace Nvg.EmailService
                     });
                     break;
                 case "oracle":
-                    services.AddScoped<EmailDbContext, EmailOracleDBContext>(provider =>
-                    {
-                        var dbInfo = provider.GetService<EmailDBInfo>();
-                        var builder = new DbContextOptionsBuilder<EmailOracleDBContext>();
-                        builder.UseOracle(dbInfo.ConnectionString,
-                                  x => x.MigrationsHistoryTable("__MyMigrationsHistory", microservice));
+                    //services.AddScoped<EmailDbContext, EmailOracleDBContext>(provider =>
+                    //{
+                    //    var dbInfo = provider.GetService<EmailDBInfo>();
+                    //    var builder = new DbContextOptionsBuilder<EmailOracleDBContext>();
+                    //    builder.UseOracle(dbInfo.ConnectionString,
+                    //              x => x.MigrationsHistoryTable("__MyMigrationsHistory", microservice));
 
-                        return new EmailOracleDBContext(builder.Options, microservice);
-                    });
-                    break;
+                    //    return new EmailOracleDBContext(builder.Options, microservice);
+                    //});
+                    break;                    
                 default:
                     services.AddScoped<EmailDbContext, EmailSqlServerDBContext>(provider =>
                     {

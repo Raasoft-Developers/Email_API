@@ -40,19 +40,19 @@ namespace Nvg.EmailService.Data
         }
     }
 
-    public class EmailOracleDbContextFactory : IDesignTimeDbContextFactory<EmailOracleDBContext>
-    {
-        public EmailOracleDBContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<EmailOracleDBContext>();
-            // For Removing migration or Updating the database, uncomment line number 49 and 50 and comment 53.
-            //string connectionString = "host=db-postgresql-blr1-95081-do-user-7578230-0.a.db.ondigitalocean.com;Database=tv_etms;User ID =nyletech;Password=Nyle@123;Port=25061;Integrated Security=true;Pooling=true;sslmode=Require;Trust Server Certificate=true;Server Compatibility Mode=Redshift;";
-            //optionsBuilder.UseNpgsql(connectionString);
+    //public class EmailOracleDbContextFactory : IDesignTimeDbContextFactory<EmailOracleDBContext>
+    //{
+    //    public EmailOracleDBContext CreateDbContext(string[] args)
+    //    {
+    //        var optionsBuilder = new DbContextOptionsBuilder<EmailOracleDBContext>();
+    //        // For Removing migration or Updating the database, uncomment line number 49 and 50 and comment 53.
+    //        //string connectionString = "host=db-postgresql-blr1-95081-do-user-7578230-0.a.db.ondigitalocean.com;Database=tv_etms;User ID =nyletech;Password=Nyle@123;Port=25061;Integrated Security=true;Pooling=true;sslmode=Require;Trust Server Certificate=true;Server Compatibility Mode=Redshift;";
+    //        //optionsBuilder.UseNpgsql(connectionString);
 
-            // Comment line number 49 and 50 and uncomment 53 before creating new migration
-            optionsBuilder.UseOracle("Email-ConnectionString");
-            // Currently schema parameter will not be used while generating migrations for SQL as line number 21 is commented in EmailOracleDBContext.cs
-            return new EmailOracleDBContext(optionsBuilder.Options, ""); // TODO: Should avoid hardcoding of schema.
-        }
-    }
+    //        // Comment line number 49 and 50 and uncomment 53 before creating new migration
+    //        optionsBuilder.UseOracle("Email-ConnectionString");
+    //        // Currently schema parameter will not be used while generating migrations for SQL as line number 21 is commented in EmailOracleDBContext.cs
+    //        return new EmailOracleDBContext(optionsBuilder.Options, ""); // TODO: Should avoid hardcoding of schema.
+    //    }
+    //}
 }
