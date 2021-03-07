@@ -1,4 +1,5 @@
 ﻿using EventBus.Abstractions;
+using Microsoft.Extensions.Logging;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.Events;
 using System;
@@ -10,14 +11,17 @@ namespace Nvg.EmailService.Email
     public class EmailEventInteractor : IEmailEventInteractor
     {
         private readonly IEventBus _eventBus;
+        private readonly ILogger<EmailEventInteractor> _logger;
 
-        public EmailEventInteractor(IEventBus eventBus)
+        public EmailEventInteractor(IEventBus eventBus, ILogger<EmailEventInteractor> logger)
         {
             _eventBus = eventBus;
+            _logger = logger;
         }
 
         public void SendMail(EmailDto emailInputs)
         {
+            _logger.LogInformation($"In EmailEventInteractor: Channel Key: {emailInputs.ChannelKey} , Template Name: {emailInputs.TemplateName}, Variant: {emailInputs.Variant}.");
             string user = (!string.IsNullOrEmpty(emailInputs.Username) ? emailInputs.Username : emailInputs.Recipients);
             var sendEmailEvent = new SendEmailEvent();
             sendEmailEvent.ChannelKey = emailInputs.ChannelKey;
@@ -31,7 +35,8 @@ namespace Nvg.EmailService.Email
                 { "Body", emailInputs.Body}
             };
             sendEmailEvent.Tag = emailInputs.Tag;
-            _eventBus.Publish(sendEmailEvent);
+            _logger.LogInformation("In EmailEventInteractor: Publishing Email data.");
+            _eventBus.Publish(sendEmailEvent);            
         }
     }
 }
