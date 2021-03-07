@@ -98,7 +98,7 @@ namespace Nvg.Api.Email
                 .Enrich.FromLogContext()
                 // uncomment to write to Azure diagnostics stream
                 .WriteTo.File(
-                    @"C:\NovigoIdentityPortal\IdentityServerPortalLogs\IdentityLog.txt",
+                    @"C:\NovigoIdentityPortal\IdentityServerPortalLogs\EmailLog.txt",
                     fileSizeLimitBytes: 1_000_000,
                     rollOnFileSizeLimit: true,
                     shared: true,

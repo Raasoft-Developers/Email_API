@@ -8,6 +8,7 @@ using Nvg.EmailService;
 using Nvg.EmailService.Email;
 using Nvg.EmailService.DTOS;
 using System.Net;
+using Microsoft.Extensions.Logging;
 
 namespace Nvg.Api.Email.Controllers
 {
@@ -16,10 +17,12 @@ namespace Nvg.Api.Email.Controllers
     public class EmailController : ControllerBase
     {
         private readonly IEmailInteractor _emailInteractor;
+        private readonly ILogger<EmailController> _logger;
 
-        public EmailController(IEmailInteractor emailInteractor)
+        public EmailController(IEmailInteractor emailInteractor, ILogger<EmailController> logger)
         {
             _emailInteractor = emailInteractor;
+            _logger = logger;
         }
 
         /// <summary>
@@ -30,11 +33,26 @@ namespace Nvg.Api.Email.Controllers
         [HttpPost]
         public ActionResult AddEmailPool(EmailPoolDto poolInput)
         {
-            var poolResponse = _emailInteractor.AddEmailPool(poolInput);
-            if (poolResponse.Status)
-                return Ok(poolResponse);
-            else
-                return StatusCode((int)HttpStatusCode.PreconditionFailed, poolResponse);
+            _logger.LogInformation("In EmailController: AddEmailPool action method hit.");
+            try
+            {
+                var poolResponse = _emailInteractor.AddEmailPool(poolInput);
+                if (poolResponse.Status)
+                {
+                    _logger.LogDebug("In EmailController: " + poolResponse.Message);
+                    return Ok(poolResponse);
+                }
+                else
+                {
+                    _logger.LogError("In EmailController: " + poolResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, poolResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("In EmailController: Internal server error: Error occurred while adding email pool: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         /// <summary>
@@ -45,11 +63,26 @@ namespace Nvg.Api.Email.Controllers
         [HttpPost]
         public ActionResult AddEmailProvider(EmailProviderSettingsDto providerInput)
         {
-            var providerResponse = _emailInteractor.AddEmailProvider(providerInput);
-            if (providerResponse.Status)
-                return Ok(providerResponse);
-            else
-                return StatusCode((int)HttpStatusCode.PreconditionFailed, providerResponse);
+            _logger.LogInformation("In EmailController: AddEmailProvider action method hit.");
+            try
+            {
+                var providerResponse = _emailInteractor.AddEmailProvider(providerInput);
+                if (providerResponse.Status)
+                {
+                    _logger.LogDebug("In EmailController: " +providerResponse.Message);
+                    return Ok(providerResponse);
+                }
+                else
+                {
+                    _logger.LogError("In EmailController: " + providerResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, providerResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("In EmailController: Internal server error: Error occurred while adding email provider: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         /// <summary>
@@ -60,11 +93,26 @@ namespace Nvg.Api.Email.Controllers
         [HttpPost]
         public ActionResult AddEmailChannel(EmailChannelDto channelInput)
         {
-            var channelResponse = _emailInteractor.AddEmailChannel(channelInput);
-            if (channelResponse.Status)
-                return Ok(channelResponse);
-            else
-                return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+            _logger.LogInformation("In EmailController: AddEmailChannel action method hit.");
+            try
+            {
+                var channelResponse = _emailInteractor.AddEmailChannel(channelInput);
+                if (channelResponse.Status)
+                {
+                    _logger.LogDebug("In EmailController: " +channelResponse.Message);
+                    return Ok(channelResponse);
+                }
+                else
+                {
+                    _logger.LogError("In EmailController: " + channelResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("In EmailController: Internal server error: Error occurred while adding email channel: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         /// <summary>
@@ -75,11 +123,26 @@ namespace Nvg.Api.Email.Controllers
         [HttpPost]
         public ActionResult AddEmailTemplate(EmailTemplateDto templateInput)
         {
-            var templateResponse = _emailInteractor.AddEmailTemplate(templateInput);
-            if (templateResponse.Status)
-                return Ok(templateResponse);
-            else
-                return StatusCode((int)HttpStatusCode.PreconditionFailed, templateResponse);
+            _logger.LogInformation("In EmailController: AddEmailTemplate action method hit.");
+            try
+            {
+                var templateResponse = _emailInteractor.AddEmailTemplate(templateInput);
+                if (templateResponse.Status)
+                {
+                    _logger.LogDebug("In EmailController: "+templateResponse.Message);
+                    return Ok(templateResponse);
+                }
+                else
+                {
+                    _logger.LogError("In EmailController: " + templateResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, templateResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("In EmailController: Internal server error: Error occurred while adding email template: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         /// <summary>
@@ -90,11 +153,26 @@ namespace Nvg.Api.Email.Controllers
         [HttpGet("{channelKey}")]
         public ActionResult GetEmailChannelByKey(string channelKey)
         {
-            var channelResponse = _emailInteractor.GetEmailChannelByKey(channelKey);
-            if (channelResponse.Status)
-                return Ok(channelResponse);
-            else
-                return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+            _logger.LogInformation("In EmailController: GetEmailChannelByKey action method hit.");
+            try
+            {
+                var channelResponse = _emailInteractor.GetEmailChannelByKey(channelKey);
+                if (channelResponse.Status)
+                {
+                    _logger.LogDebug("In EmailController: " +channelResponse.Message);
+                    return Ok(channelResponse);
+                }
+                else
+                {
+                    _logger.LogError("In EmailController: " + channelResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("In EmailController: Internal server error: Error occurred while getting email channel by key: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         /// <summary>
@@ -106,11 +184,26 @@ namespace Nvg.Api.Email.Controllers
         [HttpGet("{poolName}/{providerName}")]
         public ActionResult GetEmailProvidersByPool(string poolName, string providerName)
         {
-            var poolResponse = _emailInteractor.GetEmailProvidersByPool(poolName, providerName);
-            if (poolResponse.Status)
-                return Ok(poolResponse);
-            else
-                return StatusCode((int)HttpStatusCode.PreconditionFailed, poolResponse);
+            _logger.LogInformation("In EmailController: GetEmailProvidersByPool action method hit.");
+            try
+            {
+                var poolResponse = _emailInteractor.GetEmailProvidersByPool(poolName, providerName);
+                if (poolResponse.Status)
+                {
+                    _logger.LogDebug("In EmailController: "+poolResponse.Message);
+                    return Ok(poolResponse);
+                }
+                else
+                {
+                    _logger.LogError("In EmailController: " + poolResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, poolResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("In EmailController: Internal server error: Error occurred while trying to get email provider by pool: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         /// <summary>
@@ -122,11 +215,25 @@ namespace Nvg.Api.Email.Controllers
         [HttpGet("{channelKey}/{tag?}")]
         public ActionResult GetEmailHistories(string channelKey, string tag = null)
         {
-            var historiesResponse = _emailInteractor.GetEmailHistoriesByTag(channelKey, tag);
-            if (historiesResponse.Status)
-                return Ok(historiesResponse);
-            else
-                return StatusCode((int)HttpStatusCode.PreconditionFailed, historiesResponse);
+            _logger.LogInformation("In EmailController: GetEmailHistories action method hit.");
+            try
+            {
+                var historiesResponse = _emailInteractor.GetEmailHistoriesByTag(channelKey, tag);
+                if (historiesResponse.Status)
+                {
+                    _logger.LogDebug("In EmailController: " +historiesResponse.Message);
+                    return Ok(historiesResponse);
+                }
+                else
+                {
+                    _logger.LogError("In EmailController: " + historiesResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, historiesResponse);
+                }
+            }catch(Exception ex)
+            {
+                _logger.LogError("In EmailController: Internal server error: Error occurred while trying to get email histories: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         /// <summary>
@@ -136,12 +243,27 @@ namespace Nvg.Api.Email.Controllers
         /// <returns><see cref="EmailResponseDto{string}"/></returns>
         [HttpPost]
         public ActionResult SendMail(EmailDto emailInputs)
-        {            
-            var emailResponse = _emailInteractor.SendMail(emailInputs);
-            if (emailResponse.Status)
-                return Ok(emailResponse);
-            else
-                return StatusCode((int)HttpStatusCode.PreconditionFailed, emailResponse);
+        {
+            _logger.LogInformation("In EmailController: SendMail action method hit.");
+            try
+            {
+                var emailResponse = _emailInteractor.SendMail(emailInputs);
+                if (emailResponse.Status)
+                {
+                    _logger.LogDebug("In EmailController: "+emailResponse.Message);
+                    return Ok(emailResponse);
+                }
+                else
+                {
+                    _logger.LogError("In EmailController: " + emailResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, emailResponse);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("In EmailController: Internal server error: Error occurred while trying to send email: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
         }
     }
 }
