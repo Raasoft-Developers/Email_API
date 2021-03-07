@@ -43,7 +43,7 @@ namespace Nvg.EmailService.EmailChannel
                     }
                 }
             }
-            else
+            else if(string.IsNullOrEmpty(channelInput.EmailPoolID))
             {
                 response.Status = false;
                 response.Message = "Email pool cannot be blank.";
