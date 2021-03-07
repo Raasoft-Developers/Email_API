@@ -176,7 +176,7 @@ namespace Nvg.EmailService.Email
             {
                 if (string.IsNullOrEmpty(emailInputs.ChannelKey))
                 {
-                    _logger.LogDebug("In EmailInteractor: Channel key cannot be blank.");
+                    _logger.LogError("In EmailInteractor: Channel key cannot be blank.");
                     response.Status = false;
                     response.Message = "Channel key cannot be blank.";
                     return response;
@@ -186,7 +186,7 @@ namespace Nvg.EmailService.Email
                     var channelExist = _emailChannelInteractor.CheckIfChannelExist(emailInputs.ChannelKey).Result;
                     if (!channelExist)
                     {
-                        _logger.LogDebug($"In EmailInteractor: Invalid Channel key {emailInputs.ChannelKey}.");
+                        _logger.LogError($"In EmailInteractor: Invalid Channel key {emailInputs.ChannelKey}.");
                         response.Status = channelExist;
                         response.Message = $"Invalid Channel key {emailInputs.ChannelKey}.";
                         return response;
@@ -194,7 +194,7 @@ namespace Nvg.EmailService.Email
                 }
                 if (string.IsNullOrEmpty(emailInputs.TemplateName))
                 {
-                    _logger.LogDebug($"In EmailInteractor: Template name cannot be blank.");
+                    _logger.LogError($"In EmailInteractor: Template name cannot be blank.");
                     response.Status = false;
                     response.Message = "Template name cannot be blank.";
                     return response;
@@ -204,7 +204,7 @@ namespace Nvg.EmailService.Email
                     var templateExist = _emailTemplateInteractor.CheckIfTemplateExist(emailInputs.ChannelKey, emailInputs.TemplateName).Result;
                     if (!templateExist)
                     {
-                        _logger.LogDebug($"In EmailInteractor: No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.");
+                        _logger.LogError($"In EmailInteractor: No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.");
                         response.Status = templateExist;
                         response.Message = $"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.";
                         return response;
@@ -218,7 +218,7 @@ namespace Nvg.EmailService.Email
             }
             catch (Exception ex)
             {
-                _logger.LogError("In EmailInteractor: Error occurred in Email Interactor while getting email histories: ", ex.Message);
+                _logger.LogError("In EmailInteractor: Error occurred in Email Interactor while sending email: ", ex.Message);
                 response.Status = false;
                 response.Message = ex.Message;
                 return response;
