@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
@@ -7,16 +8,19 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
     public class SMTPProvider : IEmailProvider
     {
         private readonly EmailProviderConnectionString _emailProviderCS;
-
-        public SMTPProvider(EmailProviderConnectionString emailProviderConnectionString)
+        private readonly ILogger _logger;
+        public SMTPProvider(EmailProviderConnectionString emailProviderConnectionString, ILogger<SMTPProvider> logger)
         {
             _emailProviderCS = emailProviderConnectionString;
+            _logger = logger;
         }
 
         public async Task<string> SendEmail(string recipients, string message, string subject, string sender = null)
         {
             if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
                 sender = _emailProviderCS.Fields["Sender"];
+
+            _logger.LogInformation("Sender: " + sender);
             /*
             // Gmail SMTP implementation
             var emailMessage = new MimeMessage();
@@ -41,7 +45,9 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             var smtpServer = _emailProviderCS.Fields["SmtpServer"];
             var password = _emailProviderCS.Fields["Password"];
             var port = _emailProviderCS.Fields["Port"];
-
+            _logger.LogInformation("smtpServer: " + smtpServer);
+            _logger.LogInformation("password: " + password);
+            _logger.LogInformation("port: " + port);
             // Office365/Outlook SMTP implementation.
             int portNo = 587;
             if (!string.IsNullOrEmpty(port))
@@ -57,14 +63,17 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
                     client.Host = smtpServer;
                     client.DeliveryMethod = SmtpDeliveryMethod.Network;
                     client.EnableSsl = true;
+                    _logger.LogInformation("Sending Email");
                     client.Send(mailMessage);
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError("Error occurred when sending email: " +ex.Message);
                     throw ex;
                 }
                 finally
                 {
+                    _logger.LogInformation("Disposing SMTP Client");
                     client.Dispose();
                 }
             }

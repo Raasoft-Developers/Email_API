@@ -34,6 +34,7 @@ namespace Nvg.Api.Email.Controllers
         public ActionResult AddEmailPool(EmailPoolDto poolInput)
         {
             _logger.LogInformation("In EmailController: AddEmailPool action method hit.");
+            _logger.LogInformation("In EmailController: EmailPoolName: " + poolInput.Name);
             try
             {
                 var poolResponse = _emailInteractor.AddEmailPool(poolInput);
@@ -64,6 +65,7 @@ namespace Nvg.Api.Email.Controllers
         public ActionResult AddEmailProvider(EmailProviderSettingsDto providerInput)
         {
             _logger.LogInformation("In EmailController: AddEmailProvider action method hit.");
+            _logger.LogInformation($"In EmailController: EmailPoolName: {providerInput.EmailPoolName}, EmailProviderName: {providerInput.Name}, Configuration: {providerInput.Configuration}");
             try
             {
                 var providerResponse = _emailInteractor.AddEmailProvider(providerInput);
@@ -94,6 +96,7 @@ namespace Nvg.Api.Email.Controllers
         public ActionResult AddEmailChannel(EmailChannelDto channelInput)
         {
             _logger.LogInformation("In EmailController: AddEmailChannel action method hit.");
+            _logger.LogInformation($"In EmailController: EmailPoolName: {channelInput.EmailPoolName}, EmailProviderName: {channelInput.EmailProviderName}");
             try
             {
                 var channelResponse = _emailInteractor.AddEmailChannel(channelInput);
@@ -124,6 +127,7 @@ namespace Nvg.Api.Email.Controllers
         public ActionResult AddEmailTemplate(EmailTemplateDto templateInput)
         {
             _logger.LogInformation("In EmailController: AddEmailTemplate action method hit.");
+            _logger.LogInformation($"In EmailController: EmailPoolName: {templateInput.EmailPoolName}, TemplateName: {templateInput.Name}, Variant: {templateInput.Variant}, MessageTemplate: {templateInput.MessageTemplate}");
             try
             {
                 var templateResponse = _emailInteractor.AddEmailTemplate(templateInput);
@@ -154,6 +158,7 @@ namespace Nvg.Api.Email.Controllers
         public ActionResult GetEmailChannelByKey(string channelKey)
         {
             _logger.LogInformation("In EmailController: GetEmailChannelByKey action method hit.");
+            _logger.LogInformation($"In EmailController: ChannelKey: {channelKey}");
             try
             {
                 var channelResponse = _emailInteractor.GetEmailChannelByKey(channelKey);
@@ -185,6 +190,7 @@ namespace Nvg.Api.Email.Controllers
         public ActionResult GetEmailProvidersByPool(string poolName, string providerName)
         {
             _logger.LogInformation("In EmailController: GetEmailProvidersByPool action method hit.");
+            _logger.LogInformation($"In EmailController: PoolName: {poolName}, ProviderName: {providerName}");
             try
             {
                 var poolResponse = _emailInteractor.GetEmailProvidersByPool(poolName, providerName);
@@ -216,6 +222,7 @@ namespace Nvg.Api.Email.Controllers
         public ActionResult GetEmailHistories(string channelKey, string tag = null)
         {
             _logger.LogInformation("In EmailController: GetEmailHistories action method hit.");
+            _logger.LogInformation($"In EmailController: ChannelKey: {channelKey}, Tag: {tag}");
             try
             {
                 var historiesResponse = _emailInteractor.GetEmailHistoriesByTag(channelKey, tag);
@@ -245,6 +252,7 @@ namespace Nvg.Api.Email.Controllers
         public ActionResult SendMail(EmailDto emailInputs)
         {
             _logger.LogInformation("In EmailController: SendMail action method hit.");
+            _logger.LogInformation($"In EmailController: Recipients: {emailInputs.Recipients}, ChannelKey: {emailInputs.ChannelKey}, Body: {emailInputs.Body}, Sender: {emailInputs.Sender}, TemplateName: {emailInputs.TemplateName}");
             try
             {
                 var emailResponse = _emailInteractor.SendMail(emailInputs);

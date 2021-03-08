@@ -1,4 +1,5 @@
-﻿using Nvg.EmailBackgroundTask.EmailProvider;
+﻿using Microsoft.Extensions.Logging;
+using Nvg.EmailBackgroundTask.EmailProvider;
 using Nvg.EmailBackgroundTask.Models;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.EmailHistory;
@@ -15,31 +16,34 @@ namespace Nvg.EmailBackgroundTask
         private readonly IEmailHistoryInteractor _emailHistoryInteractor;
         private readonly IEmailQuotaInteractor _emailQuotaInteractor;
         private readonly EmailProviderConnectionString _emailProviderConnectionString;
+        private readonly ILogger _logger;
 
         public EmailManager(IEmailProvider emailProvider, IEmailTemplateInteractor emailTemplateInteractor, IEmailHistoryInteractor emailHistoryInteractor,
-            IEmailQuotaInteractor emailQuotaInteractor, EmailProviderConnectionString emailProviderConnectionString)
+            IEmailQuotaInteractor emailQuotaInteractor, EmailProviderConnectionString emailProviderConnectionString, ILogger<EmailManager> logger)
         {
             _emailProvider = emailProvider;
             _emailTemplateInteractor = emailTemplateInteractor;
             _emailHistoryInteractor = emailHistoryInteractor;
             _emailQuotaInteractor = emailQuotaInteractor;
             _emailProviderConnectionString = emailProviderConnectionString;
+            _logger = logger;
         }
         public void SendEmail(Email email)
         {
             string sender = string.Empty;
             string message = email.GetMessage(_emailTemplateInteractor);
+            _logger.LogInformation($"Message: {message}");
             // If external application didnot send the sender value, get it from template.
             if (string.IsNullOrEmpty(email.Sender))
                 sender = email.GetSender(_emailTemplateInteractor);
             else
                 sender = email.Sender;
-
+            
             if (string.IsNullOrEmpty(sender))
                 sender = _emailProviderConnectionString.Fields["Sender"];
-
+            _logger.LogInformation($"Sender: {sender}");
             string emailResponseStatus = _emailProvider.SendEmail(email.Recipients, message, email.Subject, sender).Result;
-
+            _logger.LogDebug($"Email response status: {emailResponseStatus}");
             var emailObj = new EmailHistoryDto()
             {
                 MessageSent = message,

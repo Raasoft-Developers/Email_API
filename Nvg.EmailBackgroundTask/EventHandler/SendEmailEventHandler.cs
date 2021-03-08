@@ -33,7 +33,9 @@ namespace Nvg.EmailBackgroundTask.EventHandler
             _logger.LogDebug($"Subscriber received a SendEmailEvent notification.");
             if (@event.Id != Guid.Empty)
             {
+                _logger.LogDebug($"Event ID: {@event.Id}");
                 using IServiceScope scope = GetScope(@event.ChannelKey);
+                _logger.LogDebug($"ChannelKey: {@event.ChannelKey}");
                 var emailManager = scope.ServiceProvider.GetService<EmailManager>();
 
                 //var emailQuotaInteractor = scope.ServiceProvider.GetService<IEmailQuotaInteractor>();
@@ -41,7 +43,7 @@ namespace Nvg.EmailBackgroundTask.EventHandler
 
                 var emailProviderService = scope.ServiceProvider.GetService<IEmailProviderInteractor>();
                 var providerName = emailProviderService.GetEmailProviderByChannel(@event.ChannelKey)?.Result?.Name;
-
+                _logger.LogDebug($"Provider Name: {providerName}");
                 /*if (emailSettings.EnableEmail)
                 {*/
                 var email = new Email
