@@ -30,6 +30,7 @@ namespace Nvg.EmailBackgroundTask
         }
         public void SendEmail(Email email)
         {
+            _logger.LogInformation($"SendEmail method hit.");
             string sender = string.Empty;
             string message = email.GetMessage(_emailTemplateInteractor);
             _logger.LogInformation($"Message: {message}");

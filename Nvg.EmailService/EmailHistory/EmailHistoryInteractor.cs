@@ -32,37 +32,37 @@ namespace Nvg.EmailService.EmailHistory
 
         public EmailResponseDto<EmailHistoryDto> AddEmailHistory(EmailHistoryDto historyInput)
         {
-            _logger.LogInformation("In EmailHistoryInteractor: AddEmailHistory interactor method hit.");
+            _logger.LogInformation("AddEmailHistory interactor method.");
             var response = new EmailResponseDto<EmailHistoryDto>();
             try
             {               
                 if (!string.IsNullOrEmpty(historyInput.ProviderName))
                 {
-                    _logger.LogDebug($"In EmailHistoryInteractor: {historyInput.ProviderName}");
+                    _logger.LogDebug($"Providername: {historyInput.ProviderName}");
                     if (string.IsNullOrEmpty(historyInput.EmailProviderID))
                     {
                         historyInput.EmailProviderID = _emailProviderRepository.GetEmailProviderByName(historyInput.ProviderName)?.Result?.ID;
-                        _logger.LogDebug($"In EmailHistoryInteractor: {historyInput.EmailProviderID}");
+                        _logger.LogDebug($"EmailProviderID: {historyInput.EmailProviderID}");
                     }
                 }
                 if (!string.IsNullOrEmpty(historyInput.ChannelKey))
                 {
-                    _logger.LogDebug($"In EmailHistoryInteractor: {historyInput.ChannelKey}");
+                    _logger.LogDebug($"ChannelKey: {historyInput.ChannelKey}");
                     if (string.IsNullOrEmpty(historyInput.EmailChannelID))
                     {
                         historyInput.EmailChannelID = _emailChannelRepository.GetEmailChannelByKey(historyInput.ChannelKey)?.Result?.ID;
-                        _logger.LogDebug($"In EmailHistoryInteractor: {historyInput.EmailChannelID}");
+                        _logger.LogDebug($"EmailChannelID: {historyInput.EmailChannelID}");
                     }
                 }
                 var mappedEmailInput = _mapper.Map<EmailHistoryTable>(historyInput);
                 var mappedResponse = _emailHistoryRepository.AddEmailHistory(mappedEmailInput);
                 response = _mapper.Map<EmailResponseDto<EmailHistoryDto>>(mappedResponse);
-                _logger.LogDebug($"In EmailHistoryInteractor: Successfully added Email History.");
+                _logger.LogDebug($"Status: {response.Status}, Message: {response.Message}");
                 return response;
             }
             catch(Exception ex)
             {
-                _logger.LogError("In EmailHistoryInteractor: Error occurred while adding email history:" + ex.Message);
+                _logger.LogError("Error occurred while adding email history:" + ex.Message);
                 response.Message = "Error occurred while adding email history: " + ex.Message;
                 response.Status = false;
                 return response;
@@ -71,17 +71,17 @@ namespace Nvg.EmailService.EmailHistory
 
         public EmailResponseDto<List<EmailHistoryDto>> GetEmailHistoriesByTag(string channelKey, string tag)
         {
-            _logger.LogInformation("In EmailHistoryInteractor: AddEmailHistory interactor method hit.");
+            _logger.LogInformation("AddEmailHistory interactor method.");
             EmailResponseDto<List<EmailHistoryDto>> responseDto = new EmailResponseDto<List<EmailHistoryDto>>();
             try
             {
                 var histories = _emailHistoryRepository.GetEmailHistoriesByTag(channelKey, tag);
-                _logger.LogDebug($"In EmailHistoryInteractor: "+ histories.Message);
+                _logger.LogDebug($"Status: {histories.Status},Message: {histories.Message}");
                 return _mapper.Map<EmailResponseDto<List<EmailHistoryDto>>>(histories);
             }
             catch (Exception ex)
             {
-                _logger.LogError("In EmailHistoryInteractor: Error occurred while getting email history by tag:" + ex.Message);
+                _logger.LogError("Error occurred while getting email history by tag:" + ex.Message);
                 responseDto.Message = "Failed to get histories by tag: " + ex.Message;
                 responseDto.Status = false;
                 return responseDto;

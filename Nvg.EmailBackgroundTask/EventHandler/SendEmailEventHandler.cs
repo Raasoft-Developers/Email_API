@@ -58,6 +58,7 @@ namespace Nvg.EmailBackgroundTask.EventHandler
                     Subject= @event.Subject,
                     Tag = @event.Tag
                 };
+                _logger.LogInformation($"Trying to send email.");
                 emailManager.SendEmail(email);
                 /*}
                 else

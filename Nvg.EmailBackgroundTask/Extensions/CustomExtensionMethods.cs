@@ -108,16 +108,16 @@ namespace Nvg.EmailBackgroundTask.Extensions
             services.AddScoped<EmailManager>();
             services.AddScoped<IEmailProvider>(provider =>
             {
-                var cs = provider.GetService<EmailProviderConnectionString>();
-                var logger = provider.GetRequiredService<ILogger<SMTPProvider>>();
+                var cs = provider.GetService<EmailProviderConnectionString>();                
                 var emailProviderService = provider.GetService<IEmailProviderInteractor>();
                 var emailProviderConfiguration = emailProviderService.GetEmailProviderByChannel(channelKey)?.Result;
                 if (emailProviderConfiguration != null && emailProviderConfiguration.Type.ToLowerInvariant().Equals("sendgrid"))
                 {
-                    //logger = provider.GetRequiredService<ILogger<SendGrid>>();
-                    return new SendGridProvider(cs);
+                    var loggerSendGrid = provider.GetRequiredService<ILogger<SendGridProvider>>();
+                    return new SendGridProvider(cs, loggerSendGrid);
                 }
-                return new SMTPProvider(cs, logger);
+                var loggerSmtp = provider.GetRequiredService<ILogger<SMTPProvider>>();
+                return new SMTPProvider(cs, loggerSmtp);
             });
         }
 

@@ -27,18 +27,18 @@ namespace Nvg.EmailService.EmailQuota
 
         public EmailResponseDto<EmailQuotaDto> GetEmailQuota(string channelKey)
         {
-            _logger.LogInformation("In EmailQuotaInteractor: GetEmailQuota interactor method hit.");
+            _logger.LogInformation("GetEmailQuota interactor method.");
             var response = new EmailResponseDto<EmailQuotaDto>();
             try
             {
                 var emailQuotaResponse = _emailQuotaRepository.GetEmailQuota(channelKey);
-                _logger.LogDebug("In EmailQuotaInteractor:" + emailQuotaResponse.Message);
+                _logger.LogDebug("Status: "+emailQuotaResponse.Status+", Message: " + emailQuotaResponse.Message);
                 var mappedResponse = _mapper.Map<EmailResponseDto<EmailQuotaDto>>(emailQuotaResponse);
                 return mappedResponse;
             }
             catch (Exception ex)
             {
-                _logger.LogDebug("In EmailQuotaInteractor: Failed to get Email Quota" + ex.Message);
+                _logger.LogDebug("Failed to get Email Quota" + ex.Message);
                 response.Status = false;
                 response.Message = ex.Message;
                 return response;
@@ -47,19 +47,19 @@ namespace Nvg.EmailService.EmailQuota
 
         public EmailResponseDto<EmailQuotaDto> UpdateEmailQuota(string channelKey)
         {
-            _logger.LogInformation("In EmailQuotaInteractor: UpdateEmailQuota interactor method hit.");
+            _logger.LogInformation("UpdateEmailQuota interactor method.");
             var response = new EmailResponseDto<EmailQuotaDto>();
             try
             {
                 var channelID = _emailChannelRepository.GetEmailChannelByKey(channelKey)?.Result?.ID;
                 var emailQuotaResponse = _emailQuotaRepository.UpdateEmailQuota(channelID);
-                _logger.LogDebug("In EmailQuotaInteractor:" + emailQuotaResponse.Message);
+                _logger.LogDebug("Status: "+emailQuotaResponse.Status+"Message:" + emailQuotaResponse.Message);
                 var mappedResponse = _mapper.Map<EmailResponseDto<EmailQuotaDto>>(emailQuotaResponse);
                 return mappedResponse;
             }
             catch (Exception ex)
             {
-                _logger.LogDebug("In EmailQuotaInteractor: Failed to Update Email Quota" + ex.Message);
+                _logger.LogDebug("Failed to Update Email Quota" + ex.Message);
                 response.Status = false;
                 response.Message = ex.Message;
                 return response;

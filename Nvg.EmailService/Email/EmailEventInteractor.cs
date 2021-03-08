@@ -21,7 +21,8 @@ namespace Nvg.EmailService.Email
 
         public void SendMail(EmailDto emailInputs)
         {
-            _logger.LogInformation($"In EmailEventInteractor: Channel Key: {emailInputs.ChannelKey} , Template Name: {emailInputs.TemplateName}, Variant: {emailInputs.Variant}.");
+            _logger.LogInformation($"SendMail method hit");
+            _logger.LogInformation($"Channel Key: {emailInputs.ChannelKey} , Template Name: {emailInputs.TemplateName}, Variant: {emailInputs.Variant}, Recipients: {emailInputs.Recipients}, Sender: {emailInputs.Sender}.");
             string user = (!string.IsNullOrEmpty(emailInputs.Username) ? emailInputs.Username : emailInputs.Recipients);
             var sendEmailEvent = new SendEmailEvent();
             sendEmailEvent.ChannelKey = emailInputs.ChannelKey;
@@ -35,7 +36,7 @@ namespace Nvg.EmailService.Email
                 { "Body", emailInputs.Body}
             };
             sendEmailEvent.Tag = emailInputs.Tag;
-            _logger.LogInformation("In EmailEventInteractor: Publishing Email data.");
+            _logger.LogInformation("Publishing Email data.");
             _eventBus.Publish(sendEmailEvent);            
         }
     }

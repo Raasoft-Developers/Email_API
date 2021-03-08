@@ -8,7 +8,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
     public class SMTPProvider : IEmailProvider
     {
         private readonly EmailProviderConnectionString _emailProviderCS;
-        private readonly ILogger _logger;
+        private readonly ILogger<SMTPProvider> _logger;
         public SMTPProvider(EmailProviderConnectionString emailProviderConnectionString, ILogger<SMTPProvider> logger)
         {
             _emailProviderCS = emailProviderConnectionString;
@@ -17,6 +17,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
 
         public async Task<string> SendEmail(string recipients, string message, string subject, string sender = null)
         {
+            _logger.LogInformation("SendEmail method.");
             if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
                 sender = _emailProviderCS.Fields["Sender"];
 
@@ -57,6 +58,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             {
                 try
                 {
+                    _logger.LogInformation("Initializing SMTP Client");
                     client.UseDefaultCredentials = false;
                     client.Credentials = new System.Net.NetworkCredential(sender, password);
                     client.Port = portNo; // You can use Port 25 if 587 is blocked
@@ -65,6 +67,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
                     client.EnableSsl = true;
                     _logger.LogInformation("Sending Email");
                     client.Send(mailMessage);
+                    _logger.LogInformation("Email Sent");
                 }
                 catch (Exception ex)
                 {
