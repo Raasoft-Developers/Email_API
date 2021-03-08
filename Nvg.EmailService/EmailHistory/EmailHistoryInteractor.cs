@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Nvg.EmailService.Data;
 using Nvg.EmailService.Data.EmailChannel;
 using Nvg.EmailService.Data.EmailHistory;
@@ -17,40 +18,74 @@ namespace Nvg.EmailService.EmailHistory
         private readonly IEmailHistoryRepository _emailHistoryRepository;
         private readonly IEmailProviderRepository _emailProviderRepository;
         private readonly IEmailChannelRepository _emailChannelRepository;
-
+        private readonly ILogger<EmailHistoryInteractor> _logger;
 
         public EmailHistoryInteractor(IMapper mapper, IEmailHistoryRepository emailHistoryRepository,
-            IEmailProviderRepository emailProviderRepository, IEmailChannelRepository emailChannelRepository)
+            IEmailProviderRepository emailProviderRepository, IEmailChannelRepository emailChannelRepository, ILogger<EmailHistoryInteractor> logger)
         {
             _mapper = mapper;
             _emailHistoryRepository = emailHistoryRepository;
             _emailProviderRepository = emailProviderRepository;
             _emailChannelRepository = emailChannelRepository;
+            _logger = logger;
         }
 
         public EmailResponseDto<EmailHistoryDto> AddEmailHistory(EmailHistoryDto historyInput)
         {
+            _logger.LogInformation("AddEmailHistory interactor method.");
             var response = new EmailResponseDto<EmailHistoryDto>();
-            if (!string.IsNullOrEmpty(historyInput.ProviderName))
-            {
-                if (string.IsNullOrEmpty(historyInput.EmailProviderID))
-                    historyInput.EmailProviderID = _emailProviderRepository.GetEmailProviderByName(historyInput.ProviderName)?.Result?.ID;
+            try
+            {               
+                if (!string.IsNullOrEmpty(historyInput.ProviderName))
+                {
+                    _logger.LogDebug($"Providername: {historyInput.ProviderName}");
+                    if (string.IsNullOrEmpty(historyInput.EmailProviderID))
+                    {
+                        historyInput.EmailProviderID = _emailProviderRepository.GetEmailProviderByName(historyInput.ProviderName)?.Result?.ID;
+                        _logger.LogDebug($"EmailProviderID: {historyInput.EmailProviderID}");
+                    }
+                }
+                if (!string.IsNullOrEmpty(historyInput.ChannelKey))
+                {
+                    _logger.LogDebug($"ChannelKey: {historyInput.ChannelKey}");
+                    if (string.IsNullOrEmpty(historyInput.EmailChannelID))
+                    {
+                        historyInput.EmailChannelID = _emailChannelRepository.GetEmailChannelByKey(historyInput.ChannelKey)?.Result?.ID;
+                        _logger.LogDebug($"EmailChannelID: {historyInput.EmailChannelID}");
+                    }
+                }
+                var mappedEmailInput = _mapper.Map<EmailHistoryTable>(historyInput);
+                var mappedResponse = _emailHistoryRepository.AddEmailHistory(mappedEmailInput);
+                response = _mapper.Map<EmailResponseDto<EmailHistoryDto>>(mappedResponse);
+                _logger.LogDebug($"Status: {response.Status}, Message: {response.Message}");
+                return response;
             }
-            if (!string.IsNullOrEmpty(historyInput.ChannelKey))
+            catch(Exception ex)
             {
-                if (string.IsNullOrEmpty(historyInput.EmailChannelID))
-                    historyInput.EmailChannelID = _emailChannelRepository.GetEmailChannelByKey(historyInput.ChannelKey)?.Result?.ID;
+                _logger.LogError("Error occurred while adding email history:" + ex.Message);
+                response.Message = "Error occurred while adding email history: " + ex.Message;
+                response.Status = false;
+                return response;
             }
-            var mappedEmailInput = _mapper.Map<EmailHistoryTable>(historyInput);
-            var mappedResponse = _emailHistoryRepository.AddEmailHistory(mappedEmailInput);
-            response = _mapper.Map<EmailResponseDto<EmailHistoryDto>>(mappedResponse);
-            return response;
         }
 
         public EmailResponseDto<List<EmailHistoryDto>> GetEmailHistoriesByTag(string channelKey, string tag)
         {
-            var histories = _emailHistoryRepository.GetEmailHistoriesByTag(channelKey, tag);
-            return _mapper.Map<EmailResponseDto<List<EmailHistoryDto>>>(histories);
+            _logger.LogInformation("AddEmailHistory interactor method.");
+            EmailResponseDto<List<EmailHistoryDto>> responseDto = new EmailResponseDto<List<EmailHistoryDto>>();
+            try
+            {
+                var histories = _emailHistoryRepository.GetEmailHistoriesByTag(channelKey, tag);
+                _logger.LogDebug($"Status: {histories.Status},Message: {histories.Message}");
+                return _mapper.Map<EmailResponseDto<List<EmailHistoryDto>>>(histories);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while getting email history by tag:" + ex.Message);
+                responseDto.Message = "Failed to get histories by tag: " + ex.Message;
+                responseDto.Status = false;
+                return responseDto;
+            }
         }
     }
 }

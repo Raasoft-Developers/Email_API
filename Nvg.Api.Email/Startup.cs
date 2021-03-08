@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Nvg.Api.Email.AutofacModules;
 using Nvg.Api.Email.Filters;
 using Nvg.Api.Email.Helpers;
+using Serilog;
 
 namespace Nvg.Api.Email
 {
@@ -96,7 +97,7 @@ namespace Nvg.Api.Email
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseSerilogRequestLogging();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

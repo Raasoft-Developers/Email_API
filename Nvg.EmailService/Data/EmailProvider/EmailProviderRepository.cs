@@ -1,4 +1,5 @@
-﻿using Nvg.EmailService.Data.Entities;
+﻿using Microsoft.Extensions.Logging;
+using Nvg.EmailService.Data.Entities;
 using Nvg.EmailService.DTOS;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,12 @@ namespace Nvg.EmailService.Data.EmailProvider
     public class EmailProviderRepository : IEmailProviderRepository
     {
         private readonly EmailDbContext _context;
+        private readonly ILogger<IEmailProviderRepository> _logger;
 
-        public EmailProviderRepository(EmailDbContext context)
+        public EmailProviderRepository(EmailDbContext context, ILogger<IEmailProviderRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public EmailResponseDto<EmailProviderSettingsTable> AddEmailProvider(EmailProviderSettingsTable providerInput)
@@ -95,6 +98,7 @@ namespace Nvg.EmailService.Data.EmailProvider
 
         public EmailResponseDto<EmailProviderSettingsTable> GetEmailProviderByChannelKey(string channelKey)
         {
+            _logger.LogInformation("GetEmailProviderByChannelKey");
             var response = new EmailResponseDto<EmailProviderSettingsTable>();
             try
             {
@@ -112,6 +116,9 @@ namespace Nvg.EmailService.Data.EmailProvider
                     response.Status = false;
                     response.Message = $"Email provider data for channel {channelKey} is not available.";
                 }
+                _logger.LogDebug($"Status : {response.Status}");
+                _logger.LogDebug($"Message : {response.Message}");
+
                 response.Result = emailProvider;
                 return response;
             }
