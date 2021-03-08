@@ -27,7 +27,7 @@ namespace Nvg.Api.Email
         {
             var configuration = GetConfiguration();
 
-            Log.Logger = CreateLogger();
+            Log.Logger = CreateLogger(configuration);
 
             try
             {
@@ -87,23 +87,47 @@ namespace Nvg.Api.Email
             .UseSerilog()
             .Build();
 
-        private static Serilog.ILogger CreateLogger()
+        private static Serilog.ILogger CreateLogger(IConfiguration configuration)
         {
+            //return new LoggerConfiguration()
+            //    .MinimumLevel.Debug()
+            //    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            //    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+            //    .MinimumLevel.Override("System", LogEventLevel.Warning)
+            //    .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+            //    .Enrich.FromLogContext()
+            //    // uncomment to write to Azure diagnostics stream
+            //    .WriteTo.File(
+            //        @"C:\NovigoIdentityPortal\IdentityServerPortalLogs\EmailLog.txt",
+            //        fileSizeLimitBytes: 1_000_000,
+            //        rollOnFileSizeLimit: true,
+            //        shared: true,
+            //        flushToDiskInterval: TimeSpan.FromSeconds(1))
+            //    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
+            //    .CreateLogger();
+
+            var seqServerUrl = configuration["Serilog:SeqServerUrl"];
+            var logstashUrl = configuration["Serilog:LogstashgUrl"];
             return new LoggerConfiguration()
+                .MinimumLevel.Verbose()
                 .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-                .MinimumLevel.Override("System", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                //.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                //.MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+                //.MinimumLevel.Override("System", LogEventLevel.Warning)
+                //.MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                .Enrich.WithProperty("ApplicationContext", AppName)
+                .Enrich.WithProperty("Environment", configuration["ASPNETCORE_ENVIRONMENT"])
                 .Enrich.FromLogContext()
-                // uncomment to write to Azure diagnostics stream
-                .WriteTo.File(
-                    @"C:\NovigoIdentityPortal\IdentityServerPortalLogs\EmailLog.txt",
-                    fileSizeLimitBytes: 1_000_000,
-                    rollOnFileSizeLimit: true,
-                    shared: true,
-                    flushToDiskInterval: TimeSpan.FromSeconds(1))
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
+                .WriteTo.Console()
+                 .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
+                 .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl)
+                 //.WriteTo.File(
+                 //   @"C:\NovigoIdentityPortal\IdentityServerPortalLogs\EmailLog.txt",
+                 //   fileSizeLimitBytes: 1_000_000,
+                 //   rollOnFileSizeLimit: true,
+                 //   shared: true,
+                 //   flushToDiskInterval: TimeSpan.FromSeconds(1))
+                .ReadFrom.Configuration(configuration)
                 .CreateLogger();
         }
 
