@@ -38,7 +38,7 @@ namespace Nvg.EmailService.EmailQuota
             }
             catch (Exception ex)
             {
-                _logger.LogDebug("Failed to get Email Quota" + ex.Message);
+                _logger.LogError("Failed to get Email Quota" + ex.Message);
                 response.Status = false;
                 response.Message = ex.Message;
                 return response;
@@ -59,7 +59,7 @@ namespace Nvg.EmailService.EmailQuota
             }
             catch (Exception ex)
             {
-                _logger.LogDebug("Failed to Update Email Quota" + ex.Message);
+                _logger.LogError("Failed to Update Email Quota" + ex.Message);
                 response.Status = false;
                 response.Message = ex.Message;
                 return response;
