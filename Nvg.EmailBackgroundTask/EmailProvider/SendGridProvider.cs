@@ -30,8 +30,8 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
                 from,
                 to,
                 subject, 
-                message,
-                null
+                null,
+                message
             );
             var apiResponse = await client.SendEmailAsync(email);
             return apiResponse.ToString();
