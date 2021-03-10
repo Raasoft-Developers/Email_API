@@ -23,7 +23,7 @@ namespace Nvg.EmailService.Email
         {
             _logger.LogInformation($"SendMail method hit");
             _logger.LogInformation($"Channel Key: {emailInputs.ChannelKey} , Template Name: {emailInputs.TemplateName}, Variant: {emailInputs.Variant}, Recipients: {emailInputs.Recipients}, Sender: {emailInputs.Sender}.");
-            string user = (!string.IsNullOrEmpty(emailInputs.Username) ? emailInputs.Username : emailInputs.Recipients);
+            //string user = (!string.IsNullOrEmpty(emailInputs.Username) ? emailInputs.Username : emailInputs.Recipients);
             var sendEmailEvent = new SendEmailEvent();
             sendEmailEvent.ChannelKey = emailInputs.ChannelKey;
             sendEmailEvent.TemplateName = emailInputs.TemplateName;
@@ -31,10 +31,7 @@ namespace Nvg.EmailService.Email
             sendEmailEvent.Sender = emailInputs.Sender;
             sendEmailEvent.Recipients = emailInputs.Recipients;
             sendEmailEvent.Subject = emailInputs.Subject;
-            sendEmailEvent.MessageParts = new Dictionary<string, string> {
-                { "User", user},
-                { "Body", emailInputs.Body}
-            };
+            sendEmailEvent.MessageParts = emailInputs.MessageParts;
             sendEmailEvent.Tag = emailInputs.Tag;
             _logger.LogInformation("Publishing Email data.");
             _eventBus.Publish(sendEmailEvent);            
