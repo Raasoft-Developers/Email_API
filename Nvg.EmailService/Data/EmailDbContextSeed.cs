@@ -130,7 +130,8 @@ namespace Nvg.EmailService.Data
                         var name = (string)providerRow.name;
                         var configuration = (string)providerRow.configuration;
                         var emailPoolId = (string)providerRow.emailPoolID;
-                        var emailProviderFromTblHasValue = context.EmailProviders.Any(e => e.Name == name && e.Configuration == configuration && e.EmailPoolID == emailPoolId);
+                        var id = (string)providerRow.id;
+                        var emailProviderFromTblHasValue = context.EmailProviders.Any(e => e.ID == id && e.EmailPoolID == emailPoolId);
                         if (!emailProviderFromTblHasValue)
                             SeedEmailProvider(context, providerRow);
                     }
