@@ -252,7 +252,7 @@ namespace Nvg.Api.Email.Controllers
         public ActionResult SendMail(EmailDto emailInputs)
         {
             _logger.LogInformation("SendMail action method.");
-            _logger.LogInformation($"Recipients: {emailInputs.Recipients}, ChannelKey: {emailInputs.ChannelKey}, Body: {emailInputs.Body}, Sender: {emailInputs.Sender}, TemplateName: {emailInputs.TemplateName}");
+            //_logger.LogInformation($"Recipients: {emailInputs.Recipients}, ChannelKey: {emailInputs.ChannelKey}, Body: {emailInputs.Body}, Sender: {emailInputs.Sender}, TemplateName: {emailInputs.TemplateName}");
             try
             {
                 var emailResponse = _emailInteractor.SendMail(emailInputs);

@@ -34,8 +34,8 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
                 from,
                 to,
                 subject, 
-                message,
-                null
+                null,
+                message
             );
             _logger.LogInformation("client: " + client);
             _logger.LogInformation("from: " + from);

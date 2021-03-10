@@ -27,7 +27,7 @@ namespace Nvg.Api.Email.Models
             var template = emailTemplateInteractor.GetEmailTemplate(TemplateName, ChannelKey, Variant);
             var msg = template?.MessageTemplate;
             foreach (var item in MessageParts)
-                msg = msg.Replace($"{{{item.Key}}}", item.Value);
+                msg = msg.ToLower().Replace($"{{{item.Key.ToLower()}}}", item.Value);
             return msg;
         }
 
