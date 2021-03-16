@@ -39,6 +39,18 @@ namespace Nvg.Api.Email
             services.RegisterEventBus(Configuration);
 
             services.AddEmailService(Program.AppName, Configuration);
+            services.AddCors(options =>
+            {
+                options.AddPolicy("VueCorsPolicy", builder =>
+                {
+                    builder
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                    //.AllowCredentials();
+                });
+
+            });
 
             //services.AddSwaggerGen(c =>
             //{
@@ -95,7 +107,7 @@ namespace Nvg.Api.Email
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors("VueCorsPolicy");
             app.UseAuthorization();
             app.UseSerilogRequestLogging();
             app.UseEndpoints(endpoints =>

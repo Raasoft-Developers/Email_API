@@ -70,7 +70,7 @@ namespace Nvg.EmailService.EmailChannel
                 channelInput.EmailProviderID = _emailProviderRepository.GetEmailProviderByName(defaultEmailProvider)?.Result?.ID;
 
             var mappedEmailInput = _mapper.Map<EmailChannelTable>(channelInput);
-            var mappedResponse = _emailChannelRepository.AddEmailChannel(mappedEmailInput);
+            var mappedResponse = _emailChannelRepository.AddUpdateEmailChannel(mappedEmailInput);
             response = _mapper.Map<EmailResponseDto<EmailChannelDto>>(mappedResponse);
             return response;
         }

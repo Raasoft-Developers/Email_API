@@ -21,7 +21,7 @@ namespace Nvg.EmailService.Data.EmailChannel
         /// </summary>
         /// <param name="channelInput"><see cref="EmailChannelTable"/> model</param>
         /// <returns><see cref="EmailResponseDto{EmailChannelTable}"/> model</returns>
-        public EmailResponseDto<EmailChannelTable> AddEmailChannel(EmailChannelTable channelInput)
+        public EmailResponseDto<EmailChannelTable> AddUpdateEmailChannel(EmailChannelTable channelInput)
         {
             var response = new EmailResponseDto<EmailChannelTable>();
             try
@@ -124,6 +124,99 @@ namespace Nvg.EmailService.Data.EmailChannel
                 response.Status = false;
                 response.Message = ex.Message;
                 response.Result = false;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<List<EmailChannelTable>> GetEmailChannels(string poolName, string providerName)
+        {
+            var response = new EmailResponseDto<List<EmailChannelTable>>();
+            try
+            {
+                var emailChannels = (from p in _context.EmailPools
+                                    join c in _context.EmailChannels on p.ID equals c.EmailPoolID
+                                    join pr in _context.EmailProviders on c.EmailProviderID equals pr.ID
+                                    where p.Name.ToLower().Equals(poolName.ToLower()) && (string.IsNullOrEmpty(providerName) || pr.Name.ToLower().Equals(providerName.ToLower()))
+                                    select c).ToList();
+                if (emailChannels.Count > 0)
+                {
+                    response.Status = true;
+                    response.Message = $"Retrieved Email channel data for {poolName}";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Email Channel Data Unavailable for {poolName}";
+                }
+                response.Result = emailChannels;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> DeleteEmailChannel(string channelID)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var emailChannel = _context.EmailChannels.Where(o => o.ID.ToLower().Equals(channelID.ToLower())).FirstOrDefault();
+                if (emailChannel != null)
+                {
+                    _context.EmailChannels.Remove(emailChannel);
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = $"Deleted Successfully";
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = $"Failed to delete";
+                    }
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Email Channel Data not found";
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<List<string>> GetEmailChannelKeys()
+        {
+            var response = new EmailResponseDto<List<string>>();
+            try
+            {
+                var emailChannelKeys = _context.EmailChannels.Select(o => o.Key).ToList();
+                if (emailChannelKeys.Count > 0)
+                {
+                        response.Status = true;
+                        response.Message = $"Retrieved {emailChannelKeys.Count} keys";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"No keys found";
+                }
+                response.Result = emailChannelKeys;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
                 return response;
             }
         }

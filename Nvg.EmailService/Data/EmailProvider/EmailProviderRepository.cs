@@ -19,7 +19,7 @@ namespace Nvg.EmailService.Data.EmailProvider
             _logger = logger;
         }
 
-        public EmailResponseDto<EmailProviderSettingsTable> AddEmailProvider(EmailProviderSettingsTable providerInput)
+        public EmailResponseDto<EmailProviderSettingsTable> AddUpdateEmailProvider(EmailProviderSettingsTable providerInput)
         {
             var response = new EmailResponseDto<EmailProviderSettingsTable>();
             try
@@ -151,6 +151,100 @@ namespace Nvg.EmailService.Data.EmailProvider
 
                 response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolName}";
                 response.Result = emailProviders;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<List<EmailProviderSettingsTable>> GetEmailProviders(string poolName)
+        {
+            var response = new EmailResponseDto<List<EmailProviderSettingsTable>>();
+            try
+            {
+                var emailProviders = (from p in _context.EmailProviders
+                                      join sp in _context.EmailPools on p.EmailPoolID equals sp.ID
+                                      where sp.Name.ToLower().Equals(poolName.ToLower())
+                                      select p).ToList();
+
+                if (emailProviders.Count > 0)
+                {
+                    response.Status = true;
+                }
+                else
+                    response.Status = false;
+
+                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolName}";
+                response.Result = emailProviders;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<List<string>> GetEmailProviderNames(string poolName)
+        {
+            var response = new EmailResponseDto<List<string>>();
+            try
+            {
+                var emailProviders = (from p in _context.EmailProviders
+                                      join sp in _context.EmailPools on p.EmailPoolID equals sp.ID
+                                      where sp.Name.ToLower().Equals(poolName.ToLower())
+                                      select p.Name).ToList();
+
+                if (emailProviders.Count > 0)
+                {
+                    response.Status = true;
+                }
+                else
+                    response.Status = false;
+
+                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolName}";
+                response.Result = emailProviders;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> DeleteEmailProvider(string providerID)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var emailProvider = _context.EmailProviders.Where(o => o.ID.ToLower().Equals(providerID.ToLower())).FirstOrDefault();
+
+                if (emailProvider != null)
+                {
+                    _context.EmailProviders.Remove(emailProvider);
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = $"Deleted successfully";
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = $"Delete failed";
+                    }
+                }
+                else
+                {
+                    response.Message = "No record found.";
+                    response.Status = false;
+                }               
                 return response;
             }
             catch (Exception ex)

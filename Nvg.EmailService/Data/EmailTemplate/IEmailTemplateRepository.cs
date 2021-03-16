@@ -10,11 +10,11 @@ namespace Nvg.EmailService.Data.EmailTemplate
     public interface IEmailTemplateRepository
     {
         /// <summary>
-        /// Adds the email template into the database.
+        /// Adds/Update the email template into the database.
         /// </summary>
         /// <param name="templateInput"><see cref="EmailTemplateTable"/> model</param>
         /// <returns><see cref="EmailResponseDto{EmailTemplateTable}"/></returns>
-        EmailResponseDto<EmailTemplateTable> AddEmailTemplate(EmailTemplateTable templateInput);
+        EmailResponseDto<EmailTemplateTable> AddUpdateEmailTemplate(EmailTemplateTable templateInput);
 
         /// <summary>
         /// Gets the email template by template Id.
@@ -39,6 +39,20 @@ namespace Nvg.EmailService.Data.EmailTemplate
         /// <param name="templateName">Template Name</param>
         /// <returns><see cref="EmailResponseDto{bool}"/></returns>
         EmailResponseDto<bool> CheckIfTemplateExist(string channelKey, string templateName);
+
+        /// <summary>
+        /// Gets the email template by pool name.
+        /// </summary>
+        /// <param name="poolName">Pool Name</param>
+        /// <returns><see cref="EmailTemplateTable"/></returns>
+        EmailResponseDto<List<EmailTemplateTable>> GetEmailTemplatesByPool(string poolName);
+
+        /// <summary>
+        /// Delete the email template by template Id.
+        /// </summary>
+        /// <param name="templateID">Template Id</param>
+        /// <returns><see cref="EmailTemplateTable"/></returns>
+        EmailResponseDto<string> DeleteEmailTemplate(string templateID);
 
     }
 }
