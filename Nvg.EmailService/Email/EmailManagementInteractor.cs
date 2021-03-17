@@ -22,11 +22,12 @@ namespace Nvg.EmailService.Email
         private readonly IEmailChannelRepository _emailChannelRepository;
         private readonly IEmailTemplateRepository _emailTemplateRepository;
         private readonly IEmailProviderInteractor _emailProviderInteractor;
+        private readonly IEmailHistoryRepository _emailHistoryRepository;
         private readonly ILogger<EmailManagementInteractor> _logger;
 
         public EmailManagementInteractor(IMapper mapper, IEmailPoolRepository emailPoolRepository, IEmailProviderRepository emailProviderRepository,
             IEmailChannelRepository emailChannelRepository, IEmailTemplateRepository emailTemplateRepository, IEmailProviderInteractor emailProviderInteractor,
-            ILogger<EmailManagementInteractor> logger)
+            IEmailHistoryRepository emailHistoryRepository, ILogger<EmailManagementInteractor> logger)
         {
             _mapper = mapper;
             _emailPoolRepository = emailPoolRepository;
@@ -34,6 +35,7 @@ namespace Nvg.EmailService.Email
             _emailChannelRepository = emailChannelRepository;
             _emailTemplateRepository = emailTemplateRepository;
             _emailProviderInteractor = emailProviderInteractor;
+            _emailHistoryRepository = emailHistoryRepository;
             _logger = logger;
         }
         #region Email Pool
@@ -59,14 +61,15 @@ namespace Nvg.EmailService.Email
             }
         }
 
-        public EmailResponseDto<List<string>> GetEmailPoolNames()
+        public EmailResponseDto<List<EmailPoolDto>> GetEmailPoolNames()
         {
             _logger.LogInformation("GetEmailPoolNames interactor method.");
-            EmailResponseDto<List<string>> poolResponse = new EmailResponseDto<List<string>>();
+            EmailResponseDto<List<EmailPoolDto>> poolResponse = new EmailResponseDto<List<EmailPoolDto>>();
             try
             {
                 _logger.LogInformation("Trying to get Email Pool Names.");
-                poolResponse = _emailPoolRepository.GetEmailPoolNames();
+                var response = _emailPoolRepository.GetEmailPoolNames();
+                poolResponse = _mapper.Map<EmailResponseDto<List<EmailPoolDto>>>(response);
                 _logger.LogDebug("Status: " + poolResponse.Status + ", " + poolResponse.Message);
                 return poolResponse;
             }
@@ -127,15 +130,15 @@ namespace Nvg.EmailService.Email
         #endregion
 
         #region Email Provider
-        public EmailResponseDto<List<EmailProviderSettingsDto>> GetEmailProviders(string poolName)
+        public EmailResponseDto<List<EmailProviderSettingsDto>> GetEmailProviders(string poolID)
         {
             _logger.LogInformation("GetEmailProviders interactor method.");
-            _logger.LogDebug("Pool Name:" + poolName);
+            _logger.LogDebug("Pool ID:" + poolID);
             EmailResponseDto<List<EmailProviderSettingsDto>> providerResponse = new EmailResponseDto<List<EmailProviderSettingsDto>>();
             try
             {
                 _logger.LogInformation("Trying to get Email Providers.");
-                var response = _emailProviderRepository.GetEmailProviders(poolName);
+                var response = _emailProviderRepository.GetEmailProviders(poolID);
                 providerResponse = _mapper.Map<EmailResponseDto<List<EmailProviderSettingsDto>>>(response);
                 _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
                 return providerResponse;
@@ -150,15 +153,16 @@ namespace Nvg.EmailService.Email
             }
         }
 
-        public EmailResponseDto<List<string>> GetEmailProviderNames(string poolName)
+        public EmailResponseDto<List<EmailProviderSettingsDto>> GetEmailProviderNames(string poolID)
         {
             _logger.LogInformation("GetEmailProviderNames interactor method.");
-            _logger.LogDebug("Pool Name:" + poolName);
-            EmailResponseDto<List<string>> providerResponse = new EmailResponseDto<List<string>>();
+            _logger.LogDebug("Pool Name:" + poolID);
+            EmailResponseDto<List<EmailProviderSettingsDto>> providerResponse = new EmailResponseDto<List<EmailProviderSettingsDto>>();
             try
             {
                 _logger.LogInformation("Trying to get Email Providers.");
-                providerResponse = _emailProviderRepository.GetEmailProviderNames(poolName);
+                var responseDto = _emailProviderRepository.GetEmailProviderNames(poolID);
+                providerResponse = _mapper.Map<EmailResponseDto<List<EmailProviderSettingsDto>>>(responseDto);
                 _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
                 return providerResponse;
             }
@@ -172,9 +176,9 @@ namespace Nvg.EmailService.Email
             }
         }
 
-        public EmailResponseDto<EmailProviderSettingsDto> UpdateEmailProvider(EmailProviderSettingsDto providerInput)
+        public EmailResponseDto<EmailProviderSettingsDto> AddUpdateEmailProvider(EmailProviderSettingsDto providerInput)
         {
-            _logger.LogInformation("UpdateEmailProvider interactor method.");
+            _logger.LogInformation("AddUpdateEmailProvider interactor method.");
             EmailResponseDto<EmailProviderSettingsDto> providerResponse = new EmailResponseDto<EmailProviderSettingsDto>();
             try
             {
@@ -218,15 +222,15 @@ namespace Nvg.EmailService.Email
         #endregion
 
         #region Email Channel
-        public EmailResponseDto<List<EmailChannelDto>> GetEmailChannelsByPool(string poolName, string providerName)
+        public EmailResponseDto<List<EmailChannelDto>> GetEmailChannelsByPool(string poolID)
         {
             _logger.LogInformation("GetEmailChannels interactor method.");
-            _logger.LogDebug("Pool Name:" + poolName);
+            _logger.LogDebug("Pool Name:" + poolID);
             EmailResponseDto<List<EmailChannelDto>> channelResponse = new EmailResponseDto<List<EmailChannelDto>>();
             try
             {
                 _logger.LogInformation("Trying to get Email Channels.");
-                var response = _emailChannelRepository.GetEmailChannels(poolName, providerName);
+                var response = _emailChannelRepository.GetEmailChannels(poolID);
                 channelResponse = _mapper.Map<EmailResponseDto<List<EmailChannelDto>>>(response);
                 _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                 return channelResponse;
@@ -241,7 +245,7 @@ namespace Nvg.EmailService.Email
             }
         }
 
-        public EmailResponseDto<EmailChannelDto> UpdateEmailChannel(EmailChannelDto channelInput)
+        public EmailResponseDto<EmailChannelDto> AddUpdateEmailChannel(EmailChannelDto channelInput)
         {
             _logger.LogInformation("UpdateEmailProvider interactor method.");
             EmailResponseDto<EmailChannelDto> channelResponse = new EmailResponseDto<EmailChannelDto>();
@@ -285,14 +289,15 @@ namespace Nvg.EmailService.Email
             }
         }
 
-        public EmailResponseDto<List<string>> GetEmailChannelKeys()
+        public EmailResponseDto<List<EmailChannelDto>> GetEmailChannelKeys()
         {
             _logger.LogInformation("GetEmailChannelKeys interactor method.");
-            EmailResponseDto<List<string>> channelResponse = new EmailResponseDto<List<string>>();
+            EmailResponseDto<List<EmailChannelDto>> channelResponse = new EmailResponseDto<List<EmailChannelDto>>();
             try
             {
                 _logger.LogInformation("Trying to get Email Channel keys.");
-                channelResponse = _emailChannelRepository.GetEmailChannelKeys();
+                var response = _emailChannelRepository.GetEmailChannelKeys();
+                channelResponse = _mapper.Map<EmailResponseDto<List<EmailChannelDto>>>(response);
                 _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                 return channelResponse;
             }
@@ -308,15 +313,15 @@ namespace Nvg.EmailService.Email
         #endregion
 
         #region Email Template
-        public EmailResponseDto<List<EmailTemplateDto>> GetEmailTemplatesByPool(string poolName)
+        public EmailResponseDto<List<EmailTemplateDto>> GetEmailTemplatesByPool(string poolID)
         {
             _logger.LogInformation("GetEmailTemplatesByPool interactor method.");
-            _logger.LogDebug("Pool Name:" + poolName);
+            _logger.LogDebug("Pool Name:" + poolID);
             EmailResponseDto<List<EmailTemplateDto>> templateResponse = new EmailResponseDto<List<EmailTemplateDto>>();
             try
             {
                 _logger.LogInformation("Trying to get Email Templates.");
-                var response = _emailTemplateRepository.GetEmailTemplatesByPool(poolName);
+                var response = _emailTemplateRepository.GetEmailTemplatesByPool(poolID);
                 templateResponse = _mapper.Map<EmailResponseDto<List<EmailTemplateDto>>>(response);
                 _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
                 return templateResponse;
@@ -330,6 +335,28 @@ namespace Nvg.EmailService.Email
                 return templateResponse;
             }
         }
+        public EmailResponseDto<EmailTemplateDto> AddUpdateEmailTemplate(EmailTemplateDto templateInput)
+        {
+            _logger.LogInformation("UpdateEmailProvider interactor method.");
+            EmailResponseDto<EmailTemplateDto> templateResponse = new EmailResponseDto<EmailTemplateDto>();
+            try
+            {
+                _logger.LogInformation("Trying to add EmailProvider.");
+                var mappedEmailInput = _mapper.Map<EmailTemplateTable>(templateInput);
+                var response = _emailTemplateRepository.AddUpdateEmailTemplate(mappedEmailInput);
+                templateResponse = _mapper.Map<EmailResponseDto<EmailTemplateDto>>(response);
+                _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                return templateResponse;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred in Email Interactor while updating email channel: ", ex.Message);
+                templateResponse.Message = "Error occurred while updating email channel: " + ex.Message;
+                templateResponse.Status = false;
+                return templateResponse;
+            }
+        }
+
 
         public EmailResponseDto<string> DeleteEmailTemplate(string templateID)
         {
@@ -350,6 +377,42 @@ namespace Nvg.EmailService.Email
                 templateResponse.Message = "Error occurred while deleting email template: " + ex.Message;
                 templateResponse.Status = false;
                 return templateResponse;
+            }
+        }
+        #endregion
+
+        #region Email Histories
+        public EmailResponseDto<List<EmailHistoryDto>> GetEmailHistories(string channelID, string tag)
+        {
+            _logger.LogInformation("GetEmailHistories interactor method.");
+            _logger.LogDebug("Channel ID:" + channelID);
+            EmailResponseDto<List<EmailHistoryDto>> historiesResponse = new EmailResponseDto<List<EmailHistoryDto>>();
+            try
+            {
+                var channelKey = _emailChannelRepository.GetEmailChannelByID(channelID)?.Result?.Key;
+                if (!string.IsNullOrEmpty(channelKey))
+                {
+                    _logger.LogInformation("Trying to get Email histories.");
+                    var response = _emailHistoryRepository.GetEmailHistoriesByTag(channelKey, tag);
+                    historiesResponse = _mapper.Map<EmailResponseDto<List<EmailHistoryDto>>>(response);
+                    _logger.LogDebug("Status: " + historiesResponse.Status + ", " + historiesResponse.Message);
+                    return historiesResponse;
+                }
+                else
+                {
+                    historiesResponse.Status = false;
+                    historiesResponse.Message = "Could not get the channel data.";
+                    _logger.LogDebug("Status: " + historiesResponse.Status + ", " + historiesResponse.Message);
+                    return historiesResponse;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError("Error occurred in Email Management Interactor while getting email histories: ", ex.Message);
+                historiesResponse.Message = "Error occurred while getting email histories: " + ex.Message;
+                historiesResponse.Status = false;
+                return historiesResponse;
             }
         }
         #endregion

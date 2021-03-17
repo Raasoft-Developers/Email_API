@@ -30,10 +30,9 @@ namespace Nvg.EmailService.Data.EmailChannel
         /// <summary>
         /// Gets the email channels in the database.
         /// </summary>
-        /// <param name="poolName">Pool Name</param>
-        /// <param name="providerName">Provider Name</param>
+        /// <param name="poolID">Pool ID</param>
         /// <returns><see cref="EmailResponseDto{T}"/> model</returns>
-        EmailResponseDto<List<EmailChannelTable>> GetEmailChannels(string poolName, string providerName);
+        EmailResponseDto<List<EmailChannelTable>> GetEmailChannels(string poolID);
 
         /// <summary>
         /// Delete the email channel in the database.
@@ -46,6 +45,8 @@ namespace Nvg.EmailService.Data.EmailChannel
         /// Gets the email channel keys in the database.
         /// </summary>
         /// <returns><see cref="EmailResponseDto{T}"/> model</returns>
-        EmailResponseDto<List<string>> GetEmailChannelKeys();
+        EmailResponseDto<List<EmailChannelTable>> GetEmailChannelKeys();
+
+        EmailResponseDto<EmailChannelTable> GetEmailChannelByID(string channelID);
     }
 }

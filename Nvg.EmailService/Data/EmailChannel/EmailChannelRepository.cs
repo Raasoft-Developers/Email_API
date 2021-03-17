@@ -104,6 +104,38 @@ namespace Nvg.EmailService.Data.EmailChannel
         }
 
         /// <summary>
+        /// Gets the Channel by Channel Key.
+        /// </summary>
+        /// <param name="channelID">Channel Key</param>
+        /// <returns><see cref="EmailResponseDto{EmailChannelTable}"/> model</returns>
+        public EmailResponseDto<EmailChannelTable> GetEmailChannelByID(string channelID)
+        {
+            var response = new EmailResponseDto<EmailChannelTable>();
+            try
+            {
+                var emailChannel = _context.EmailChannels.FirstOrDefault(sp => sp.ID.ToLower().Equals(channelID.ToLower()));
+                if (emailChannel != null)
+                {
+                    response.Status = true;
+                    response.Message = $"Retrieved Email channel data for {channelID}";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Email Channel Data Unavailable for {channelID}";
+                }
+                response.Result = emailChannel;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        /// <summary>
         /// Checks if the channel exists.
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
@@ -128,7 +160,7 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
 
-        public EmailResponseDto<List<EmailChannelTable>> GetEmailChannels(string poolName, string providerName)
+        public EmailResponseDto<List<EmailChannelTable>> GetEmailChannels(string poolID)
         {
             var response = new EmailResponseDto<List<EmailChannelTable>>();
             try
@@ -136,17 +168,17 @@ namespace Nvg.EmailService.Data.EmailChannel
                 var emailChannels = (from p in _context.EmailPools
                                     join c in _context.EmailChannels on p.ID equals c.EmailPoolID
                                     join pr in _context.EmailProviders on c.EmailProviderID equals pr.ID
-                                    where p.Name.ToLower().Equals(poolName.ToLower()) && (string.IsNullOrEmpty(providerName) || pr.Name.ToLower().Equals(providerName.ToLower()))
+                                    where p.ID.ToLower().Equals(poolID.ToLower())
                                     select c).ToList();
                 if (emailChannels.Count > 0)
                 {
                     response.Status = true;
-                    response.Message = $"Retrieved Email channel data for {poolName}";
+                    response.Message = $"Retrieved Email channel data for {poolID}";
                 }
                 else
                 {
                     response.Status = false;
-                    response.Message = $"Email Channel Data Unavailable for {poolName}";
+                    response.Message = $"Email Channel Data Unavailable for {poolID}";
                 }
                 response.Result = emailChannels;
                 return response;
@@ -194,12 +226,12 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
 
-        public EmailResponseDto<List<string>> GetEmailChannelKeys()
+        public EmailResponseDto<List<EmailChannelTable>> GetEmailChannelKeys()
         {
-            var response = new EmailResponseDto<List<string>>();
+            var response = new EmailResponseDto<List<EmailChannelTable>>();
             try
             {
-                var emailChannelKeys = _context.EmailChannels.Select(o => o.Key).ToList();
+                var emailChannelKeys = _context.EmailChannels.Select(o => new EmailChannelTable { Key = o.Key, ID = o.ID }).ToList();
                 if (emailChannelKeys.Count > 0)
                 {
                         response.Status = true;

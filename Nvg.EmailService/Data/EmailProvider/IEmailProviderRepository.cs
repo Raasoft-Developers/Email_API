@@ -47,9 +47,9 @@ namespace Nvg.EmailService.Data.EmailProvider
         /// <summary>
         /// Gets all the email provider Names.
         /// </summary>
-        /// <param name="poolName">Pool name</param>
+        /// <param name="poolID">Pool ID</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
-        EmailResponseDto<List<string>> GetEmailProviderNames(string poolName);
+        EmailResponseDto<List<EmailProviderSettingsTable>> GetEmailProviderNames(string poolID);
 
         /// <summary>
         /// Delete the email provider to the database.

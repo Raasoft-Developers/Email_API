@@ -156,14 +156,14 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
-        [HttpGet("{poolName}")]
-        public ActionResult GetEmailProviderNames(string poolName)
+        [HttpGet("{poolID}")]
+        public ActionResult GetEmailProviderNames(string poolID)
         {
             _logger.LogInformation("GetEmailProviderNames action method.");
-            _logger.LogDebug("Pool Name: " + poolName);
+            _logger.LogDebug("Pool Name: " + poolID);
             try
             {
-                var providerResponse = _emailManagementInteractor.GetEmailProviderNames(poolName);
+                var providerResponse = _emailManagementInteractor.GetEmailProviderNames(poolID);
                 if (providerResponse.Status)
                 {
                     _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
@@ -183,13 +183,39 @@ namespace Nvg.Api.Email.Controllers
         }
 
         [HttpPost]
+        public ActionResult AddEmailProvider(EmailProviderSettingsDto providerInput)
+        {
+            _logger.LogInformation("AddEmailProvider action method.");
+            _logger.LogDebug("Pool Name: " + providerInput.EmailPoolName);
+            try
+            {
+                var providerResponse = _emailManagementInteractor.AddUpdateEmailProvider(providerInput);
+                if (providerResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
+                    return Ok(providerResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + providerResponse.Status + ", " + providerResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, providerResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while updating email providers: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpPost]
         public ActionResult UpdateEmailProvider(EmailProviderSettingsDto providerInput)
         {
             _logger.LogInformation("UpdateEmailProviders action method.");
             _logger.LogDebug("Pool Name: " + providerInput.EmailPoolName);
             try
             {
-                var providerResponse = _emailManagementInteractor.UpdateEmailProvider(providerInput);
+                var providerResponse = _emailManagementInteractor.AddUpdateEmailProvider(providerInput);
                 if (providerResponse.Status)
                 {
                     _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
@@ -234,14 +260,14 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
-        [HttpGet("{poolName}/{providerName?}")]
-        public ActionResult GetEmailChannelsByPool(string poolName, string providerName = null)
+        [HttpGet("{poolID}")]
+        public ActionResult GetEmailChannelsByPool(string poolID)
         {
             _logger.LogInformation("GetEmailChannelsByPool action method.");
-            _logger.LogDebug("Pool Name: " + poolName);
+            _logger.LogDebug("Pool Name: " + poolID);
             try
             {
-                var channelResponse = _emailManagementInteractor.GetEmailChannelsByPool(poolName,providerName);
+                var channelResponse = _emailManagementInteractor.GetEmailChannelsByPool(poolID);
                 if (channelResponse.Status)
                 {
                     _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
@@ -292,7 +318,7 @@ namespace Nvg.Api.Email.Controllers
             _logger.LogDebug("Pool Name: " + channelInput.EmailPoolName);
             try
             {
-                var channelResponse = _emailManagementInteractor.UpdateEmailChannel(channelInput);
+                var channelResponse = _emailManagementInteractor.AddUpdateEmailChannel(channelInput);
                 if (channelResponse.Status)
                 {
                     _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
@@ -339,14 +365,14 @@ namespace Nvg.Api.Email.Controllers
         #endregion
 
         #region Email Template
-        [HttpGet("{poolName}")]
-        public ActionResult GetEmailTemplatesByPool(string poolName)
+        [HttpGet("{poolID}")]
+        public ActionResult GetEmailTemplatesByPool(string poolID)
         {
             _logger.LogInformation("GetEmailTemplatesByPool action method.");
-            _logger.LogDebug("Pool Name: " + poolName);
+            _logger.LogDebug("Pool Name: " + poolID);
             try
             {
-                var templateResponse = _emailManagementInteractor.GetEmailTemplatesByPool(poolName);
+                var templateResponse = _emailManagementInteractor.GetEmailTemplatesByPool(poolID);
                 if (templateResponse.Status)
                 {
                     _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
@@ -361,6 +387,58 @@ namespace Nvg.Api.Email.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("Internal server error: Error occurred while getting email templates by pool: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AddEmailTemplate(EmailTemplateDto templateInput)
+        {
+            _logger.LogInformation("AddEmailTemplate action method.");
+            _logger.LogDebug("Pool ID: " + templateInput.EmailPoolID);
+            try
+            {
+                var templateResponse = _emailManagementInteractor.AddUpdateEmailTemplate(templateInput);
+                if (templateResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                    return Ok(templateResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, templateResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while updating email template: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult UpdateEmailTemplate(EmailTemplateDto templateInput)
+        {
+            _logger.LogInformation("UpdateEmailChannel action method.");
+            _logger.LogDebug("Pool ID: " + templateInput.EmailPoolID);
+            try
+            {
+                var templateResponse = _emailManagementInteractor.AddUpdateEmailTemplate(templateInput);
+                if (templateResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                    return Ok(templateResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, templateResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while updating email template: " + ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
         }
@@ -387,6 +465,40 @@ namespace Nvg.Api.Email.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("Internal server error: Error occurred while deleting email template: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+        #endregion
+
+        #region email histores
+        /// <summary>
+        /// API to get the email history by channel key and tag.
+        /// </summary>
+        /// <param name="channelID">Channel ID</param>
+        /// <param name="tag">Tag</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        [HttpGet("{channelID}/{tag?}")]
+        public ActionResult GetEmailHistories(string channelID, string tag = null)
+        {
+            _logger.LogInformation("GetEmailHistories action method.");
+            _logger.LogInformation($"ChannelKey: {channelID}, Tag: {tag}");
+            try
+            {
+                var historiesResponse = _emailManagementInteractor.GetEmailHistories(channelID, tag);
+                if (historiesResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + historiesResponse.Status + ", " + historiesResponse.Message);
+                    return Ok(historiesResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + historiesResponse.Status + ", " + historiesResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, historiesResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while trying to get email histories: " + ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
         }

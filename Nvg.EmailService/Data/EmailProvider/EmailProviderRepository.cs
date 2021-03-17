@@ -161,14 +161,14 @@ namespace Nvg.EmailService.Data.EmailProvider
             }
         }
 
-        public EmailResponseDto<List<EmailProviderSettingsTable>> GetEmailProviders(string poolName)
+        public EmailResponseDto<List<EmailProviderSettingsTable>> GetEmailProviders(string poolID)
         {
             var response = new EmailResponseDto<List<EmailProviderSettingsTable>>();
             try
             {
                 var emailProviders = (from p in _context.EmailProviders
                                       join sp in _context.EmailPools on p.EmailPoolID equals sp.ID
-                                      where sp.Name.ToLower().Equals(poolName.ToLower())
+                                      where sp.ID.ToLower().Equals(poolID.ToLower())
                                       select p).ToList();
 
                 if (emailProviders.Count > 0)
@@ -178,7 +178,7 @@ namespace Nvg.EmailService.Data.EmailProvider
                 else
                     response.Status = false;
 
-                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolName}";
+                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolID}";
                 response.Result = emailProviders;
                 return response;
             }
@@ -190,15 +190,15 @@ namespace Nvg.EmailService.Data.EmailProvider
             }
         }
 
-        public EmailResponseDto<List<string>> GetEmailProviderNames(string poolName)
+        public EmailResponseDto<List<EmailProviderSettingsTable>> GetEmailProviderNames(string poolID)
         {
-            var response = new EmailResponseDto<List<string>>();
+            var response = new EmailResponseDto<List<EmailProviderSettingsTable>>();
             try
             {
                 var emailProviders = (from p in _context.EmailProviders
                                       join sp in _context.EmailPools on p.EmailPoolID equals sp.ID
-                                      where sp.Name.ToLower().Equals(poolName.ToLower())
-                                      select p.Name).ToList();
+                                      where sp.ID.ToLower().Equals(poolID.ToLower())
+                                      select p).ToList();
 
                 if (emailProviders.Count > 0)
                 {
@@ -207,7 +207,7 @@ namespace Nvg.EmailService.Data.EmailProvider
                 else
                     response.Status = false;
 
-                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolName}";
+                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolID}";
                 response.Result = emailProviders;
                 return response;
             }

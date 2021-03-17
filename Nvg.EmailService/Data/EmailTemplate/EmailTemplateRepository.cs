@@ -123,14 +123,14 @@ namespace Nvg.EmailService.Data.EmailTemplate
             return emailTemplate;
         }
 
-        public EmailResponseDto<List<EmailTemplateTable>> GetEmailTemplatesByPool(string poolName)
+        public EmailResponseDto<List<EmailTemplateTable>> GetEmailTemplatesByPool(string poolID)
         {
             var response = new EmailResponseDto<List<EmailTemplateTable>>();
             try
             {
                 var emailTemplates = (from t in _context.EmailTemplates
                                      join p in _context.EmailPools on t.EmailPoolID equals p.ID
-                                     where p.Name.ToLower().Equals(poolName.ToLower())
+                                     where p.ID.ToLower().Equals(poolID.ToLower())
                                      select t).ToList();
                 if (emailTemplates.Count > 0)
                 {

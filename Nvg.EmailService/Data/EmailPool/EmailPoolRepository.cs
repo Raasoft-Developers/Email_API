@@ -109,12 +109,12 @@ namespace Nvg.EmailService.Data.EmailPool
             }
         }
 
-        public EmailResponseDto<List<string>> GetEmailPoolNames()
+        public EmailResponseDto<List<EmailPoolTable>> GetEmailPoolNames()
         {
-            var response = new EmailResponseDto<List<string>>();
+            var response = new EmailResponseDto<List<EmailPoolTable>>();
             try
             {
-                var emailPools = _context.EmailPools.Select(o=>o.Name).ToList();
+                var emailPools = _context.EmailPools.ToList();
                 if (emailPools.Count > 0)
                 {
                     response.Status = true;

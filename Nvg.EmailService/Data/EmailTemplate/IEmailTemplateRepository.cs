@@ -43,9 +43,9 @@ namespace Nvg.EmailService.Data.EmailTemplate
         /// <summary>
         /// Gets the email template by pool name.
         /// </summary>
-        /// <param name="poolName">Pool Name</param>
+        /// <param name="poolID">Pool ID</param>
         /// <returns><see cref="EmailTemplateTable"/></returns>
-        EmailResponseDto<List<EmailTemplateTable>> GetEmailTemplatesByPool(string poolName);
+        EmailResponseDto<List<EmailTemplateTable>> GetEmailTemplatesByPool(string poolID);
 
         /// <summary>
         /// Delete the email template by template Id.

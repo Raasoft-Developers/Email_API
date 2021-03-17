@@ -46,6 +46,6 @@ namespace Nvg.EmailService.Data.EmailPool
         /// Gets all the email pool names
         /// </summary>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
-        EmailResponseDto<List<string>> GetEmailPoolNames();
+        EmailResponseDto<List<EmailPoolTable>> GetEmailPoolNames();
     }
 }
