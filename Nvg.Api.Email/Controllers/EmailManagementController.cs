@@ -312,6 +312,32 @@ namespace Nvg.Api.Email.Controllers
         }
 
         [HttpPost]
+        public ActionResult AddEmailChannel(EmailChannelDto channelInput)
+        {
+            _logger.LogInformation("AddEmailChannel action method.");
+            _logger.LogDebug("Pool Name: " + channelInput.EmailPoolName);
+            try
+            {
+                var channelResponse = _emailManagementInteractor.AddUpdateEmailChannel(channelInput);
+                if (channelResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                    return Ok(channelResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while updating email channel: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpPost]
         public ActionResult UpdateEmailChannel(EmailChannelDto channelInput)
         {
             _logger.LogInformation("UpdateEmailChannel action method.");
