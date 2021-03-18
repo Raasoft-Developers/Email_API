@@ -130,14 +130,14 @@ namespace Nvg.Api.Email.Controllers
         #endregion
 
         #region Email Provider
-        [HttpGet("{poolName}")]
-        public ActionResult GetEmailProviders(string poolName)
+        [HttpGet("{poolID}")]
+        public ActionResult GetEmailProviders(string poolID)
         {
             _logger.LogInformation("GetEmailProviders action method.");
-            _logger.LogDebug("Pool Name: " + poolName);
+            _logger.LogDebug("Pool ID: " + poolID);
             try
             {
-                var providerResponse = _emailManagementInteractor.GetEmailProviders(poolName);
+                var providerResponse = _emailManagementInteractor.GetEmailProviders(poolID);
                 if (providerResponse.Status)
                 {
                     _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
@@ -255,7 +255,7 @@ namespace Nvg.Api.Email.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Internal server error: Error occurred while deleting email pool: " + ex.Message);
+                _logger.LogError("Internal server error: Error occurred while deleting email provider: " + ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
         }
@@ -332,7 +332,7 @@ namespace Nvg.Api.Email.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Internal server error: Error occurred while updating email channel: " + ex.Message);
+                _logger.LogError("Internal server error: Error occurred while adding email channel: " + ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
         }
@@ -438,7 +438,7 @@ namespace Nvg.Api.Email.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Internal server error: Error occurred while updating email template: " + ex.Message);
+                _logger.LogError("Internal server error: Error occurred while adding email template: " + ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
         }
@@ -446,7 +446,7 @@ namespace Nvg.Api.Email.Controllers
         [HttpPost]
         public ActionResult UpdateEmailTemplate(EmailTemplateDto templateInput)
         {
-            _logger.LogInformation("UpdateEmailChannel action method.");
+            _logger.LogInformation("UpdateEmailTemplate action method.");
             _logger.LogDebug("Pool ID: " + templateInput.EmailPoolID);
             try
             {
