@@ -169,7 +169,15 @@ namespace Nvg.EmailService.Data.EmailChannel
                                     join c in _context.EmailChannels on p.ID equals c.EmailPoolID
                                     join pr in _context.EmailProviders on c.EmailProviderID equals pr.ID
                                     where p.ID.ToLower().Equals(poolID.ToLower())
-                                    select c).ToList();
+                                    select new EmailChannelTable
+                                    {
+                                        ID=c.ID,
+                                        Key=c.Key,
+                                        EmailPoolID=c.EmailPoolID,
+                                        EmailPoolName=p.Name,
+                                        EmailProviderID=c.EmailProviderID,
+                                        EmailProviderName=pr.Name
+                                    }).ToList();
                 if (emailChannels.Count > 0)
                 {
                     response.Status = true;
