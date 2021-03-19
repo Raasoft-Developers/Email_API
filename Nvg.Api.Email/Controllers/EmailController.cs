@@ -18,7 +18,7 @@ namespace Nvg.Api.Email.Controllers
     {
         private readonly IEmailInteractor _emailInteractor;
         private readonly ILogger<EmailController> _logger;
-
+        private readonly string defaultEmailChannel= "MasterEmailChannel";
         public EmailController(IEmailInteractor emailInteractor, ILogger<EmailController> logger)
         {
             _emailInteractor = emailInteractor;
@@ -180,6 +180,32 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+
+        [HttpGet]
+        public ActionResult GetDefaultChannnel()
+        {
+            _logger.LogInformation("GetDefaultChannnel action method .");
+            try
+            {
+                var channelResponse = _emailInteractor.GetEmailChannelByKey(defaultEmailChannel);
+                if (channelResponse.Status)
+                {
+                    _logger.LogDebug("In EmailController: " + channelResponse.Message);
+                    return Ok(channelResponse);
+                }
+                else
+                {
+                    _logger.LogError("In EmailController: " + channelResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("In EmailController: Internal server error: Error occurred while getting email channel by key: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+
+        }
         /// <summary>
         /// API to get the email providers by pool name and providers name.
         /// </summary>
