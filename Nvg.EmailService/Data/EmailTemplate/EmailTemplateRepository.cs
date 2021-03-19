@@ -26,8 +26,8 @@ namespace Nvg.EmailService.Data.EmailTemplate
             try
             {
                 var template = _context.EmailTemplates.FirstOrDefault(st => st.Name.ToLower().Equals(templateInput.Name.ToLower()) &&
-                st.EmailPoolID.Equals(templateInput.EmailPoolID) &&
-                st.Variant.ToLower().Equals(templateInput.Variant.ToLower()));
+                st.EmailPoolID.Equals(templateInput.EmailPoolID) && (string.IsNullOrEmpty(templateInput.Variant) ||
+                st.Variant.ToLower().Equals(templateInput.Variant.ToLower())));
                 if (template != null)
                 {
                     template.MessageTemplate = templateInput.MessageTemplate;
