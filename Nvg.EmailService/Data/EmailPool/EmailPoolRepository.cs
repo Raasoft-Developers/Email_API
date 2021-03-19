@@ -3,7 +3,6 @@ using Nvg.EmailService.DTOS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Nvg.EmailService.Data.EmailPool
 {

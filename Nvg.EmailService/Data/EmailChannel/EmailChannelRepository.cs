@@ -117,12 +117,12 @@ namespace Nvg.EmailService.Data.EmailChannel
                 if (emailChannel != null)
                 {
                     response.Status = true;
-                    response.Message = $"Retrieved Email channel data for {channelID}";
+                    response.Message = $"Retrieved Email channel data";
                 }
                 else
                 {
                     response.Status = false;
-                    response.Message = $"Email Channel Data Unavailable for {channelID}";
+                    response.Message = $"Email Channel Data Unavailable";
                 }
                 response.Result = emailChannel;
                 return response;
@@ -181,12 +181,12 @@ namespace Nvg.EmailService.Data.EmailChannel
                 if (emailChannels.Count > 0)
                 {
                     response.Status = true;
-                    response.Message = $"Retrieved Email channel data for {poolID}";
+                    response.Message = $"Retrieved Email channel data";
                 }
                 else
                 {
                     response.Status = false;
-                    response.Message = $"Email Channel Data Unavailable for {poolID}";
+                    response.Message = $"Email Channel Data Unavailable";
                 }
                 response.Result = emailChannels;
                 return response;

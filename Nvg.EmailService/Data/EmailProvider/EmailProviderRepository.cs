@@ -178,7 +178,7 @@ namespace Nvg.EmailService.Data.EmailProvider
                 else
                     response.Status = false;
 
-                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolID}";
+                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool";
                 response.Result = emailProviders;
                 return response;
             }
@@ -207,7 +207,7 @@ namespace Nvg.EmailService.Data.EmailProvider
                 else
                     response.Status = false;
 
-                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolID}";
+                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool";
                 response.Result = emailProviders;
                 return response;
             }

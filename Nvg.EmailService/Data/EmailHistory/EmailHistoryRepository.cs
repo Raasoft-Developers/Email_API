@@ -77,7 +77,7 @@ namespace Nvg.EmailService.Data.EmailHistory
                 else
                     response.Status = false;
 
-                response.Message = $"Retrieved {emailHistories.Count} Email histories data for pool {tag}";
+                response.Message = $"Retrieved {emailHistories.Count} Email histories data for pool";
                 response.Result = emailHistories;
                 return response;
             }
