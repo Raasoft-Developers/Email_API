@@ -335,6 +335,37 @@ namespace Nvg.EmailService.Email
                 return templateResponse;
             }
         }
+        public EmailResponseDto<List<EmailTemplateDto>> GetEmailTemplatesByChannelID(string channelID)
+        {
+            _logger.LogInformation("GetEmailTemplatesByChannelID interactor method.");
+            _logger.LogDebug("Channel ID:" + channelID);
+            EmailResponseDto<List<EmailTemplateDto>> templateResponse = new EmailResponseDto<List<EmailTemplateDto>>();
+            try
+            {
+                _logger.LogInformation("Trying to get Email Templates.");
+                var poolID = _emailChannelRepository.GetEmailChannelByID(channelID)?.Result?.EmailPoolID;
+                if (!string.IsNullOrEmpty(poolID)){
+                    var response = _emailTemplateRepository.GetEmailTemplatesByPool(poolID);
+                    templateResponse = _mapper.Map<EmailResponseDto<List<EmailTemplateDto>>>(response);                    
+                }
+                else
+                {
+                    templateResponse.Message = "Channel does not exist.";
+                    templateResponse.Status = false;
+                }
+                _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                return templateResponse;
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError("Error occurred in Email Management Interactor while getting email templates: ", ex.Message);
+                templateResponse.Message = "Error occurred while getting email templates: " + ex.Message;
+                templateResponse.Status = false;
+                return templateResponse;
+            }
+        }
+
         public EmailResponseDto<EmailTemplateDto> AddUpdateEmailTemplate(EmailTemplateDto templateInput)
         {
             _logger.LogInformation("UpdateEmailProvider interactor method.");
@@ -416,5 +447,63 @@ namespace Nvg.EmailService.Email
             }
         }
         #endregion
+
+        //public EmailResponseDto<string> SendMail(EmailDto emailInputs)
+        //{
+        //    _logger.LogInformation("SendMail interactor method.");
+        //    var response = new EmailResponseDto<string>();
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(emailInputs.ChannelKey))
+        //        {
+        //            _logger.LogError("Channel key cannot be blank.");
+        //            response.Status = false;
+        //            response.Message = "Channel key cannot be blank.";
+        //            return response;
+        //        }
+        //        else
+        //        {
+        //            var channelExist = _emailChannelInteractor.CheckIfChannelExist(emailInputs.ChannelKey).Result;
+        //            if (!channelExist)
+        //            {
+        //                _logger.LogError($"Invalid Channel key {emailInputs.ChannelKey}.");
+        //                response.Status = channelExist;
+        //                response.Message = $"Invalid Channel key {emailInputs.ChannelKey}.";
+        //                return response;
+        //            }
+        //        }
+        //        if (string.IsNullOrEmpty(emailInputs.TemplateName))
+        //        {
+        //            _logger.LogError($"Template name cannot be blank.");
+        //            response.Status = false;
+        //            response.Message = "Template name cannot be blank.";
+        //            return response;
+        //        }
+        //        else
+        //        {
+        //            var templateExist = _emailTemplateInteractor.CheckIfTemplateExist(emailInputs.ChannelKey, emailInputs.TemplateName).Result;
+        //            if (!templateExist)
+        //            {
+        //                _logger.LogError($"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.");
+        //                response.Status = templateExist;
+        //                response.Message = $"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.";
+        //                return response;
+        //            }
+        //        }
+        //        _logger.LogInformation("Trying to send Email.");
+        //        _emailEventInteractor.SendMail(emailInputs);
+        //        response.Status = true;
+        //        response.Message = $"Email is sent successfully to {emailInputs.Recipients}.";
+        //        _logger.LogDebug("" + response.Message);
+        //        return response;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError("Error occurred in Email Interactor while sending email: ", ex.Message);
+        //        response.Status = false;
+        //        response.Message = ex.Message;
+        //        return response;
+        //    }
+        //}
     }
 }

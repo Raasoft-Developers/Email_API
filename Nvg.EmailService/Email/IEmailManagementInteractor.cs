@@ -97,9 +97,16 @@ namespace Nvg.EmailService.Email
         /// <summary>
         /// Gets all the email Templates for pool.
         /// </summary>
-        /// <param name="poolID">Pool Name</param>
+        /// <param name="poolID">Pool ID</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<List<EmailTemplateDto>> GetEmailTemplatesByPool(string poolID);
+
+        /// <summary>
+        /// Gets all the email Templates for pool.
+        /// </summary>
+        /// <param name="channelID">Channel ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<List<EmailTemplateDto>> GetEmailTemplatesByChannelID(string channelID);
 
         /// <summary>
         /// Add/Updates the email template
