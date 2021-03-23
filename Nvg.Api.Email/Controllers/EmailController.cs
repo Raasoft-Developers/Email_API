@@ -9,6 +9,7 @@ using Nvg.EmailService.Email;
 using Nvg.EmailService.DTOS;
 using System.Net;
 using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace Nvg.Api.Email.Controllers
 {
@@ -272,6 +273,22 @@ namespace Nvg.Api.Email.Controllers
                 _logger.LogError("Internal server error: Error occurred while trying to send email: " + ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
+        }
+
+        [HttpGet]
+        public IActionResult DownloadApiDocument()
+        {
+            var path = Path.Combine(
+                           Directory.GetCurrentDirectory(),
+                           "wwwroot", "Email.docx");
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                stream.CopyTo(memory);
+            }
+            memory.Position = 0;
+            return File(memory, "application/octet-stream", Path.GetFileName(path));
         }
     }
 }
