@@ -278,6 +278,7 @@ namespace Nvg.Api.Email.Controllers
         [HttpGet]
         public IActionResult DownloadApiDocument()
         {
+            _logger.LogInformation("DownloadApiDocument action method.");
             var path = Path.Combine(
                            Directory.GetCurrentDirectory(),
                            "wwwroot", "Email.docx");
@@ -288,6 +289,7 @@ namespace Nvg.Api.Email.Controllers
                 stream.CopyTo(memory);
             }
             memory.Position = 0;
+            _logger.LogInformation("Download success.");
             return File(memory, "application/octet-stream", Path.GetFileName(path));
         }
     }
