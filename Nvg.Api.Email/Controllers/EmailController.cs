@@ -10,6 +10,7 @@ using Nvg.EmailService.DTOS;
 using System.Net;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using Microsoft.Extensions.Configuration;
 
 namespace Nvg.Api.Email.Controllers
 {
@@ -19,11 +20,13 @@ namespace Nvg.Api.Email.Controllers
     {
         private readonly IEmailInteractor _emailInteractor;
         private readonly ILogger<EmailController> _logger;
+        private IConfiguration _config;
 
-        public EmailController(IEmailInteractor emailInteractor, ILogger<EmailController> logger)
+        public EmailController(IEmailInteractor emailInteractor, ILogger<EmailController> logger, IConfiguration config)
         {
             _emailInteractor = emailInteractor;
             _logger = logger;
+            _config = config;
         }
 
         /// <summary>
@@ -276,21 +279,14 @@ namespace Nvg.Api.Email.Controllers
         }
 
         [HttpGet]
-        public IActionResult DownloadApiDocument()
+        public IActionResult GetApiDocumentUrl()
         {
-            _logger.LogInformation("DownloadApiDocument action method.");
-            var path = Path.Combine(
-                           Directory.GetCurrentDirectory(),
-                           "wwwroot", "Email.docx");
-
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(path, FileMode.Open))
-            {
-                stream.CopyTo(memory);
-            }
-            memory.Position = 0;
-            _logger.LogInformation("Download success.");
-            return File(memory, "application/octet-stream", Path.GetFileName(path));
+            CustomResponse<string> response = new CustomResponse<string>();
+            string url = _config.GetSection("apiDocumentDownloadUrl").Value;
+            response.Status = true;
+            response.Message = "retrieved URl";
+            response.Result = url;
+            return Ok(response);
         }
     }
 }
