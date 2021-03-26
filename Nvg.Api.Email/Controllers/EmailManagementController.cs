@@ -443,6 +443,32 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        [HttpGet("{templateID}")]
+        public ActionResult GetEmailTemplateByID(string templateID)
+        {
+            _logger.LogInformation("GetEmailTemplateByID action method.");
+            _logger.LogDebug("Template ID: " + templateID);
+            try
+            {
+                var templateResponse = _emailManagementInteractor.GetEmailTemplate(templateID);
+                if (templateResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                    return Ok(templateResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, templateResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while getting email templates by id: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
         [HttpPost]
         public ActionResult AddEmailTemplate(EmailTemplateDto templateInput)
         {

@@ -87,16 +87,9 @@ namespace Nvg.EmailService.Data.EmailPool
             try
             {
                 var emailPools = _context.EmailPools.ToList();
-                if (emailPools.Count > 0)
-                {
-                    response.Status = true;
-                    response.Message = $"Retrieved Email pool data";
-                }
-                else
-                {
-                    response.Status = false;
-                    response.Message = $"Email pool data is not available";
-                }
+                response.Status = true;
+                response.Message = $"Retrieved {emailPools.Count} Email pool data";
+                
                 response.Result = emailPools;
                 return response;
             }
@@ -114,16 +107,8 @@ namespace Nvg.EmailService.Data.EmailPool
             try
             {
                 var emailPools = _context.EmailPools.ToList();
-                if (emailPools.Count > 0)
-                {
-                    response.Status = true;
-                    response.Message = $"Retrieved Email pool data";
-                }
-                else
-                {
-                    response.Status = false;
-                    response.Message = $"Email pool data is not available";
-                }
+                response.Status = true;
+                response.Message = $"Retrieved {emailPools.Count} Email pool data";                
                 response.Result = emailPools;
                 return response;
             }

@@ -132,16 +132,9 @@ namespace Nvg.EmailService.Data.EmailTemplate
                                      join p in _context.EmailPools on t.EmailPoolID equals p.ID
                                      where p.ID.ToLower().Equals(poolID.ToLower())
                                      select t).ToList();
-                if (emailTemplates.Count > 0)
-                {
-                    response.Status = true;
-                    response.Message = $"Obtained {emailTemplates.Count} records";
-                }
-                else
-                {
-                    response.Status = false;
-                    response.Message = $"Found no record";
-                }
+                
+                response.Status = true;
+                response.Message = $"Obtained {emailTemplates.Count} records";                
                 response.Result = emailTemplates;
                 return response;
             }

@@ -72,11 +72,8 @@ namespace Nvg.EmailService.Data.EmailHistory
                                     TemplateVariant=h.TemplateVariant
                                     }).ToList();
 
-                if (emailHistories.Count != 0)
-                    response.Status = true;
-                else
-                    response.Status = false;
-
+                
+                response.Status = true;
                 response.Message = $"Retrieved {emailHistories.Count} Email histories data for pool";
                 response.Result = emailHistories;
                 return response;

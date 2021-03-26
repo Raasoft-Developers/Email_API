@@ -8,6 +8,7 @@ using Nvg.EmailService.Data.EmailTemplate;
 using Nvg.EmailService.Data.Entities;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.EmailProvider;
+using Nvg.EmailService.EmailTemplate;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -361,6 +362,39 @@ namespace Nvg.EmailService.Email
 
                 _logger.LogError("Error occurred in Email Management Interactor while getting email templates: ", ex.Message);
                 templateResponse.Message = "Error occurred while getting email templates: " + ex.Message;
+                templateResponse.Status = false;
+                return templateResponse;
+            }
+        }
+        
+        public EmailResponseDto<EmailTemplateDto> GetEmailTemplate(string templateID)
+        {
+            _logger.LogInformation("GetEmailTemplate interactor method.");
+            _logger.LogDebug("Template ID:" + templateID);
+            EmailResponseDto<EmailTemplateDto> templateResponse = new EmailResponseDto<EmailTemplateDto>();
+            try
+            {
+                _logger.LogInformation("Trying to get Email Templates.");
+                var response = _emailTemplateRepository.GetEmailTemplate(templateID);
+                if (response != null)
+                {
+                    templateResponse.Status = true;
+                    templateResponse.Message = "Successfully retrieved data";
+                    templateResponse.Result = _mapper.Map<EmailTemplateDto>(response);
+                }
+                else
+                {
+                    templateResponse.Status = true;
+                    templateResponse.Message = "Template not found";
+                }
+                _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                return templateResponse;
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError("Error occurred in Email Management Interactor while getting email template by id: ", ex.Message);
+                templateResponse.Message = "Error occurred while getting email template by id: " + ex.Message;
                 templateResponse.Status = false;
                 return templateResponse;
             }

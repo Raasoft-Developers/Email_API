@@ -116,6 +116,13 @@ namespace Nvg.EmailService.Email
         EmailResponseDto<EmailTemplateDto> AddUpdateEmailTemplate(EmailTemplateDto templateInput);
 
         /// <summary>
+        /// Gets email template by id
+        /// </summary>
+        /// <param name="templateID"></param>
+        /// <returns></returns>
+        EmailResponseDto<EmailTemplateDto> GetEmailTemplate(string templateID);
+
+        /// <summary>
         /// Delete the Email Template into the database.
         /// </summary>
         /// <param name="templateID">Template ID</param>

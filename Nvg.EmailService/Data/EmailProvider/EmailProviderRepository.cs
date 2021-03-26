@@ -143,12 +143,9 @@ namespace Nvg.EmailService.Data.EmailProvider
                 if (emailProviders.Count != 0)
                 {
                     if (!string.IsNullOrEmpty(providerName))
-                        emailProviders = emailProviders.Where(s => s.Name.ToLower().Equals(providerName.ToLower())).ToList();
-                    response.Status = true;
+                        emailProviders = emailProviders.Where(s => s.Name.ToLower().Equals(providerName.ToLower())).ToList();                    
                 }
-                else
-                    response.Status = false;
-
+                response.Status = true;
                 response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolName}";
                 response.Result = emailProviders;
                 return response;
@@ -171,13 +168,8 @@ namespace Nvg.EmailService.Data.EmailProvider
                                       where sp.ID.ToLower().Equals(poolID.ToLower())
                                       select p).ToList();
 
-                if (emailProviders.Count > 0)
-                {
-                    response.Status = true;
-                }
-                else
-                    response.Status = false;
-
+                
+                response.Status = true;
                 response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool";
                 response.Result = emailProviders;
                 return response;
@@ -200,13 +192,8 @@ namespace Nvg.EmailService.Data.EmailProvider
                                       where sp.ID.ToLower().Equals(poolID.ToLower())
                                       select p).ToList();
 
-                if (emailProviders.Count > 0)
-                {
-                    response.Status = true;
-                }
-                else
-                    response.Status = false;
-
+               
+                response.Status = true;
                 response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool";
                 response.Result = emailProviders;
                 return response;

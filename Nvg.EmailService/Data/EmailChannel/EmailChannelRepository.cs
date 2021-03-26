@@ -104,7 +104,7 @@ namespace Nvg.EmailService.Data.EmailChannel
         }
 
         /// <summary>
-        /// Gets the Channel by Channel Key.
+        /// Gets the Channel by Channel ID.
         /// </summary>
         /// <param name="channelID">Channel Key</param>
         /// <returns><see cref="EmailResponseDto{EmailChannelTable}"/> model</returns>
@@ -116,14 +116,13 @@ namespace Nvg.EmailService.Data.EmailChannel
                 var emailChannel = _context.EmailChannels.FirstOrDefault(sp => sp.ID.ToLower().Equals(channelID.ToLower()));
                 if (emailChannel != null)
                 {
-                    response.Status = true;
                     response.Message = $"Retrieved Email channel data";
                 }
                 else
                 {
-                    response.Status = false;
                     response.Message = $"Email Channel Data Unavailable";
                 }
+                response.Status = true;
                 response.Result = emailChannel;
                 return response;
             }
@@ -178,16 +177,9 @@ namespace Nvg.EmailService.Data.EmailChannel
                                         EmailProviderID=c.EmailProviderID,
                                         EmailProviderName=pr.Name
                                     }).ToList();
-                if (emailChannels.Count > 0)
-                {
-                    response.Status = true;
-                    response.Message = $"Retrieved Email channel data";
-                }
-                else
-                {
-                    response.Status = false;
-                    response.Message = $"Email Channel Data Unavailable";
-                }
+                
+                response.Status = true;
+                response.Message = $"Retrieved {emailChannels.Count} Email channel data";                
                 response.Result = emailChannels;
                 return response;
             }
@@ -240,16 +232,9 @@ namespace Nvg.EmailService.Data.EmailChannel
             try
             {
                 var emailChannelKeys = _context.EmailChannels.Select(o => new EmailChannelTable { Key = o.Key, ID = o.ID }).ToList();
-                if (emailChannelKeys.Count > 0)
-                {
-                        response.Status = true;
-                        response.Message = $"Retrieved {emailChannelKeys.Count} keys";
-                }
-                else
-                {
-                    response.Status = false;
-                    response.Message = $"No keys found";
-                }
+               
+                response.Status = true;
+                response.Message = $"Retrieved {emailChannelKeys.Count} keys";                
                 response.Result = emailChannelKeys;
                 return response;
             }
