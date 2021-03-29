@@ -39,17 +39,28 @@ namespace Nvg.Api.Email.Controllers
         {
             _logger.LogInformation("AddEmailPool action method.");
             _logger.LogInformation("EmailPoolName: " + poolInput.Name);
+            EmailResponseDto<EmailPoolDto> poolResponse = new EmailResponseDto<EmailPoolDto>();
             try
             {
-                var poolResponse = _emailInteractor.AddEmailPool(poolInput);
-                if (poolResponse.Status)
+                if (!string.IsNullOrWhiteSpace(poolInput.Name))
                 {
-                    _logger.LogDebug("Status: "+poolResponse.Status+ ", " + poolResponse.Message);
-                    return Ok(poolResponse);
+                    poolResponse = _emailInteractor.AddEmailPool(poolInput);
+                    if (poolResponse.Status)
+                    {
+                        _logger.LogDebug("Status: " + poolResponse.Status + ", " + poolResponse.Message);
+                        return Ok(poolResponse);
+                    }
+                    else
+                    {
+                        _logger.LogError("Status: " + poolResponse.Status + ", " + poolResponse.Message);
+                        return StatusCode((int)HttpStatusCode.PreconditionFailed, poolResponse);
+                    }
                 }
                 else
                 {
-                    _logger.LogError("Status: "+poolResponse.Status+", " + poolResponse.Message);
+                    poolResponse.Status = false;
+                    poolResponse.Message = "Pool Name cannot be empty or whitespace.";
+                    _logger.LogError("Status: " + poolResponse.Status + ", " + poolResponse.Message);
                     return StatusCode((int)HttpStatusCode.PreconditionFailed, poolResponse);
                 }
             }
@@ -70,17 +81,28 @@ namespace Nvg.Api.Email.Controllers
         {
             _logger.LogInformation("AddEmailProvider action method.");
             _logger.LogInformation($"EmailPoolName: {providerInput.EmailPoolName}, EmailProviderName: {providerInput.Name}, Configuration: {providerInput.Configuration}");
+            EmailResponseDto<EmailProviderSettingsDto> providerResponse = new EmailResponseDto<EmailProviderSettingsDto>();
             try
             {
-                var providerResponse = _emailInteractor.AddEmailProvider(providerInput);
-                if (providerResponse.Status)
+                if (!string.IsNullOrWhiteSpace(providerInput.Configuration) && !string.IsNullOrWhiteSpace(providerInput.Type) && !string.IsNullOrWhiteSpace(providerInput.Name))
                 {
-                    _logger.LogDebug("Status: " + providerResponse.Status + ", "+providerResponse.Message);
-                    return Ok(providerResponse);
+                    providerResponse = _emailInteractor.AddEmailProvider(providerInput);
+                    if (providerResponse.Status)
+                    {
+                        _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
+                        return Ok(providerResponse);
+                    }
+                    else
+                    {
+                        _logger.LogError("Status: " + providerResponse.Status + ", " + providerResponse.Message);
+                        return StatusCode((int)HttpStatusCode.PreconditionFailed, providerResponse);
+                    }
                 }
                 else
                 {
-                    _logger.LogError("Status: " + providerResponse.Status + ", "+ providerResponse.Message);
+                    providerResponse.Status = false;
+                    providerResponse.Message = "Provider Name, Type and Configuration cannot be empty or whitespace.";
+                    _logger.LogError("Status: " + providerResponse.Status + ", " + providerResponse.Message);
                     return StatusCode((int)HttpStatusCode.PreconditionFailed, providerResponse);
                 }
             }
@@ -101,16 +123,27 @@ namespace Nvg.Api.Email.Controllers
         {
             _logger.LogInformation("AddEmailChannel action method.");
             _logger.LogInformation($"EmailPoolName: {channelInput.EmailPoolName}, EmailProviderName: {channelInput.EmailProviderName}");
+            EmailResponseDto<EmailChannelDto> channelResponse = new EmailResponseDto<EmailChannelDto>();
             try
             {
-                var channelResponse = _emailInteractor.AddEmailChannel(channelInput);
-                if (channelResponse.Status)
+                if (!string.IsNullOrWhiteSpace(channelInput.Key))
                 {
-                    _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
-                    return Ok(channelResponse);
+                    channelResponse = _emailInteractor.AddEmailChannel(channelInput);
+                    if (channelResponse.Status)
+                    {
+                        _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return Ok(channelResponse);
+                    }
+                    else
+                    {
+                        _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                    }
                 }
                 else
                 {
+                    channelResponse.Status = false;
+                    channelResponse.Message = "Key cannot be empty or whitespace.";
                     _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                     return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
                 }
@@ -132,16 +165,26 @@ namespace Nvg.Api.Email.Controllers
         {
             _logger.LogInformation("AddEmailTemplate action method.");
             _logger.LogInformation($"EmailPoolName: {templateInput.EmailPoolName}, TemplateName: {templateInput.Name}, Variant: {templateInput.Variant}, MessageTemplate: {templateInput.MessageTemplate}");
+            EmailResponseDto<EmailTemplateDto> templateResponse = new EmailResponseDto<EmailTemplateDto>();
             try
             {
-                var templateResponse = _emailInteractor.AddEmailTemplate(templateInput);
-                if (templateResponse.Status)
+                if (!string.IsNullOrWhiteSpace(templateInput.Name) && !string.IsNullOrWhiteSpace(templateInput.MessageTemplate))
                 {
-                    _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
-                    return Ok(templateResponse);
+                    templateResponse = _emailInteractor.AddEmailTemplate(templateInput);
+                    if (templateResponse.Status)
+                    {
+                        _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                        return Ok(templateResponse);
+                    }
+                    else
+                    {
+                        _logger.LogError("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                        return StatusCode((int)HttpStatusCode.PreconditionFailed, templateResponse);
+                    }
                 }
-                else
-                {
+                else{
+                    templateResponse.Status = false;
+                    templateResponse.Message = "Name and Message Template cannot be empty or whitespace.";
                     _logger.LogError("Status: " + templateResponse.Status + ", " + templateResponse.Message);
                     return StatusCode((int)HttpStatusCode.PreconditionFailed, templateResponse);
                 }
