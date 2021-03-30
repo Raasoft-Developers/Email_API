@@ -391,7 +391,7 @@ namespace Nvg.Api.Email.Controllers
                 else
                 {
                     channelResponse.Status = false;
-                    channelResponse.Message = "Key cannot be empty or whitespace.";
+                    channelResponse.Message = "Channel Key cannot be empty or whitespace.";
                     _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                     return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
                 }
@@ -428,7 +428,7 @@ namespace Nvg.Api.Email.Controllers
                 else
                 {
                     channelResponse.Status = false;
-                    channelResponse.Message = "Key cannot be empty or whitespace.";
+                    channelResponse.Message = "Channel Key cannot be empty or whitespace.";
                     _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                     return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
                 }
