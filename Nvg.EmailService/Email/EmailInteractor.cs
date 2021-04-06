@@ -115,6 +115,26 @@ namespace Nvg.EmailService.Email
             }
         }
 
+        public EmailResponseDto<EmailTemplateDto> UpdateEmailTemplate(EmailTemplateDto templateInput)
+        {
+            _logger.LogInformation("UpdateEmailTemplate interactor method.");
+            EmailResponseDto<EmailTemplateDto> templateResponse = new EmailResponseDto<EmailTemplateDto>();
+            try
+            {
+                _logger.LogInformation("Trying to update EmailTemplate.");
+                templateResponse = _emailTemplateInteractor.AddEmailTemplate(templateInput);
+                _logger.LogDebug("" + templateResponse.Message);
+                return templateResponse;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred in Email Interactor while adding email template: ", ex.Message);
+                templateResponse.Message = "Error occurred while adding email template: " + ex.Message;
+                templateResponse.Status = false;
+                return templateResponse;
+            }
+        }
+
         public EmailResponseDto<EmailChannelDto> GetEmailChannelByKey(string channelKey)
         {
             _logger.LogInformation("GetEmailChannelByKey interactor method.");

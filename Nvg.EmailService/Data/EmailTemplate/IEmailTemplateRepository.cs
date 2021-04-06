@@ -10,11 +10,11 @@ namespace Nvg.EmailService.Data.EmailTemplate
     public interface IEmailTemplateRepository
     {
         /// <summary>
-        /// Adds the email template into the database.
+        /// Adds/Updates the email template in the database.
         /// </summary>
         /// <param name="templateInput"><see cref="EmailTemplateTable"/> model</param>
         /// <returns><see cref="EmailResponseDto{EmailTemplateTable}"/></returns>
-        EmailResponseDto<EmailTemplateTable> AddEmailTemplate(EmailTemplateTable templateInput);
+        EmailResponseDto<EmailTemplateTable> AddUpdateEmailTemplate(EmailTemplateTable templateInput);
 
         /// <summary>
         /// Gets the email template by template Id.

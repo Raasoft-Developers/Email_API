@@ -150,6 +150,37 @@ namespace Nvg.Api.Email.Controllers
         }
 
         /// <summary>
+        /// API to Update email template to the database table.
+        /// </summary>
+        /// <param name="templateInput"><see cref="EmailTemplateDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{EmailTemplateDto}"/></returns>
+        [HttpPost]
+        public ActionResult UpdateEmailTemplate(EmailTemplateDto templateInput)
+        {
+            _logger.LogInformation("UpdateEmailTemplate action method.");
+            _logger.LogInformation($"EmailPoolName: {templateInput.EmailPoolName}, TemplateName: {templateInput.Name}, Variant: {templateInput.Variant}, MessageTemplate: {templateInput.MessageTemplate}");
+            try
+            {
+                var templateResponse = _emailInteractor.AddEmailTemplate(templateInput);
+                if (templateResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                    return Ok(templateResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + templateResponse.Status + ", " + templateResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, templateResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while updating email template: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        /// <summary>
         /// API to get the Email Channel by channel key.
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
@@ -190,12 +221,12 @@ namespace Nvg.Api.Email.Controllers
                 var channelResponse = _emailInteractor.GetEmailChannelByKey(defaultEmailChannel);
                 if (channelResponse.Status)
                 {
-                    _logger.LogDebug("In EmailController: " + channelResponse.Message);
+                    _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                     return Ok(channelResponse);
                 }
                 else
                 {
-                    _logger.LogError("In EmailController: " + channelResponse.Message);
+                    _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                     return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
                 }
             }

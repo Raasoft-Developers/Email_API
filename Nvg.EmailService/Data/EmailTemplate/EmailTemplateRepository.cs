@@ -20,14 +20,14 @@ namespace Nvg.EmailService.Data.EmailTemplate
             _context = context;
             _logger = logger;
         }
-        public EmailResponseDto<EmailTemplateTable> AddEmailTemplate(EmailTemplateTable templateInput)
+        public EmailResponseDto<EmailTemplateTable> AddUpdateEmailTemplate(EmailTemplateTable templateInput)
         {
             var response = new EmailResponseDto<EmailTemplateTable>();
             try
             {
                 var template = _context.EmailTemplates.FirstOrDefault(st => st.Name.ToLower().Equals(templateInput.Name.ToLower()) &&
-                st.EmailPoolID.Equals(templateInput.EmailPoolID) &&
-                st.Variant.ToLower().Equals(templateInput.Variant.ToLower()));
+                st.EmailPoolID.Equals(templateInput.EmailPoolID) && (string.IsNullOrEmpty(st.Variant) ||
+                st.Variant.ToLower().Equals(templateInput.Variant.ToLower())));
                 if (template != null)
                 {
                     template.MessageTemplate = templateInput.MessageTemplate;

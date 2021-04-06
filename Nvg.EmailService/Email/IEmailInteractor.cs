@@ -43,6 +43,13 @@ namespace Nvg.EmailService.Email
         EmailResponseDto<EmailTemplateDto> AddEmailTemplate(EmailTemplateDto templateInput);
 
         /// <summary>
+        /// Update the email template to the database.
+        /// </summary>
+        /// <param name="templateInput"><see cref="EmailTemplateDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{EmailTemplateDto}"/></returns>
+        EmailResponseDto<EmailTemplateDto> UpdateEmailTemplate(EmailTemplateDto templateInput);
+
+        /// <summary>
         /// Gets the email channel by Key.
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
