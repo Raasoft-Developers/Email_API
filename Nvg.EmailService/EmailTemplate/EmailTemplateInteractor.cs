@@ -19,7 +19,7 @@ namespace Nvg.EmailService.EmailTemplate
             _emailPoolRepository = emailPoolRepository;
         }
 
-        public EmailResponseDto<EmailTemplateDto> AddEmailTemplate(EmailTemplateDto templateInput)
+        public EmailResponseDto<EmailTemplateDto> AddUpdateEmailTemplate(EmailTemplateDto templateInput)
         {
             var response = new EmailResponseDto<EmailTemplateDto>();
             if (!string.IsNullOrEmpty(templateInput.EmailPoolName))

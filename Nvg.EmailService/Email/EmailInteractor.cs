@@ -102,7 +102,7 @@ namespace Nvg.EmailService.Email
             try
             {
                 _logger.LogInformation("Trying to add EmailTemplate.");
-                templateResponse = _emailTemplateInteractor.AddEmailTemplate(templateInput);
+                templateResponse = _emailTemplateInteractor.AddUpdateEmailTemplate(templateInput);
                 _logger.LogDebug("" + templateResponse.Message);
                 return templateResponse;
             }
@@ -122,7 +122,7 @@ namespace Nvg.EmailService.Email
             try
             {
                 _logger.LogInformation("Trying to update EmailTemplate.");
-                templateResponse = _emailTemplateInteractor.AddEmailTemplate(templateInput);
+                templateResponse = _emailTemplateInteractor.AddUpdateEmailTemplate(templateInput);
                 _logger.LogDebug("" + templateResponse.Message);
                 return templateResponse;
             }
