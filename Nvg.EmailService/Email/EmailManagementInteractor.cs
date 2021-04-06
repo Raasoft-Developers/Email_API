@@ -183,7 +183,7 @@ namespace Nvg.EmailService.Email
             EmailResponseDto<EmailProviderSettingsDto> providerResponse = new EmailResponseDto<EmailProviderSettingsDto>();
             try
             {
-                _logger.LogInformation("Trying to add EmailProvider.");
+                _logger.LogInformation("Trying to add/update EmailProvider.");
                 var mappedEmailInput = _mapper.Map<EmailProviderSettingsTable>(providerInput);
                 var response = _emailProviderRepository.AddUpdateEmailProvider(mappedEmailInput);
                 providerResponse = _mapper.Map<EmailResponseDto<EmailProviderSettingsDto>>(response);
@@ -192,7 +192,7 @@ namespace Nvg.EmailService.Email
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error occurred in Email Interactor while updating email provider: ", ex.Message);
+                _logger.LogError("Error occurred in Email Interactor while adding/updating email provider: ", ex.Message);
                 providerResponse.Message = "Error occurred while updating email provider: " + ex.Message;
                 providerResponse.Status = false;
                 return providerResponse;
@@ -225,7 +225,7 @@ namespace Nvg.EmailService.Email
         #region Email Channel
         public EmailResponseDto<List<EmailChannelDto>> GetEmailChannelsByPool(string poolID)
         {
-            _logger.LogInformation("GetEmailChannels interactor method.");
+            _logger.LogInformation("GetEmailChannelsByPool interactor method.");
             _logger.LogDebug("Pool Name:" + poolID);
             EmailResponseDto<List<EmailChannelDto>> channelResponse = new EmailResponseDto<List<EmailChannelDto>>();
             try
@@ -248,11 +248,11 @@ namespace Nvg.EmailService.Email
 
         public EmailResponseDto<EmailChannelDto> AddUpdateEmailChannel(EmailChannelDto channelInput)
         {
-            _logger.LogInformation("UpdateEmailProvider interactor method.");
+            _logger.LogInformation("AddUpdateEmailChannel interactor method.");
             EmailResponseDto<EmailChannelDto> channelResponse = new EmailResponseDto<EmailChannelDto>();
             try
             {
-                _logger.LogInformation("Trying to add EmailProvider.");
+                _logger.LogInformation("Trying to add/update EmailChannel.");
                 var mappedEmailInput = _mapper.Map<EmailChannelTable>(channelInput);
                 var response = _emailChannelRepository.AddUpdateEmailChannel(mappedEmailInput);
                 channelResponse = _mapper.Map<EmailResponseDto<EmailChannelDto>>(response);
@@ -261,7 +261,7 @@ namespace Nvg.EmailService.Email
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error occurred in Email Interactor while updating email channel: ", ex.Message);
+                _logger.LogError("Error occurred in Email Interactor while adding/updating email channel: ", ex.Message);
                 channelResponse.Message = "Error occurred while updating email channel: " + ex.Message;
                 channelResponse.Status = false;
                 return channelResponse;
@@ -402,11 +402,11 @@ namespace Nvg.EmailService.Email
 
         public EmailResponseDto<EmailTemplateDto> AddUpdateEmailTemplate(EmailTemplateDto templateInput)
         {
-            _logger.LogInformation("UpdateEmailProvider interactor method.");
+            _logger.LogInformation("AddUpdateEmailTemplate interactor method.");
             EmailResponseDto<EmailTemplateDto> templateResponse = new EmailResponseDto<EmailTemplateDto>();
             try
             {
-                _logger.LogInformation("Trying to add EmailProvider.");
+                _logger.LogInformation("Trying to add/update EmailTemplate.");
                 var mappedEmailInput = _mapper.Map<EmailTemplateTable>(templateInput);
                 var response = _emailTemplateRepository.AddUpdateEmailTemplate(mappedEmailInput);
                 templateResponse = _mapper.Map<EmailResponseDto<EmailTemplateDto>>(response);
@@ -415,7 +415,7 @@ namespace Nvg.EmailService.Email
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error occurred in Email Interactor while updating email channel: ", ex.Message);
+                _logger.LogError("Error occurred in Email Interactor while adding/updating email template: ", ex.Message);
                 templateResponse.Message = "Error occurred while updating email channel: " + ex.Message;
                 templateResponse.Status = false;
                 return templateResponse;
