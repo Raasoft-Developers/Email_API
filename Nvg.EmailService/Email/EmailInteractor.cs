@@ -102,7 +102,7 @@ namespace Nvg.EmailService.Email
             try
             {
                 _logger.LogInformation("Trying to add EmailTemplate.");
-                templateResponse = _emailTemplateInteractor.AddUpdateEmailTemplate(templateInput);
+                templateResponse = _emailTemplateInteractor.AddEmailTemplate(templateInput);
                 _logger.LogDebug("" + templateResponse.Message);
                 return templateResponse;
             }
@@ -122,14 +122,14 @@ namespace Nvg.EmailService.Email
             try
             {
                 _logger.LogInformation("Trying to update EmailTemplate.");
-                templateResponse = _emailTemplateInteractor.AddUpdateEmailTemplate(templateInput);
+                templateResponse = _emailTemplateInteractor.UpdateEmailTemplate(templateInput);
                 _logger.LogDebug("" + templateResponse.Message);
                 return templateResponse;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error occurred in Email Interactor while adding email template: ", ex.Message);
-                templateResponse.Message = "Error occurred while adding email template: " + ex.Message;
+                _logger.LogError("Error occurred in Email Interactor while updating email template: ", ex.Message);
+                templateResponse.Message = "Error occurred while updating email template: " + ex.Message;
                 templateResponse.Status = false;
                 return templateResponse;
             }

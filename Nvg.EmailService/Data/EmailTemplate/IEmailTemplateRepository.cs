@@ -14,7 +14,8 @@ namespace Nvg.EmailService.Data.EmailTemplate
         /// </summary>
         /// <param name="templateInput"><see cref="EmailTemplateTable"/> model</param>
         /// <returns><see cref="EmailResponseDto{EmailTemplateTable}"/></returns>
-        EmailResponseDto<EmailTemplateTable> AddUpdateEmailTemplate(EmailTemplateTable templateInput);
+        EmailResponseDto<EmailTemplateTable> AddEmailTemplate(EmailTemplateTable templateInput);
+        EmailResponseDto<EmailTemplateTable> UpdateEmailTemplate(EmailTemplateTable templateInput);
 
         /// <summary>
         /// Gets the email template by template Id.

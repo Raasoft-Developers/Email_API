@@ -5,11 +5,12 @@ namespace Nvg.EmailService.EmailTemplate
     public interface IEmailTemplateInteractor
     {
         /// <summary>
-        /// Adds/Updates the email template in the database.
+        /// Adds the email template in the database.
         /// </summary>
         /// <param name="templateInput"><see cref="EmailTemplateDto"/> model</param>
         /// <returns><see cref="EmailResponseDto{EmailTemplateDto}"/></returns>
-        EmailResponseDto<EmailTemplateDto> AddUpdateEmailTemplate(EmailTemplateDto templateInput);
+        EmailResponseDto<EmailTemplateDto> AddEmailTemplate(EmailTemplateDto templateInput);
+        EmailResponseDto<EmailTemplateDto> UpdateEmailTemplate(EmailTemplateDto templateInput);
 
         EmailTemplateDto GetEmailTemplate(string TemplateID);
         EmailTemplateDto GetEmailTemplate(string templateName, string channelKey, string variant = null);

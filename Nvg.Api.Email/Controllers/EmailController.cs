@@ -161,7 +161,7 @@ namespace Nvg.Api.Email.Controllers
             _logger.LogInformation($"EmailPoolName: {templateInput.EmailPoolName}, TemplateName: {templateInput.Name}, Variant: {templateInput.Variant}, MessageTemplate: {templateInput.MessageTemplate}");
             try
             {
-                var templateResponse = _emailInteractor.AddEmailTemplate(templateInput);
+                var templateResponse = _emailInteractor.UpdateEmailTemplate(templateInput);
                 if (templateResponse.Status)
                 {
                     _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
