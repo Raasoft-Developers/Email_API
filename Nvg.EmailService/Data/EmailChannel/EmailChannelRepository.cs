@@ -16,11 +16,6 @@ namespace Nvg.EmailService.Data.EmailChannel
             _context = context;
         }
 
-        /// <summary>
-        /// Adds the email channel to the database.
-        /// </summary>
-        /// <param name="channelInput"><see cref="EmailChannelTable"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailChannelTable}"/> model</returns>
         public EmailResponseDto<EmailChannelTable> AddEmailChannel(EmailChannelTable channelInput)
         {
             var response = new EmailResponseDto<EmailChannelTable>();
@@ -29,19 +24,9 @@ namespace Nvg.EmailService.Data.EmailChannel
                 var channel = _context.EmailChannels.FirstOrDefault(sp => sp.Key.Equals(channelInput.Key) && sp.EmailPoolID.Equals(channelInput.EmailPoolID));
                 if (channel != null)
                 {
-                    channel.EmailProviderID = channelInput.EmailProviderID;
-                    if (_context.SaveChanges() == 1)
-                    {
-                        response.Status = true;
-                        response.Message = "Updated";
-                        response.Result = channelInput;
-                    }
-                    else
-                    {
-                        response.Status = false;
-                        response.Message = "Failed To Update";
-                        response.Result = channelInput;
-                    }
+                    response.Status = false;
+                    response.Message = "This Channel already exists.";
+                    response.Result = channelInput;
                 }
                 else
                 {
@@ -71,11 +56,45 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
 
-        /// <summary>
-        /// Gets the Channel by Channel Key.
-        /// </summary>
-        /// <param name="channelKey">Channel Key</param>
-        /// <returns><see cref="EmailResponseDto{EmailChannelTable}"/> model</returns>
+        public EmailResponseDto<EmailChannelTable> UpdateEmailChannel(EmailChannelTable channelInput)
+        {
+            var response = new EmailResponseDto<EmailChannelTable>();
+            try
+            {
+                var channel = _context.EmailChannels.FirstOrDefault(sp => sp.Key.Equals(channelInput.Key) && sp.EmailPoolID.Equals(channelInput.EmailPoolID));
+                if (channel != null)
+                {
+                    channel.EmailProviderID = channelInput.EmailProviderID;
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = "Updated";
+                        response.Result = channelInput;
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Failed To Update";
+                        response.Result = channelInput;
+                    }
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Cannot find Channel with Key {channelInput.Key}";
+                    response.Result = channelInput;
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+                
         public EmailResponseDto<EmailChannelTable> GetEmailChannelByKey(string channelKey)
         {
             var response = new EmailResponseDto<EmailChannelTable>();
@@ -103,11 +122,6 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
 
-        /// <summary>
-        /// Checks if the channel exists.
-        /// </summary>
-        /// <param name="channelKey">Channel Key</param>
-        /// <returns><see cref="EmailResponseDto{bool}"/> model</returns>
         public EmailResponseDto<bool> CheckIfChannelExist(string channelKey)
         {
             var response = new EmailResponseDto<bool>();
@@ -124,6 +138,62 @@ namespace Nvg.EmailService.Data.EmailChannel
                 response.Status = false;
                 response.Message = ex.Message;
                 response.Result = false;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> CheckIfEmailChannelIDIsValid(string channelID)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var smsPool = _context.EmailChannels.Any(sp => sp.ID.ToLower().Equals(channelID.ToLower()));
+                if (smsPool)
+                {
+                    response.Status = true;
+                    response.Message = $"Email Channel ID is valid.";
+                    response.Result = "Valid Email Channel.";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Email Channel data is not available";
+                    response.Result = "Invalid Email Channel.";
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> CheckIfEmailChannelIDKeyValid(string channelID, string channelKey)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var smsPool = _context.EmailChannels.Any(sp => sp.ID.ToLower().Equals(channelID.ToLower()) && sp.Key.ToLower().Equals(channelKey.ToLower()));
+                if (smsPool)
+                {
+                    response.Status = true;
+                    response.Message = $"Valid Channel ID and Channel Key {channelKey}.";
+                    response.Result = "Email Channel Valid.";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Invalid Channel ID and Channel Key {channelKey}";
+                    response.Result = "Email Channel Invalid.";
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
                 return response;
             }
         }

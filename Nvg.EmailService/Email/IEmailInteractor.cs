@@ -11,49 +11,63 @@ namespace Nvg.EmailService.Email
         /// Method to send an email.
         /// </summary>
         /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{string}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<string> SendMail(EmailDto emailInputs);
 
         /// <summary>
         /// Adds the email pool to database.
         /// </summary>
         /// <param name="poolInput"><see cref="EmailPoolDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailPoolDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<EmailPoolDto> AddEmailPool(EmailPoolDto poolInput);
 
         /// <summary>
         /// Adds the email provider to the database.
         /// </summary>
         /// <param name="providerInput"><see cref="EmailProviderSettingsDto"/></param>
-        /// <returns><see cref="EmailResponseDto{EmailProviderSettingsDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<EmailProviderSettingsDto> AddEmailProvider(EmailProviderSettingsDto providerInput);
+
+        /// <summary>
+        /// Updates the email provider in the database.
+        /// </summary>
+        /// <param name="providerInput"><see cref="EmailProviderSettingsDto"/></param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<EmailProviderSettingsDto> UpdateEmailProvider(EmailProviderSettingsDto providerInput);
 
         /// <summary>
         /// Adds the email channel to the database.
         /// </summary>
         /// <param name="channelInput"><see cref="EmailChannelDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailChannelDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<EmailChannelDto> AddEmailChannel(EmailChannelDto channelInput);
+
+        /// <summary>
+        /// Updates the email channel in the database.
+        /// </summary>
+        /// <param name="channelInput"><see cref="EmailChannelDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<EmailChannelDto> UpdateEmailChannel(EmailChannelDto channelInput);
 
         /// <summary>
         /// Adds the email template to the database.
         /// </summary>
         /// <param name="templateInput"><see cref="EmailTemplateDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailTemplateDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<EmailTemplateDto> AddEmailTemplate(EmailTemplateDto templateInput);
 
         /// <summary>
         /// Update the email template to the database.
         /// </summary>
         /// <param name="templateInput"><see cref="EmailTemplateDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailTemplateDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<EmailTemplateDto> UpdateEmailTemplate(EmailTemplateDto templateInput);
 
         /// <summary>
         /// Gets the email channel by Key.
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
-        /// <returns><see cref="EmailResponseDto{EmailChannelDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<EmailChannelDto> GetEmailChannelByKey(string channelKey);
 
         /// <summary>
@@ -61,7 +75,7 @@ namespace Nvg.EmailService.Email
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
         /// <param name="tag">Tag</param>
-        /// <returns><<see cref="EmailResponseDto{List{EmailHistoryDto}}"/>/returns>
+        /// <returns><<see cref="EmailResponseDto{T}"/>/returns>
         EmailResponseDto<List<EmailHistoryDto>> GetEmailHistoriesByTag(string channelKey, string tag);
 
         /// <summary>
@@ -69,7 +83,7 @@ namespace Nvg.EmailService.Email
         /// </summary>
         /// <param name="poolName">Pool name</param>
         /// <param name="providerName">Provider name</param>
-        /// <returns><see cref="EmailResponseDto{EmailProviderSettingsDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<List<EmailProviderSettingsDto>> GetEmailProvidersByPool(string poolName, string providerName);
     }
 }

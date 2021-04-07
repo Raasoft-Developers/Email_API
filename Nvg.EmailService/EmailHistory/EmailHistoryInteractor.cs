@@ -44,6 +44,36 @@ namespace Nvg.EmailService.EmailHistory
                         historyInput.EmailProviderID = _emailProviderRepository.GetEmailProviderByName(historyInput.ProviderName)?.Result?.ID;
                         _logger.LogDebug($"EmailProviderID: {historyInput.EmailProviderID}");
                     }
+                    else
+                    {
+                        var emailProvider = _emailProviderRepository.CheckIfEmailProviderIDNameValid(historyInput.EmailProviderID, historyInput.ProviderName);
+                        if (!emailProvider.Status)
+                        {
+                            response.Status = false;
+                            response.Message = "Email Provider ID and Provider Name do not match.";
+                            response.Result = historyInput;
+                            return response;
+                        }
+                    }
+                }
+                else if (!string.IsNullOrEmpty(historyInput.EmailProviderID))
+                {
+                    var emailProvider = _emailProviderRepository.CheckIfEmailProviderIDIsValid(historyInput.EmailProviderID);
+                    if (!emailProvider.Status)
+                    {
+                        response.Status = false;
+                        response.Message = "Invalid Email Provider ID.";
+                        response.Result = historyInput;
+                        return response;
+                    }
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = "Email Provider ID or Name cannot be blank.";
+                    response.Result = historyInput;
+                    _logger.LogError($"{response.Message}");
+                    return response;
                 }
                 if (!string.IsNullOrEmpty(historyInput.ChannelKey))
                 {
@@ -53,6 +83,38 @@ namespace Nvg.EmailService.EmailHistory
                         historyInput.EmailChannelID = _emailChannelRepository.GetEmailChannelByKey(historyInput.ChannelKey)?.Result?.ID;
                         _logger.LogDebug($"EmailChannelID: {historyInput.EmailChannelID}");
                     }
+                    else
+                    {
+                        var emailChannel = _emailChannelRepository.CheckIfEmailChannelIDKeyValid(historyInput.EmailChannelID, historyInput.ChannelKey);
+                        if (!emailChannel.Status)
+                        {
+                            _logger.LogError($"{emailChannel.Message}");
+                            response.Status = false;
+                            response.Message = emailChannel.Message;
+                            response.Result = historyInput;
+                            return response;
+                        }
+                    }
+                }
+                else if (!string.IsNullOrEmpty(historyInput.EmailChannelID))
+                {
+                    var emailChannel = _emailChannelRepository.CheckIfEmailChannelIDIsValid(historyInput.EmailChannelID);
+                    if (!emailChannel.Status)
+                    {
+                        _logger.LogError($"{emailChannel.Message}");
+                        response.Status = false;
+                        response.Message = emailChannel.Message;
+                        response.Result = historyInput;
+                        return response;
+                    }
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = "Email Channel ID or Key cannot be blank.";
+                    response.Result = historyInput;
+                    _logger.LogError($"{response.Message}");
+                    return response;
                 }
                 var mappedEmailInput = _mapper.Map<EmailHistoryTable>(historyInput);
                 var mappedResponse = _emailHistoryRepository.AddEmailHistory(mappedEmailInput);

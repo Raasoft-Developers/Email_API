@@ -29,12 +29,12 @@ namespace Nvg.Api.Email.Controllers
         /// API to add email pool to the database table.
         /// </summary>
         /// <param name="poolInput"><see cref="EmailPoolDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailPoolDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
         public ActionResult AddEmailPool(EmailPoolDto poolInput)
         {
             _logger.LogInformation("AddEmailPool action method.");
-            _logger.LogInformation("EmailPoolName: " + poolInput.Name);
+            _logger.LogDebug("EmailPoolName: " + poolInput.Name);
             try
             {
                 var poolResponse = _emailInteractor.AddEmailPool(poolInput);
@@ -60,12 +60,12 @@ namespace Nvg.Api.Email.Controllers
         /// API to add email provider to the database table.
         /// </summary>
         /// <param name="providerInput"><see cref="EmailProviderSettingsDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailProviderSettingsDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
         public ActionResult AddEmailProvider(EmailProviderSettingsDto providerInput)
         {
             _logger.LogInformation("AddEmailProvider action method.");
-            _logger.LogInformation($"EmailPoolName: {providerInput.EmailPoolName}, EmailProviderName: {providerInput.Name}, Configuration: {providerInput.Configuration}");
+            _logger.LogDebug($"EmailPoolName: {providerInput.EmailPoolName}, EmailProviderName: {providerInput.Name}, Configuration: {providerInput.Configuration}");
             try
             {
                 var providerResponse = _emailInteractor.AddEmailProvider(providerInput);
@@ -88,15 +88,46 @@ namespace Nvg.Api.Email.Controllers
         }
 
         /// <summary>
+        /// API to update email provider to the database table.
+        /// </summary>
+        /// <param name="providerInput"><see cref="EmailProviderSettingsDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        [HttpPost]
+        public ActionResult UpdateEmailProvider(EmailProviderSettingsDto providerInput)
+        {
+            _logger.LogInformation("UpdateEmailProvider action method.");
+            _logger.LogDebug($"EmailPoolName: {providerInput.EmailPoolName}, EmailProviderName: {providerInput.Name}, Configuration: {providerInput.Configuration}");
+            try
+            {
+                var providerResponse = _emailInteractor.UpdateEmailProvider(providerInput);
+                if (providerResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
+                    return Ok(providerResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + providerResponse.Status + ", " + providerResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, providerResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while updating email provider: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        /// <summary>
         /// API to add Email Channel to the database table.
         /// </summary>
         /// <param name="channelInput"><see cref="EmailChannelDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailChannelDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
         public ActionResult AddEmailChannel(EmailChannelDto channelInput)
         {
             _logger.LogInformation("AddEmailChannel action method.");
-            _logger.LogInformation($"EmailPoolName: {channelInput.EmailPoolName}, EmailProviderName: {channelInput.EmailProviderName}");
+            _logger.LogDebug($"EmailPoolName: {channelInput.EmailPoolName}, EmailProviderName: {channelInput.EmailProviderName}");
             try
             {
                 var channelResponse = _emailInteractor.AddEmailChannel(channelInput);
@@ -119,15 +150,46 @@ namespace Nvg.Api.Email.Controllers
         }
 
         /// <summary>
+        /// API to update Email Channel to the database table.
+        /// </summary>
+        /// <param name="channelInput"><see cref="EmailChannelDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        [HttpPost]
+        public ActionResult UpdateEmailChannel(EmailChannelDto channelInput)
+        {
+            _logger.LogInformation("UpdateEmailChannel action method.");
+            _logger.LogDebug($"EmailPoolName: {channelInput.EmailPoolName}, EmailProviderName: {channelInput.EmailProviderName}");
+            try
+            {
+                var channelResponse = _emailInteractor.UpdateEmailChannel(channelInput);
+                if (channelResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                    return Ok(channelResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while updating email channel: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        /// <summary>
         /// API to add email template to the database table.
         /// </summary>
         /// <param name="templateInput"><see cref="EmailTemplateDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailTemplateDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
         public ActionResult AddEmailTemplate(EmailTemplateDto templateInput)
         {
             _logger.LogInformation("AddEmailTemplate action method.");
-            _logger.LogInformation($"EmailPoolName: {templateInput.EmailPoolName}, TemplateName: {templateInput.Name}, Variant: {templateInput.Variant}, MessageTemplate: {templateInput.MessageTemplate}");
+            _logger.LogDebug($"EmailPoolName: {templateInput.EmailPoolName}, TemplateName: {templateInput.Name}, Variant: {templateInput.Variant}, MessageTemplate: {templateInput.MessageTemplate}");
             try
             {
                 var templateResponse = _emailInteractor.AddEmailTemplate(templateInput);
@@ -153,12 +215,12 @@ namespace Nvg.Api.Email.Controllers
         /// API to Update email template to the database table.
         /// </summary>
         /// <param name="templateInput"><see cref="EmailTemplateDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailTemplateDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
         public ActionResult UpdateEmailTemplate(EmailTemplateDto templateInput)
         {
             _logger.LogInformation("UpdateEmailTemplate action method.");
-            _logger.LogInformation($"EmailPoolName: {templateInput.EmailPoolName}, TemplateName: {templateInput.Name}, Variant: {templateInput.Variant}, MessageTemplate: {templateInput.MessageTemplate}");
+            _logger.LogDebug($"EmailPoolName: {templateInput.EmailPoolName}, TemplateName: {templateInput.Name}, Variant: {templateInput.Variant}, MessageTemplate: {templateInput.MessageTemplate}");
             try
             {
                 var templateResponse = _emailInteractor.UpdateEmailTemplate(templateInput);
@@ -184,12 +246,12 @@ namespace Nvg.Api.Email.Controllers
         /// API to get the Email Channel by channel key.
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
-        /// <returns><see cref="EmailResponseDto{EmailChannelDto}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpGet("{channelKey}")]
         public ActionResult GetEmailChannelByKey(string channelKey)
         {
             _logger.LogInformation("GetEmailChannelByKey action method.");
-            _logger.LogInformation($"ChannelKey: {channelKey}");
+            _logger.LogDebug($"ChannelKey: {channelKey}");
             try
             {
                 var channelResponse = _emailInteractor.GetEmailChannelByKey(channelKey);
@@ -211,7 +273,10 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
-
+        /// <summary>
+        /// API to get default Channel.
+        /// </summary>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpGet]
         public ActionResult GetDefaultChannnel()
         {
@@ -232,7 +297,7 @@ namespace Nvg.Api.Email.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("In EmailController: Internal server error: Error occurred while getting email channel by key: " + ex.Message);
+                _logger.LogError("Internal server error: Error occurred while getting default email channel: " + ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
 
@@ -242,12 +307,12 @@ namespace Nvg.Api.Email.Controllers
         /// </summary>
         /// <param name="poolName">Pool Name</param>
         /// <param name="providerName">Providers Name</param>
-        /// <returns><see cref="EmailResponseDto{List{EmailProviderSettingsDto}}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpGet("{poolName}/{providerName}")]
         public ActionResult GetEmailProvidersByPool(string poolName, string providerName)
         {
             _logger.LogInformation("GetEmailProvidersByPool action method.");
-            _logger.LogInformation($"PoolName: {poolName}, ProviderName: {providerName}");
+            _logger.LogDebug($"PoolName: {poolName}, ProviderName: {providerName}");
             try
             {
                 var poolResponse = _emailInteractor.GetEmailProvidersByPool(poolName, providerName);
@@ -274,12 +339,12 @@ namespace Nvg.Api.Email.Controllers
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
         /// <param name="tag">Tag</param>
-        /// <returns><see cref="EmailResponseDto{List{EmailHistoryDto}}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpGet("{channelKey}/{tag?}")]
         public ActionResult GetEmailHistories(string channelKey, string tag = null)
         {
             _logger.LogInformation("GetEmailHistories action method.");
-            _logger.LogInformation($"ChannelKey: {channelKey}, Tag: {tag}");
+            _logger.LogDebug($"ChannelKey: {channelKey}, Tag: {tag}");
             try
             {
                 var historiesResponse = _emailInteractor.GetEmailHistoriesByTag(channelKey, tag);
@@ -304,12 +369,12 @@ namespace Nvg.Api.Email.Controllers
         /// API to send emails.
         /// </summary>
         /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{string}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
         public ActionResult SendMail(EmailDto emailInputs)
         {
             _logger.LogInformation("SendMail action method.");
-            //_logger.LogInformation($"Recipients: {emailInputs.Recipients}, ChannelKey: {emailInputs.ChannelKey}, Body: {emailInputs.Body}, Sender: {emailInputs.Sender}, TemplateName: {emailInputs.TemplateName}");
+            //_logger.LogDebug($"Recipients: {emailInputs.Recipients}, ChannelKey: {emailInputs.ChannelKey}, Body: {emailInputs.Body}, Sender: {emailInputs.Sender}, TemplateName: {emailInputs.TemplateName}");
             try
             {
                 var emailResponse = _emailInteractor.SendMail(emailInputs);

@@ -30,20 +30,6 @@ namespace Nvg.EmailService.Data.EmailTemplate
                 st.Variant.ToLower().Equals(templateInput.Variant.ToLower())));
                 if (template != null)
                 {
-                    //template.MessageTemplate = templateInput.MessageTemplate;
-                    //template.Sender = templateInput.Sender;
-                    //if (_context.SaveChanges() == 1)
-                    //{
-                    //    response.Status = true;
-                    //    response.Message = "Updated";
-                    //    response.Result = templateInput;
-                    //}
-                    //else
-                    //{
-                    //    response.Status = false;
-                    //    response.Message = "Failed To Update";
-                    //    response.Result = templateInput;
-                    //}
                     response.Status = false;
                     response.Message = $"This template is already used.";
                     response.Result = templateInput;
@@ -81,7 +67,7 @@ namespace Nvg.EmailService.Data.EmailTemplate
             try
             {
                 var template = _context.EmailTemplates.FirstOrDefault(st => st.Name.ToLower().Equals(templateInput.Name.ToLower()) &&
-                st.EmailPoolID.Equals(templateInput.EmailPoolID) && (string.IsNullOrEmpty(st.Variant) ||
+                st.EmailPoolID.Equals(templateInput.EmailPoolID) && (string.IsNullOrEmpty(templateInput.Variant) ||
                 st.Variant.ToLower().Equals(templateInput.Variant.ToLower())));
                 if (template != null)
                 {

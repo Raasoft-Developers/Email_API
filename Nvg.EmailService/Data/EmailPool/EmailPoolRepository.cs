@@ -81,5 +81,61 @@ namespace Nvg.EmailService.Data.EmailPool
                 return response;
             }
         }
+
+        public EmailResponseDto<string> CheckIfEmailPoolIDIsValid(string poolID)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var smsPool = _context.EmailPools.Any(sp => sp.ID.ToLower().Equals(poolID.ToLower()));
+                if (smsPool)
+                {
+                    response.Status = true;
+                    response.Message = $"Email Pool ID is valid.";
+                    response.Result = "Valid Email Pool.";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Email pool data is not available";
+                    response.Result = "Invalid Email Pool.";
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> CheckIfEmailPoolIDNameValid(string poolID, string poolName)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var smsPool = _context.EmailPools.Any(sp => sp.ID.ToLower().Equals(poolID.ToLower()) && sp.Name.ToLower().Equals(poolName.ToLower()));
+                if (smsPool)
+                {
+                    response.Status = true;
+                    response.Message = $"Valid Pool ID and Pool Name {poolName}.";
+                    response.Result = "Email Pool Valid.";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Invalid Pool ID and Pool Name {poolName}";
+                    response.Result = "Email Pool Invalid.";
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
     }
 }
