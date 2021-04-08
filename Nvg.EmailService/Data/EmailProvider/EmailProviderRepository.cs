@@ -165,14 +165,14 @@ namespace Nvg.EmailService.Data.EmailProvider
             {
                 var emailProviders = (from p in _context.EmailProviders
                                     join sp in _context.EmailPools on p.EmailPoolID equals sp.ID
-                                    where sp.Name.ToLower().Equals(poolName.ToLower())
+                                    where sp.Name.ToLower().Equals(poolName.ToLower()) && (string.IsNullOrEmpty(providerName) || p.Name.ToLower().Equals(providerName.ToLower()))
                                     select p).ToList();
 
-                if (emailProviders.Count != 0)
-                {
-                    if (!string.IsNullOrEmpty(providerName))
-                        emailProviders = emailProviders.Where(s => s.Name.ToLower().Equals(providerName.ToLower())).ToList();                    
-                }
+                //if (emailProviders.Count != 0)
+                //{
+                //    if (!string.IsNullOrEmpty(providerName))
+                //        emailProviders = emailProviders.Where(s => s.Name.ToLower().Equals(providerName.ToLower())).ToList();                    
+                //}
                 response.Status = true;
                 response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolName}";
                 response.Result = emailProviders;
