@@ -71,7 +71,7 @@ namespace Nvg.EmailService.EmailProvider
                 return response;
             }
             var mappedEmailInput = _mapper.Map<EmailProviderSettingsTable>(providerInput);
-            var mappedResponse = _emailProviderRepository.AddUpdateEmailProvider(mappedEmailInput);
+            var mappedResponse = _emailProviderRepository.AddEmailProvider(mappedEmailInput);
             response = _mapper.Map<EmailResponseDto<EmailProviderSettingsDto>>(mappedResponse);
             return response;
         }

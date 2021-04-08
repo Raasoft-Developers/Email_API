@@ -217,7 +217,7 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(providerInput.Configuration) && !string.IsNullOrWhiteSpace(providerInput.Type) && !string.IsNullOrWhiteSpace(providerInput.Name))
                 {
-                    providerResponse = _emailManagementInteractor.AddUpdateEmailProvider(providerInput);
+                    providerResponse = _emailManagementInteractor.AddEmailProvider(providerInput);
                     if (providerResponse.Status)
                     {
                         _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
@@ -254,7 +254,7 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(providerInput.Configuration))
                 {
-                    providerResponse = _emailManagementInteractor.AddUpdateEmailProvider(providerInput);
+                    providerResponse = _emailManagementInteractor.UpdateEmailProvider(providerInput);
                     if (providerResponse.Status)
                     {
                         _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
@@ -379,7 +379,7 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(channelInput.Key))
                 {
-                    channelResponse = _emailManagementInteractor.AddUpdateEmailChannel(channelInput);
+                    channelResponse = _emailManagementInteractor.AddEmailChannel(channelInput);
                     if (channelResponse.Status)
                     {
                         _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
@@ -416,7 +416,7 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(channelInput.Key))
                 {
-                    channelResponse = _emailManagementInteractor.AddUpdateEmailChannel(channelInput);
+                    channelResponse = _emailManagementInteractor.UpdateEmailChannel(channelInput);
                     if (channelResponse.Status)
                     {
                         _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
@@ -570,7 +570,7 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(templateInput.Name) && !string.IsNullOrWhiteSpace(templateInput.MessageTemplate))
                 {
-                    templateResponse = _emailManagementInteractor.AddUpdateEmailTemplate(templateInput);
+                    templateResponse = _emailManagementInteractor.AddEmailTemplate(templateInput);
                     if (templateResponse.Status)
                     {
                         _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
@@ -607,7 +607,7 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(templateInput.Name) && !string.IsNullOrWhiteSpace(templateInput.MessageTemplate))
                 {
-                    templateResponse = _emailManagementInteractor.AddUpdateEmailTemplate(templateInput);
+                    templateResponse = _emailManagementInteractor.UpdateEmailTemplate(templateInput);
                     if (templateResponse.Status)
                     {
                         _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);

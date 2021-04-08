@@ -19,7 +19,7 @@ namespace Nvg.EmailService.Data.EmailProvider
             _logger = logger;
         }
 
-        public EmailResponseDto<EmailProviderSettingsTable> AddUpdateEmailProvider(EmailProviderSettingsTable providerInput)
+        public EmailResponseDto<EmailProviderSettingsTable> AddEmailProvider(EmailProviderSettingsTable providerInput)
         {
             var response = new EmailResponseDto<EmailProviderSettingsTable>();
             try

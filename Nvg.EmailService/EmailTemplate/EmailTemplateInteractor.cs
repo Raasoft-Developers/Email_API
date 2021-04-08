@@ -68,7 +68,7 @@ namespace Nvg.EmailService.EmailTemplate
                 return response;
             }
             var mappedInput = _mapper.Map<EmailTemplateTable>(templateInput);
-            var mappedResponse = _emailTemplateRepository.AddUpdateEmailTemplate(mappedInput);
+            var mappedResponse = _emailTemplateRepository.AddEmailTemplate(mappedInput);
             response = _mapper.Map<EmailResponseDto<EmailTemplateDto>>(mappedResponse);
             return response;
         }
