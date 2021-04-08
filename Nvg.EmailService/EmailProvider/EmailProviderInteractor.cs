@@ -40,6 +40,28 @@ namespace Nvg.EmailService.EmailProvider
                         return response;
                     }
                 }
+                else
+                {
+                    var emailPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(providerInput.EmailPoolID, providerInput.EmailPoolName);
+                    if (!emailPool.Status)
+                    {
+                        response.Status = false;
+                        response.Message = "Email Pool ID and Name do not match.";
+                        response.Result = providerInput;
+                        return response;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(providerInput.EmailPoolID))
+            {
+                var emailPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(providerInput.EmailPoolID);
+                if (!emailPool.Status)
+                {
+                    response.Status = false;
+                    response.Message = "Invalid Email Pool ID.";
+                    response.Result = providerInput;
+                    return response;
+                }
             }
             else
             {
@@ -50,6 +72,60 @@ namespace Nvg.EmailService.EmailProvider
             }
             var mappedEmailInput = _mapper.Map<EmailProviderSettingsTable>(providerInput);
             var mappedResponse = _emailProviderRepository.AddUpdateEmailProvider(mappedEmailInput);
+            response = _mapper.Map<EmailResponseDto<EmailProviderSettingsDto>>(mappedResponse);
+            return response;
+        }
+
+        public EmailResponseDto<EmailProviderSettingsDto> UpdateEmailProvider(EmailProviderSettingsDto providerInput)
+        {
+            var response = new EmailResponseDto<EmailProviderSettingsDto>();
+            if (!string.IsNullOrEmpty(providerInput.EmailPoolName))
+            {
+                if (string.IsNullOrEmpty(providerInput.EmailPoolID))
+                {
+                    var emailPool = _emailPoolRepository.GetEmailPoolByName(providerInput.EmailPoolName)?.Result;
+                    if (emailPool != null)
+                        providerInput.EmailPoolID = emailPool.ID;
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Invalid Email pool.";
+                        response.Result = providerInput;
+                        return response;
+                    }
+                }
+                else
+                {
+                    var emailPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(providerInput.EmailPoolID, providerInput.EmailPoolName);
+                    if (!emailPool.Status)
+                    {
+                        response.Status = false;
+                        response.Message = "Email Pool ID and Name do not match.";
+                        response.Result = providerInput;
+                        return response;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(providerInput.EmailPoolID))
+            {
+                var emailPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(providerInput.EmailPoolID);
+                if (!emailPool.Status)
+                {
+                    response.Status = false;
+                    response.Message = "Invalid Email Pool ID.";
+                    response.Result = providerInput;
+                    return response;
+                }
+            }
+            else
+            {
+                response.Status = false;
+                response.Message = "Email pool cannot be blank.";
+                response.Result = providerInput;
+                return response;
+            }
+            var mappedEmailInput = _mapper.Map<EmailProviderSettingsTable>(providerInput);
+            var mappedResponse = _emailProviderRepository.UpdateEmailProvider(mappedEmailInput);
             response = _mapper.Map<EmailResponseDto<EmailProviderSettingsDto>>(mappedResponse);
             return response;
         }

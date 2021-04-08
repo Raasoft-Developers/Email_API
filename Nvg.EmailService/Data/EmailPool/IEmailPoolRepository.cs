@@ -47,5 +47,20 @@ namespace Nvg.EmailService.Data.EmailPool
         /// </summary>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<List<EmailPoolTable>> GetEmailPoolNames();
+
+        /// <summary>
+        /// Checks if the Pool ID exists in the database.
+        /// </summary>
+        /// <param name="poolID">Pool ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<string> CheckIfEmailPoolIDIsValid(string poolID);
+
+        /// <summary>
+        /// Checks if Pool ID and Name exists in the database.
+        /// </summary>
+        /// <param name="poolID">Pool ID</param>
+        /// <param name="poolName">Pool Name</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<string> CheckIfEmailPoolIDNameValid(string poolID, string poolName);
     }
 }

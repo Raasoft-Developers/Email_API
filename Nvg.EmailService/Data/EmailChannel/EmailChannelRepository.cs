@@ -21,7 +21,47 @@ namespace Nvg.EmailService.Data.EmailChannel
         /// </summary>
         /// <param name="channelInput"><see cref="EmailChannelTable"/> model</param>
         /// <returns><see cref="EmailResponseDto{EmailChannelTable}"/> model</returns>
-        public EmailResponseDto<EmailChannelTable> AddUpdateEmailChannel(EmailChannelTable channelInput)
+        public EmailResponseDto<EmailChannelTable> AddEmailChannel(EmailChannelTable channelInput)
+        {
+            var response = new EmailResponseDto<EmailChannelTable>();
+            try
+            {
+                var channel = _context.EmailChannels.FirstOrDefault(sp => sp.Key.Equals(channelInput.Key) && sp.EmailPoolID.Equals(channelInput.EmailPoolID));
+                if (channel != null)
+                {
+                    response.Status = false;
+                    response.Message = "This Channel already exists.";
+                    response.Result = channelInput;
+                }
+                else
+                {
+                    channelInput.ID = Guid.NewGuid().ToString();
+                    _context.EmailChannels.Add(channelInput);
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = "Added";
+                        response.Result = channelInput;
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Not Added";
+                        response.Result = channelInput;
+                    }
+                }
+                
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<EmailChannelTable> UpdateEmailChannel(EmailChannelTable channelInput)
         {
             var response = new EmailResponseDto<EmailChannelTable>();
             try
@@ -45,22 +85,11 @@ namespace Nvg.EmailService.Data.EmailChannel
                 }
                 else
                 {
-                    channelInput.ID = Guid.NewGuid().ToString();
-                    _context.EmailChannels.Add(channelInput);
-                    if (_context.SaveChanges() == 1)
-                    {
-                        response.Status = true;
-                        response.Message = "Added";
-                        response.Result = channelInput;
-                    }
-                    else
-                    {
-                        response.Status = false;
-                        response.Message = "Not Added";
-                        response.Result = channelInput;
-                    }
+                    response.Status = false;
+                    response.Message = $"Cannot find Channel with Key {channelInput.Key}";
+                    response.Result = channelInput;
                 }
-                
+
                 return response;
             }
             catch (Exception ex)
@@ -236,6 +265,62 @@ namespace Nvg.EmailService.Data.EmailChannel
                 response.Status = true;
                 response.Message = $"Retrieved {emailChannelKeys.Count} keys";                
                 response.Result = emailChannelKeys;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> CheckIfEmailChannelIDIsValid(string channelID)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var smsPool = _context.EmailChannels.Any(sp => sp.ID.ToLower().Equals(channelID.ToLower()));
+                if (smsPool)
+                {
+                    response.Status = true;
+                    response.Message = $"Email Channel ID is valid.";
+                    response.Result = "Valid Email Channel.";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Email Channel data is not available";
+                    response.Result = "Invalid Email Channel.";
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> CheckIfEmailChannelIDKeyValid(string channelID, string channelKey)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var smsPool = _context.EmailChannels.Any(sp => sp.ID.ToLower().Equals(channelID.ToLower()) && sp.Key.ToLower().Equals(channelKey.ToLower()));
+                if (smsPool)
+                {
+                    response.Status = true;
+                    response.Message = $"Valid Channel ID and Channel Key {channelKey}.";
+                    response.Result = "Email Channel Valid.";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Invalid Channel ID and Channel Key {channelKey}";
+                    response.Result = "Email Channel Invalid.";
+                }
                 return response;
             }
             catch (Exception ex)

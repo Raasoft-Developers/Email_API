@@ -13,7 +13,14 @@ namespace Nvg.EmailService.Data.EmailProvider
         /// </summary>
         /// <param name="providerInput"><see cref="EmailProviderSettingsTable"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
-        EmailResponseDto<EmailProviderSettingsTable> AddUpdateEmailProvider(EmailProviderSettingsTable providerInput);
+        EmailResponseDto<EmailProviderSettingsTable> AddEmailProvider(EmailProviderSettingsTable providerInput);
+
+        /// <summary>
+        /// Updates the email provider in the database.
+        /// </summary>
+        /// <param name="providerInput"><see cref="EmailProviderSettingsTable"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<EmailProviderSettingsTable> UpdateEmailProvider(EmailProviderSettingsTable providerInput);
 
         /// <summary>
         /// Gets the email provider setttings by provider name.
@@ -57,5 +64,20 @@ namespace Nvg.EmailService.Data.EmailProvider
         /// <param name="providerInput"><see cref="EmailProviderSettingsTable"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<string> DeleteEmailProvider(string providerID);
+
+        /// <summary>
+        /// Checks if the Provider ID exists in the database.
+        /// </summary>
+        /// <param name="providerID">Provider ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<string> CheckIfEmailProviderIDIsValid(string providerID);
+
+        /// <summary>
+        /// Checks if the Provider ID and Name exists in the database.
+        /// </summary>
+        /// <param name="providerID">Provider ID</param>
+        /// <param name="providerName">Provider Name</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<string> CheckIfEmailProviderIDNameValid(string providerID, string providerName);
     }
 }

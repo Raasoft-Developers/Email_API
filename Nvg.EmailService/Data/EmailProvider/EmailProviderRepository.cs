@@ -27,19 +27,9 @@ namespace Nvg.EmailService.Data.EmailProvider
                 var provider = _context.EmailProviders.FirstOrDefault(sp => sp.Name.Equals(providerInput.Name) && sp.EmailPoolID.Equals(providerInput.EmailPoolID) && sp.Type.Equals(providerInput.Type));
                 if (provider != null)
                 {
-                    provider.Configuration = providerInput.Configuration;
-                    if (_context.SaveChanges() == 1)
-                    {
-                        response.Status = true;
-                        response.Message = "Updated";
-                        response.Result = providerInput;
-                    }
-                    else
-                    {
-                        response.Status = false;
-                        response.Message = "Failed To Update";
-                        response.Result = providerInput;
-                    }
+                    response.Status = false;
+                    response.Message = "The Provider already exists.";
+                    return response;
                 }
                 else
                 {
@@ -58,6 +48,44 @@ namespace Nvg.EmailService.Data.EmailProvider
                         response.Result = providerInput;
                     }
 
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<EmailProviderSettingsTable> UpdateEmailProvider(EmailProviderSettingsTable providerInput)
+        {
+            var response = new EmailResponseDto<EmailProviderSettingsTable>();
+            try
+            {
+                var provider = _context.EmailProviders.FirstOrDefault(sp => sp.Name.Equals(providerInput.Name) && sp.EmailPoolID.Equals(providerInput.EmailPoolID) && sp.Type.Equals(providerInput.Type));
+                if (provider != null)
+                {
+                    provider.Configuration = providerInput.Configuration;
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = "Updated";
+                        response.Result = providerInput;
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Failed To Update";
+                        response.Result = providerInput;
+                    }
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Cannot find Provider with Name {providerInput.Name}";
+                    return response;
                 }
                 return response;
             }
@@ -196,6 +224,62 @@ namespace Nvg.EmailService.Data.EmailProvider
                 response.Status = true;
                 response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool";
                 response.Result = emailProviders;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> CheckIfEmailProviderIDIsValid(string providerID)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var smsPool = _context.EmailProviders.Any(sp => sp.ID.ToLower().Equals(providerID.ToLower()));
+                if (smsPool)
+                {
+                    response.Status = true;
+                    response.Message = $"Email Provider ID is valid.";
+                    response.Result = "Valid Email Provider.";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Email Provider data is not available";
+                    response.Result = "Invalid Email Provider.";
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> CheckIfEmailProviderIDNameValid(string providerID, string providerName)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var smsPool = _context.EmailProviders.Any(sp => sp.ID.ToLower().Equals(providerID.ToLower()) && sp.Name.ToLower().Equals(providerName.ToLower()));
+                if (smsPool)
+                {
+                    response.Status = true;
+                    response.Message = $"Valid Provider ID and Provider Name {providerName}.";
+                    response.Result = "Email Provider Valid.";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Invalid Provider ID and Provider Name {providerName}";
+                    response.Result = "Email Provider Invalid.";
+                }
                 return response;
             }
             catch (Exception ex)

@@ -41,9 +41,31 @@ namespace Nvg.EmailService.EmailChannel
                         response.Result = channelInput;
                         return response;
                     }
+                }                
+                else
+                {
+                    var smsPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(channelInput.EmailPoolID, channelInput.EmailPoolName);
+                    if (!smsPool.Status)
+                    {
+                        response.Status = false;
+                        response.Message = "Email Pool ID and Pool Name do not match.";
+                        response.Result = channelInput;
+                        return response;
+                    }
                 }
             }
-            else if(string.IsNullOrEmpty(channelInput.EmailPoolID))
+            else if (!string.IsNullOrEmpty(channelInput.EmailPoolID))
+            {
+                var smsPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(channelInput.EmailPoolID);
+                if (!smsPool.Status)
+                {
+                    response.Status = false;
+                    response.Message = "Invalid SMS Pool ID.";
+                    response.Result = channelInput;
+                    return response;
+                }
+            }
+            else
             {
                 response.Status = false;
                 response.Message = "Email pool cannot be blank.";
@@ -65,12 +87,129 @@ namespace Nvg.EmailService.EmailChannel
                         return response;
                     }
                 }
+                else
+                {
+                    var smsProvider = _emailProviderRepository.CheckIfEmailProviderIDNameValid(channelInput.EmailProviderID, channelInput.EmailProviderName);
+                    if (!smsProvider.Status)
+                    {
+                        response.Status = false;
+                        response.Message = "Email Provider ID and Provider Name do not match.";
+                        response.Result = channelInput;
+                        return response;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(channelInput.EmailProviderID))
+            {
+                var smsProvider = _emailProviderRepository.CheckIfEmailProviderIDIsValid(channelInput.EmailProviderID);
+                if (!smsProvider.Status)
+                {
+                    response.Status = false;
+                    response.Message = "Invalid Email Provider ID.";
+                    response.Result = channelInput;
+                    return response;
+                }
             }
             else
                 channelInput.EmailProviderID = _emailProviderRepository.GetEmailProviderByName(defaultEmailProvider)?.Result?.ID;
 
             var mappedEmailInput = _mapper.Map<EmailChannelTable>(channelInput);
             var mappedResponse = _emailChannelRepository.AddUpdateEmailChannel(mappedEmailInput);
+            response = _mapper.Map<EmailResponseDto<EmailChannelDto>>(mappedResponse);
+            return response;
+        }
+
+        public EmailResponseDto<EmailChannelDto> UpdateEmailChannel(EmailChannelDto channelInput)
+        {
+            var response = new EmailResponseDto<EmailChannelDto>();
+            if (!string.IsNullOrEmpty(channelInput.EmailPoolName))
+            {
+                if (string.IsNullOrEmpty(channelInput.EmailPoolID))
+                {
+                    var emailPool = _emailPoolRepository.GetEmailPoolByName(channelInput.EmailPoolName)?.Result;
+                    if (emailPool != null)
+                        channelInput.EmailPoolID = emailPool.ID;
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Invalid Email pool.";
+                        response.Result = channelInput;
+                        return response;
+                    }
+                }
+                else
+                {
+                    var smsPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(channelInput.EmailPoolID, channelInput.EmailPoolName);
+                    if (!smsPool.Status)
+                    {
+                        response.Status = false;
+                        response.Message = "Email Pool ID and Pool Name do not match.";
+                        response.Result = channelInput;
+                        return response;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(channelInput.EmailPoolID))
+            {
+                var smsPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(channelInput.EmailPoolID);
+                if (!smsPool.Status)
+                {
+                    response.Status = false;
+                    response.Message = "Invalid SMS Pool ID.";
+                    response.Result = channelInput;
+                    return response;
+                }
+            }
+            else
+            {
+                response.Status = false;
+                response.Message = "Email pool cannot be blank.";
+                response.Result = channelInput;
+                return response;
+            }
+            if (!string.IsNullOrEmpty(channelInput.EmailProviderName))
+            {
+                if (string.IsNullOrEmpty(channelInput.EmailProviderID))
+                {
+                    var emailProvider = _emailProviderRepository.GetEmailProviderByName(channelInput.EmailProviderName)?.Result;
+                    if (emailProvider != null)
+                        channelInput.EmailProviderID = emailProvider.ID;
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Invalid Email provider.";
+                        response.Result = channelInput;
+                        return response;
+                    }
+                }
+                else
+                {
+                    var emailProvider = _emailProviderRepository.CheckIfEmailProviderIDNameValid(channelInput.EmailProviderID, channelInput.EmailProviderName);
+                    if (!emailProvider.Status)
+                    {
+                        response.Status = false;
+                        response.Message = "Email Provider ID and Provider Name do not match.";
+                        response.Result = channelInput;
+                        return response;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(channelInput.EmailProviderID))
+            {
+                var emailProvider = _emailProviderRepository.CheckIfEmailProviderIDIsValid(channelInput.EmailProviderID);
+                if (!emailProvider.Status)
+                {
+                    response.Status = false;
+                    response.Message = "Invalid Email Provider ID.";
+                    response.Result = channelInput;
+                    return response;
+                }
+            }
+            else
+                channelInput.EmailProviderID = _emailProviderRepository.GetEmailProviderByName(defaultEmailProvider)?.Result?.ID;
+
+            var mappedEmailInput = _mapper.Map<EmailChannelTable>(channelInput);
+            var mappedResponse = _emailChannelRepository.UpdateEmailChannel(mappedEmailInput);
             response = _mapper.Map<EmailResponseDto<EmailChannelDto>>(mappedResponse);
             return response;
         }

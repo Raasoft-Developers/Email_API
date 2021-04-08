@@ -20,7 +20,48 @@ namespace Nvg.EmailService.Data.EmailTemplate
             _context = context;
             _logger = logger;
         }
-        public EmailResponseDto<EmailTemplateTable> AddUpdateEmailTemplate(EmailTemplateTable templateInput)
+        public EmailResponseDto<EmailTemplateTable> AddEmailTemplate(EmailTemplateTable templateInput)
+        {
+            var response = new EmailResponseDto<EmailTemplateTable>();
+            try
+            {
+                var template = _context.EmailTemplates.FirstOrDefault(st => st.Name.ToLower().Equals(templateInput.Name.ToLower()) &&
+                st.EmailPoolID.Equals(templateInput.EmailPoolID) && (string.IsNullOrEmpty(templateInput.Variant) ||
+                st.Variant.ToLower().Equals(templateInput.Variant.ToLower())));
+                if (template != null)
+                {
+                    response.Status = false;
+                    response.Message = $"This template is already used.";
+                    response.Result = templateInput;
+                }
+                else
+                {
+                    templateInput.ID = Guid.NewGuid().ToString();
+                    _context.EmailTemplates.Add(templateInput);
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = "Added";
+                        response.Result = templateInput;
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Not Added";
+                        response.Result = templateInput;
+                    }
+                }
+                  
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        public EmailResponseDto<EmailTemplateTable> UpdateEmailTemplate(EmailTemplateTable templateInput)
         {
             var response = new EmailResponseDto<EmailTemplateTable>();
             try
@@ -47,22 +88,11 @@ namespace Nvg.EmailService.Data.EmailTemplate
                 }
                 else
                 {
-                    templateInput.ID = Guid.NewGuid().ToString();
-                    _context.EmailTemplates.Add(templateInput);
-                    if (_context.SaveChanges() == 1)
-                    {
-                        response.Status = true;
-                        response.Message = "Added";
-                        response.Result = templateInput;
-                    }
-                    else
-                    {
-                        response.Status = false;
-                        response.Message = "Not Added";
-                        response.Result = templateInput;
-                    }
+                    response.Status = false;
+                    response.Message = $"Unable to find template with name {templateInput.Name} and variant {templateInput.Variant}";
+                    response.Result = templateInput;
                 }
-                  
+
                 return response;
             }
             catch (Exception ex)

@@ -37,6 +37,28 @@ namespace Nvg.EmailService.EmailTemplate
                         return response;
                     }
                 }
+                else
+                {
+                    var smsPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(templateInput.EmailPoolID, templateInput.EmailPoolName);
+                    if (!smsPool.Status)
+                    {
+                        response.Status = false;
+                        response.Message = "Email Pool ID and Name do not match.";
+                        response.Result = templateInput;
+                        return response;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(templateInput.EmailPoolID))
+            {
+                var smsPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(templateInput.EmailPoolID);
+                if (!smsPool.Status)
+                {
+                    response.Status = false;
+                    response.Message = "Invalid Email Pool ID.";
+                    response.Result = templateInput;
+                    return response;
+                }
             }
             else
             {
@@ -47,6 +69,60 @@ namespace Nvg.EmailService.EmailTemplate
             }
             var mappedInput = _mapper.Map<EmailTemplateTable>(templateInput);
             var mappedResponse = _emailTemplateRepository.AddUpdateEmailTemplate(mappedInput);
+            response = _mapper.Map<EmailResponseDto<EmailTemplateDto>>(mappedResponse);
+            return response;
+        }
+
+        public EmailResponseDto<EmailTemplateDto> UpdateEmailTemplate(EmailTemplateDto templateInput)
+        {
+            var response = new EmailResponseDto<EmailTemplateDto>();
+            if (!string.IsNullOrEmpty(templateInput.EmailPoolName))
+            {
+                if (string.IsNullOrEmpty(templateInput.EmailPoolID))
+                {
+                    var emailPool = _emailPoolRepository.GetEmailPoolByName(templateInput.EmailPoolName)?.Result;
+                    if (emailPool != null)
+                        templateInput.EmailPoolID = emailPool.ID;
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = "Invalid Email pool.";
+                        response.Result = templateInput;
+                        return response;
+                    }
+                }
+                else
+                {
+                    var smsPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(templateInput.EmailPoolID, templateInput.EmailPoolName);
+                    if (!smsPool.Status)
+                    {
+                        response.Status = false;
+                        response.Message = "Email Pool ID and Name do not match.";
+                        response.Result = templateInput;
+                        return response;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(templateInput.EmailPoolID))
+            {
+                var smsPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(templateInput.EmailPoolID);
+                if (!smsPool.Status)
+                {
+                    response.Status = false;
+                    response.Message = "Invalid Email Pool ID.";
+                    response.Result = templateInput;
+                    return response;
+                }
+            }
+            else
+            {
+                response.Status = false;
+                response.Message = "Email pool cannot be blank.";
+                response.Result = templateInput;
+                return response;
+            }
+            var mappedInput = _mapper.Map<EmailTemplateTable>(templateInput);
+            var mappedResponse = _emailTemplateRepository.UpdateEmailTemplate(mappedInput);
             response = _mapper.Map<EmailResponseDto<EmailTemplateDto>>(mappedResponse);
             return response;
         }
