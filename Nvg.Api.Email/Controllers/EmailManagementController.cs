@@ -705,37 +705,5 @@ namespace Nvg.Api.Email.Controllers
             }
         }
         #endregion
-
-
-        /// <summary>
-        /// API to send emails.
-        /// </summary>
-        /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
-        /// <returns><see cref="EmailResponseDto{string}"/></returns>
-        //[HttpPost]
-        //public ActionResult SendMail(EmailDto emailInputs)
-        //{
-        //    _logger.LogInformation("SendMail action method.");
-        //    //_logger.LogInformation($"Recipients: {emailInputs.Recipients}, ChannelKey: {emailInputs.ChannelKey}, Body: {emailInputs.Body}, Sender: {emailInputs.Sender}, TemplateName: {emailInputs.TemplateName}");
-        //    try
-        //    {
-        //        var emailResponse = _emailInteractor.SendMail(emailInputs);
-        //        if (emailResponse.Status)
-        //        {
-        //            _logger.LogDebug("Status: " + emailResponse.Status + ", " + emailResponse.Message);
-        //            return Ok(emailResponse);
-        //        }
-        //        else
-        //        {
-        //            _logger.LogError("Status: " + emailResponse.Status + ", " + emailResponse.Message);
-        //            return StatusCode((int)HttpStatusCode.PreconditionFailed, emailResponse);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError("Internal server error: Error occurred while trying to send email: " + ex.Message);
-        //        return StatusCode((int)HttpStatusCode.InternalServerError, ex);
-        //    }
-        //}
     }
 }
