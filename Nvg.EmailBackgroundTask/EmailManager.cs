@@ -45,23 +45,28 @@ namespace Nvg.EmailBackgroundTask
             _logger.LogInformation($"Sender: {sender}");
             string emailResponseStatus = _emailProvider.SendEmail(email.Recipients, message, email.Subject, sender).Result;
             _logger.LogDebug($"Email response status: {emailResponseStatus}");
-            var emailObj = new EmailHistoryDto()
+            
+            foreach(var recipient in email.Recipients)
             {
-                MessageSent = message,
-                Sender = sender,
-                Recipients = email.Recipients,
-                TemplateName = email.TemplateName,
-                TemplateVariant = email.Variant,
-                ChannelKey = email.ChannelKey,
-                ProviderName = email.ProviderName,
-                Tags = email.Tag,
-                SentOn = DateTime.UtcNow,
-                Status = emailResponseStatus,
-                Attempts = 1,
-            };
-            _emailHistoryInteractor.AddEmailHistory(emailObj);
-
+                var emailObj = new EmailHistoryDto()
+                {
+                    MessageSent = message,
+                    Sender = sender,
+                    Recipients = recipient,
+                    TemplateName = email.TemplateName,
+                    TemplateVariant = email.Variant,
+                    ChannelKey = email.ChannelKey,
+                    ProviderName = email.ProviderName,
+                    Tags = email.Tag,
+                    SentOn = DateTime.UtcNow,
+                    Status = emailResponseStatus,
+                    Attempts = 1,
+                };
+                _emailHistoryInteractor.AddEmailHistory(emailObj);
+            }
+            //Update Quota Implemented Outside The Loop--revisit
             _emailQuotaInteractor.UpdateEmailQuota(email.ChannelKey);
+
         }
     }
 }

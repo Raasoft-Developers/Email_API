@@ -12,7 +12,7 @@ namespace Nvg.EmailService.DTOS
         public string TemplateName { get; set; }
         public string Variant { get; set; }
         public string Sender { get; set; }
-        public string Recipients { get; set; }
+        public List<string> Recipients { get; set; }
         public string Subject { get; set; }
         public Dictionary<string,string> MessageParts { get; set; }
         public string Tag { get; set; }
