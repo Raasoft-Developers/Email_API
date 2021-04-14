@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             _logger = logger;
         }
 
-        public async Task<string> SendEmail(string recipients, string message, string subject, string sender = null)
+        public async Task<string> SendEmail(List<string> recipients, string message, string subject, string sender = null)
         {
             _logger.LogInformation("SendEmail method.");
             if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
@@ -32,7 +33,8 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             */
 
             MailMessage emailMessage = new MailMessage();
-            emailMessage.To.Add(new MailAddress(recipients));
+            foreach(var recipient in recipients)
+                emailMessage.To.Add(new MailAddress(recipient));
             emailMessage.From = new MailAddress(sender);
             emailMessage.Subject = subject;
             emailMessage.Body = message;

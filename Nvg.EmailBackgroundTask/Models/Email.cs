@@ -12,7 +12,7 @@ namespace Nvg.EmailBackgroundTask.Models
         {
             MessageParts = new Dictionary<string, string>();
         }
-        public string Recipients { get; set; }
+        public List<string> Recipients { get; set; }
         public string Sender { get; set; }
         public string TemplateName { get; set; }
         public string Subject { get; set; }

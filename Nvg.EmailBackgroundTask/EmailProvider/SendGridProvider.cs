@@ -20,7 +20,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             _logger = logger;
         }
 
-        public async Task<string> SendEmail(string recipients, string message, string subject, string sender = "")
+        public async Task<string> SendEmail(List<string> recipients, string message, string subject, string sender = "")
         {
             _logger.LogInformation("SendEmail method.");
             if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
@@ -29,13 +29,17 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             var APIKey = _emailProviderCS.Fields["ApiKey"];
             var client = new SendGridClient(APIKey);
             var from = new EmailAddress(sender);
-            var to = new EmailAddress(recipients);
-            var email = MailHelper.CreateSingleEmail(
+            var to = new List<EmailAddress>();
+            foreach (var recipient in recipients)
+                to.Add(new EmailAddress(recipient));
+            bool showAllRecipients = true;
+            var email = MailHelper.CreateSingleEmailToMultipleRecipients(
                 from,
                 to,
                 subject, 
                 null,
-                message
+                message, 
+                showAllRecipients
             );
             _logger.LogInformation("client: " + client);
             _logger.LogInformation("from: " + from);
