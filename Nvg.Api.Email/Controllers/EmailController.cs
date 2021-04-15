@@ -12,13 +12,11 @@ using Microsoft.Extensions.Logging;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Nvg.Api.Email.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class EmailController : ControllerBase
     {
         private readonly IEmailInteractor _emailInteractor;
