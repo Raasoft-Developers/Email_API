@@ -280,7 +280,7 @@ namespace Nvg.EmailService.Email
                 _logger.LogInformation("Trying to send Email.");
                 _emailEventInteractor.SendMail(emailInputs);
                 response.Status = true;
-                response.Message = $"Email is sent successfully to {emailInputs.Recipients}.";
+                response.Message = $"Email is sent successfully to {string.Join(",", emailInputs.Recipients)}.";
                 _logger.LogDebug(""+response.Message);
                 return response;
             }
