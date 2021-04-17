@@ -7,7 +7,7 @@ pool:
 variables:
   buildConfiguration: 'Release'
   git_commit: $(Build.SourceVersion)
-  image_name: 'nvgapiemail'
+  image_name: 'nvgemailbackgroundtask'
 
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
@@ -15,7 +15,7 @@ steps:
 - task: Docker@2
   inputs:
     command: 'build'
-    Dockerfile: '**/Dockerfile'
+    Dockerfile: '/Nvg.EmailBackgroundTask/Dockerfile'
     buildContext: '$(Build.SourcesDirectory)'
     tags: 'latest'
     repository: '$(image_name)'
