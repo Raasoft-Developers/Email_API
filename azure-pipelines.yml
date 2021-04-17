@@ -15,7 +15,7 @@ steps:
 - task: Docker@2
   inputs:
     command: 'build'
-    Dockerfile: '/Nvg.Api.Email/Dockerfile'
+    Dockerfile: '$(Build.SourcesDirectory)/Nvg.Api.Email/Dockerfile'
     buildContext: '$(Build.SourcesDirectory)'
     tags: 'latest'
     repository: '$(image_name)'
