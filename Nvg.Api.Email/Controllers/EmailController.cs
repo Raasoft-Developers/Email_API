@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Nvg.EmailService;
-using Nvg.EmailService.Email;
-using Nvg.EmailService.DTOS;
-using System.Net;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.IO;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Authorization;
+using Nvg.EmailService.DTOS;
+using Nvg.EmailService.Email;
+using System;
+using System.Net;
 
 namespace Nvg.Api.Email.Controllers
 {
@@ -21,14 +13,12 @@ namespace Nvg.Api.Email.Controllers
     {
         private readonly IEmailInteractor _emailInteractor;
         private readonly ILogger<EmailController> _logger;
-        private IConfiguration _config;
         private readonly string defaultEmailChannel = "MasterEmailChannel";
 
-        public EmailController(IEmailInteractor emailInteractor, ILogger<EmailController> logger, IConfiguration config)
+        public EmailController(IEmailInteractor emailInteractor, ILogger<EmailController> logger)
         {
             _emailInteractor = emailInteractor;
             _logger = logger;
-            _config = config;
         }
 
         /// <summary>
@@ -443,17 +433,6 @@ namespace Nvg.Api.Email.Controllers
                 _logger.LogError("Internal server error: Error occurred while trying to send email: " + ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
-        }
-
-        [HttpGet]
-        public IActionResult GetApiDocumentUrl()
-        {
-            CustomResponse<string> response = new CustomResponse<string>();
-            string url = _config.GetSection("apiDocumentDownloadUrl").Value;
-            response.Status = true;
-            response.Message = "retrieved URl";
-            response.Result = url;
-            return Ok(response);
-        }
+        }       
     }
 }

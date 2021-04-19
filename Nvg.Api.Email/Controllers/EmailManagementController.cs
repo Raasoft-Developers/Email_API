@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.Email;
@@ -21,15 +22,22 @@ namespace Nvg.Api.Email.Controllers
         private readonly IEmailManagementInteractor _emailManagementInteractor;
         private readonly IEmailInteractor _emailInteractor;
         private readonly ILogger<EmailManagementController> _logger;
+        private IConfiguration _config;
 
-        public EmailManagementController(IEmailManagementInteractor emailManagementInteractor, IEmailInteractor emailInteractor, ILogger<EmailManagementController> logger)
+        public EmailManagementController(IEmailManagementInteractor emailManagementInteractor, IEmailInteractor emailInteractor,
+            IConfiguration config, ILogger<EmailManagementController> logger)
         {
             _emailManagementInteractor = emailManagementInteractor;
             _emailInteractor = emailInteractor;
             _logger = logger;
+            _config = config;
         }
 
         #region Email Pool
+        /// <summary>
+        /// API to get all the Email Pool data.
+        /// </summary>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpGet]
         public ActionResult GetEmailPools()
         {
@@ -55,6 +63,10 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to get all the Email Pool Names.
+        /// </summary>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpGet]
         public ActionResult GetEmailPoolNames()
         {
@@ -80,6 +92,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to update the Email Pool data.
+        /// </summary>
+        /// <param name="poolInput"><see cref="EmailPoolDto"/></param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
         public ActionResult UpdateEmailPool(EmailPoolDto poolInput)
         {
@@ -116,6 +133,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to delete the Email Pool data.
+        /// </summary>
+        /// <param name="poolID">Pool ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpGet("{poolID}")]
         public ActionResult DeleteEmailPool(string poolID)
         {
@@ -155,6 +177,12 @@ namespace Nvg.Api.Email.Controllers
         #endregion
 
         #region Email Provider
+
+        /// <summary>
+        /// API to get the Email Providers.
+        /// </summary>
+        /// <param name="poolID">Pool ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpGet("{poolID}")]
         public ActionResult GetEmailProviders(string poolID)
         {
@@ -181,6 +209,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to get the Email Providers Names.
+        /// </summary>
+        /// <param name="poolID">Pool ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpGet("{poolID}")]
         public ActionResult GetEmailProviderNames(string poolID)
         {
@@ -207,6 +240,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to add the Email Providers.
+        /// </summary>
+        /// <param name="providerInput"><see cref="EmailProviderSettingsDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
         public ActionResult AddEmailProvider(EmailProviderSettingsDto providerInput)
         {
@@ -244,6 +282,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to update the Email Providers.
+        /// </summary>
+        /// <param name="providerInput"><see cref="EmailProviderSettingsDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
         public ActionResult UpdateEmailProvider(EmailProviderSettingsDto providerInput)
         {
@@ -281,6 +324,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to delete the Email Providers.
+        /// </summary>
+        /// <param name="providerID">Email Provider ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpGet("{providerID}")]
         public ActionResult DeleteEmailProvider(string providerID)
         {
@@ -318,6 +366,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to get the Email Channels by Pool.
+        /// </summary>
+        /// <param name="poolID">Email Pool ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpGet("{poolID}")]
         public ActionResult GetEmailChannelsByPool(string poolID)
         {
@@ -344,6 +397,10 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to get all the Email Channel Key data.
+        /// </summary>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpGet]
         public ActionResult GetEmailChannelKeys()
         {
@@ -369,6 +426,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to add the Email Channel.
+        /// </summary>
+        /// <param name="channelInput"><see cref="EmailChannelDto"/></param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
         public ActionResult AddEmailChannel(EmailChannelDto channelInput)
         {
@@ -406,6 +468,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to update the Email Channel.
+        /// </summary>
+        /// <param name="channelInput"><see cref="EmailChannelDto"/></param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
         public ActionResult UpdateEmailChannel(EmailChannelDto channelInput)
         {
@@ -443,6 +510,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to delete the Email Channel data.
+        /// </summary>
+        /// <param name="channelID">Email Channel ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpGet("{channelID}")]
         public ActionResult DeleteEmailChannel(string channelID)
         {
@@ -482,6 +554,11 @@ namespace Nvg.Api.Email.Controllers
         #endregion
 
         #region Email Template
+        /// <summary>
+        /// API to get all the Email Templates by Pool ID.
+        /// </summary>
+        /// <param name="poolID">Pool ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpGet("{poolID}")]
         public ActionResult GetEmailTemplatesByPool(string poolID)
         {
@@ -508,6 +585,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to get all the Email Templates by Channel ID.
+        /// </summary>
+        /// <param name="channelID">Email Channel ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpGet("{channelID}")]
         public ActionResult GetEmailTemplatesByChannelID(string channelID)
         {
@@ -534,6 +616,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to get the Email Tempalte by Template ID.
+        /// </summary>
+        /// <param name="templateID">Template ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpGet("{templateID}")]
         public ActionResult GetEmailTemplateByID(string templateID)
         {
@@ -560,6 +647,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to add the Email Template data.
+        /// </summary>
+        /// <param name="templateInput"><see cref="EmailTemplateDto"/></param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
         public ActionResult AddEmailTemplate(EmailTemplateDto templateInput)
         {
@@ -597,6 +689,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to update the Email Template data.
+        /// </summary>
+        /// <param name="templateInput"<see cref="EmailTemplateDto"/></param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
         public ActionResult UpdateEmailTemplate(EmailTemplateDto templateInput)
         {
@@ -634,6 +731,11 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to delete the Email Template data.
+        /// </summary>
+        /// <param name="templateID">Template ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpGet("{templateID}")]
         public ActionResult DeleteEmailTemplate(string templateID)
         {
@@ -705,5 +807,20 @@ namespace Nvg.Api.Email.Controllers
             }
         }
         #endregion
+
+        /// <summary>
+        /// Gets the API document URL.
+        /// </summary>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        [HttpGet]
+        public IActionResult GetApiDocumentUrl()
+        {
+            CustomResponse<string> response = new CustomResponse<string>();
+            string url = _config.GetSection("apiDocumentDownloadUrl").Value;
+            response.Status = true;
+            response.Message = "retrieved URl";
+            response.Result = url;
+            return Ok(response);
+        }
     }
 }
