@@ -692,7 +692,7 @@ namespace Nvg.Api.Email.Controllers
         /// <summary>
         /// API to update the Email Template data.
         /// </summary>
-        /// <param name="templateInput"<see cref="EmailTemplateDto"/></param>
+        /// <param name="templateInput"><see cref="EmailTemplateDto"/></param>
         /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
         public ActionResult UpdateEmailTemplate(EmailTemplateDto templateInput)
