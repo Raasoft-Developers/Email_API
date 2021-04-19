@@ -818,7 +818,7 @@ namespace Nvg.Api.Email.Controllers
             CustomResponse<string> response = new CustomResponse<string>();
             string url = _config.GetSection("apiDocumentDownloadUrl").Value;
             response.Status = true;
-            response.Message = "retrieved URl";
+            response.Message = "Retrieved URL.";
             response.Result = url;
             return Ok(response);
         }
