@@ -44,8 +44,8 @@ namespace Nvg.EmailService.EmailChannel
                 }                
                 else
                 {
-                    var smsPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(channelInput.EmailPoolID, channelInput.EmailPoolName);
-                    if (!smsPool.Status)
+                    var emailPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(channelInput.EmailPoolID, channelInput.EmailPoolName);
+                    if (!emailPool.Status)
                     {
                         response.Status = false;
                         response.Message = "Email Pool ID and Pool Name do not match.";
@@ -56,11 +56,11 @@ namespace Nvg.EmailService.EmailChannel
             }
             else if (!string.IsNullOrEmpty(channelInput.EmailPoolID))
             {
-                var smsPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(channelInput.EmailPoolID);
-                if (!smsPool.Status)
+                var emailPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(channelInput.EmailPoolID);
+                if (!emailPool.Status)
                 {
                     response.Status = false;
-                    response.Message = "Invalid SMS Pool ID.";
+                    response.Message = "Invalid Email Pool ID.";
                     response.Result = channelInput;
                     return response;
                 }
@@ -89,8 +89,8 @@ namespace Nvg.EmailService.EmailChannel
                 }
                 else
                 {
-                    var smsProvider = _emailProviderRepository.CheckIfEmailProviderIDNameValid(channelInput.EmailProviderID, channelInput.EmailProviderName);
-                    if (!smsProvider.Status)
+                    var emailProvider = _emailProviderRepository.CheckIfEmailProviderIDNameValid(channelInput.EmailProviderID, channelInput.EmailProviderName);
+                    if (!emailProvider.Status)
                     {
                         response.Status = false;
                         response.Message = "Email Provider ID and Provider Name do not match.";
@@ -101,8 +101,8 @@ namespace Nvg.EmailService.EmailChannel
             }
             else if (!string.IsNullOrEmpty(channelInput.EmailProviderID))
             {
-                var smsProvider = _emailProviderRepository.CheckIfEmailProviderIDIsValid(channelInput.EmailProviderID);
-                if (!smsProvider.Status)
+                var emailProvider = _emailProviderRepository.CheckIfEmailProviderIDIsValid(channelInput.EmailProviderID);
+                if (!emailProvider.Status)
                 {
                     response.Status = false;
                     response.Message = "Invalid Email Provider ID.";
@@ -139,8 +139,8 @@ namespace Nvg.EmailService.EmailChannel
                 }
                 else
                 {
-                    var smsPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(channelInput.EmailPoolID, channelInput.EmailPoolName);
-                    if (!smsPool.Status)
+                    var emailPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(channelInput.EmailPoolID, channelInput.EmailPoolName);
+                    if (!emailPool.Status)
                     {
                         response.Status = false;
                         response.Message = "Email Pool ID and Pool Name do not match.";
@@ -151,8 +151,8 @@ namespace Nvg.EmailService.EmailChannel
             }
             else if (!string.IsNullOrEmpty(channelInput.EmailPoolID))
             {
-                var smsPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(channelInput.EmailPoolID);
-                if (!smsPool.Status)
+                var emailPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(channelInput.EmailPoolID);
+                if (!emailPool.Status)
                 {
                     response.Status = false;
                     response.Message = "Invalid Email Pool ID.";
