@@ -155,7 +155,7 @@ namespace Nvg.EmailService.EmailChannel
                 if (!smsPool.Status)
                 {
                     response.Status = false;
-                    response.Message = "Invalid SMS Pool ID.";
+                    response.Message = "Invalid Email Pool ID.";
                     response.Result = channelInput;
                     return response;
                 }
