@@ -13,12 +13,12 @@ namespace Nvg.EmailService.EmailQuota
         /// <param name="channelKey">Channel Key</param>
         /// <returns><see cref="EmailResponseDto{EmailQuotaDto}"/></returns>
         EmailResponseDto<EmailQuotaDto> GetEmailQuota(string channelKey);
+        
         /// <summary>
         /// Check if Email Quota of the channel is exceeded.Status is set to true or false based on value
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
-        /// <returns><see cref="EmailResponseDto{EmailQuotaDto}"/></returns>
-
+        /// <returns><see cref="bool"/></returns>
         bool CheckIfQuotaExceeded(string channelKey);
 
 
@@ -26,7 +26,7 @@ namespace Nvg.EmailService.EmailQuota
         /// Adds the Email Quota Values for Channel.
         /// </summary>
         /// <param name="emailChannel">Email Channel </param>
-        /// <returns><see cref="EmailResponseDto{EmailQuotaTable}"/></returns>
+        /// <returns><see cref="EmailResponseDto{EmailQuotaDto}"/></returns>
         EmailResponseDto<EmailQuotaDto> AddEmailQuota(EmailChannelDto emailChannel);
 
         /// <summary>

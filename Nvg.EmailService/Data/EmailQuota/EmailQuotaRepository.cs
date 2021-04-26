@@ -94,7 +94,7 @@ namespace Nvg.EmailService.Data.EmailQuota
                         TotalQuota = -1,
                         MonthlyConsumption = 1,
                         TotalConsumption = 1,
-                        CurrentMonth = DateTime.Now.Month.ToString("MMM")
+                        CurrentMonth = DateTime.Now.ToString("MMM").ToUpper()
                     };
                     _context.EmailQuotas.Add(emailQuota);
                 }
