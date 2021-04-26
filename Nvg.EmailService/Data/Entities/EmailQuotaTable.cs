@@ -14,11 +14,11 @@ namespace Nvg.EmailService.Data.Entities
         public string EmailChannelID { get; set; }
         [ForeignKey("EmailChannelID")]
         public EmailChannelTable EmailChannel { get; set; }
-        public int TotalConsumption { get; set; }
-        public int MonthlyConsumption { get; set; }
-        public string CurrentMonth { get; set; }
-        public int MonthlyQuota { get; set; }
-        public int TotalQuota { get; set; }
 
+        public int TotalConsumption { get; set; }
+
+        public int MonthlyConsumption { get; set; }
+
+        public int MonthlyQuota { get; set; }
     }
 }

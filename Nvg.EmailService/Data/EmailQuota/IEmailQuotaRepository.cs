@@ -21,22 +21,5 @@ namespace Nvg.EmailService.Data.EmailQuota
         /// <param name="channelID">Channel Id</param>
         /// <returns><see cref="EmailResponseDto{EmailQuotaTable}"/></returns>
         EmailResponseDto<EmailQuotaTable> UpdateEmailQuota(string channelID);
-
-        /// <summary>
-        /// Adds the Email Quota Values for Channel.
-        /// </summary>
-        /// <param name="emailChannel">Email Channel </param>
-        /// <returns><see cref="EmailResponseDto{EmailQuotaTable}"/></returns>
-        EmailResponseDto<EmailQuotaTable> AddEmailQuota(EmailChannelDto emailChannel);
-
-
-        /// <summary>
-        /// Updates the Current Month of the Channel's Quota.
-        /// </summary>
-        /// <param name="channelID">Channel Id</param>
-        /// <param name="currentMonth">Current Month</param>
-        /// <returns><see cref="EmailResponseDto{EmailQuotaTable}"/></returns>
-        EmailResponseDto<EmailQuotaTable> UpdateCurrentMonth(string channelKey, string currentMonth)
-
     }
 }
