@@ -38,6 +38,38 @@ namespace Nvg.EmailService.Data.EmailQuota
             }
         }
 
+        public EmailResponseDto<EmailQuotaTable> UpdateCurrentMonth(string channelKey,string currentMonth)
+        {
+            var response = new EmailResponseDto<EmailQuotaTable>();
+            try
+            {
+                var emailQuota = (from q in _context.EmailQuotas
+                                  join c in _context.EmailChannels on q.EmailChannelID equals c.ID
+                                  where c.Key.ToLower().Equals(channelKey.ToLower())
+                                  select q).FirstOrDefault();
+                emailQuota.CurrentMonth = currentMonth;
+                emailQuota.MonthlyConsumption = 0;
+                var updated = _context.SaveChanges();
+                if(updated>0)
+                {
+                    response.Status = true;
+                    response.Message = $"Updated Channel Quota Current Month";
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Failed to Update Channel Quota Current Month";
+                }
+                response.Result = emailQuota;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
         public EmailResponseDto<EmailQuotaTable> UpdateEmailQuota(string channelID)
         {
             var response = new EmailResponseDto<EmailQuotaTable>();
@@ -57,10 +89,52 @@ namespace Nvg.EmailService.Data.EmailQuota
                     {
                         EmailChannelID = channelID,
                         MonthlyQuota = 100,
+                        TotalQuota = 1000,
                         MonthlyConsumption = 1,
-                        TotalConsumption = 1
+                        TotalConsumption = 1,
+                        CurrentMonth = DateTime.Now.Month.ToString("MMM")
                     };
                     _context.EmailQuotas.Add(emailQuota);
+                }
+                if (_context.SaveChanges() == 1)
+                {
+                    response.Status = true;
+                    response.Message = "Email Quota is updated";
+                    response.Result = emailQuota;
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        public EmailResponseDto<EmailQuotaTable> AddEmailQuota(EmailChannelDto emailChannel)
+        {
+            var response = new EmailResponseDto<EmailQuotaTable>();
+            try
+            {
+                var emailQuota = _context.EmailQuotas.FirstOrDefault(q => q.EmailChannelID == emailChannel.ID);
+                if (emailQuota == null)
+                {
+                    emailQuota = new EmailQuotaTable()
+                    {
+                        EmailChannelID = emailChannel.ID,
+                        MonthlyQuota = emailChannel.IsRestrictedByQuota ? emailChannel.MonthlyQuota : -1,
+                        MonthlyConsumption = 0,
+                        TotalConsumption = 0,
+                        TotalQuota = emailChannel.IsRestrictedByQuota ? emailChannel.TotalQuota : -1,
+                        CurrentMonth = DateTime.Now.Month.ToString("MMM")
+                    };
+                    _context.EmailQuotas.Add(emailQuota);
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = "Email Quota already exists";
+                    response.Result = emailQuota;
                 }
                 if (_context.SaveChanges() == 1)
                 {

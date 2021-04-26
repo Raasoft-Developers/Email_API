@@ -4,6 +4,7 @@ using Nvg.EmailService.EmailChannel;
 using Nvg.EmailService.EmailHistory;
 using Nvg.EmailService.EmailPool;
 using Nvg.EmailService.EmailProvider;
+using Nvg.EmailService.EmailQuota;
 using Nvg.EmailService.EmailTemplate;
 using System;
 using System.Collections.Generic;
@@ -19,12 +20,15 @@ namespace Nvg.EmailService.Email
         private readonly IEmailChannelInteractor _emailChannelInteractor;
         private readonly IEmailTemplateInteractor _emailTemplateInteractor;
         private readonly IEmailHistoryInteractor _emailHistoryInteractor;
+        private readonly IEmailQuotaInteractor _emailQuotaInteractor;
+
         private readonly ILogger<EmailInteractor> _logger;
 
         public EmailInteractor(IEmailEventInteractor emailEventInteractor,
             IEmailPoolInteractor emailPoolInteractor, IEmailProviderInteractor emailProviderInteractor,
-            IEmailChannelInteractor emailChannelInteractor, IEmailTemplateInteractor emailTemplateInteractor,
-            IEmailHistoryInteractor emailHistoryInteractor, ILogger<EmailInteractor> logger)
+            IEmailChannelInteractor emailChannelInteractor, IEmailTemplateInteractor emailTemplateInteractor, 
+            IEmailQuotaInteractor emailQuotaInteractor, IEmailHistoryInteractor emailHistoryInteractor,
+            ILogger<EmailInteractor> logger)
         {
             _emailEventInteractor = emailEventInteractor;
             _emailPoolInteractor = emailPoolInteractor;
@@ -32,6 +36,7 @@ namespace Nvg.EmailService.Email
             _emailChannelInteractor = emailChannelInteractor;
             _emailTemplateInteractor = emailTemplateInteractor;
             _emailHistoryInteractor = emailHistoryInteractor;
+            _emailQuotaInteractor = emailQuotaInteractor;
             _logger = logger;
         }
 
@@ -103,6 +108,11 @@ namespace Nvg.EmailService.Email
             {
                 _logger.LogInformation("Trying to add EmailChannel.");
                 channelResponse = _emailChannelInteractor.AddEmailChannel(channelInput);
+                if(channelResponse.Status)
+                {
+                    //If channel has been added, add email quota for channel
+                    _emailQuotaInteractor.AddEmailQuota(channelInput);
+                }
                 _logger.LogDebug("" + channelResponse.Message);
                 return channelResponse;
             }
@@ -276,6 +286,14 @@ namespace Nvg.EmailService.Email
                         response.Message = $"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.";
                         return response;
                     }
+                }
+                var isExceeded= _emailQuotaInteractor.CheckIfQuotaExceeded(emailInputs.ChannelKey);
+                if (isExceeded)
+                {
+                    _logger.LogError($"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.");
+                    response.Status = isExceeded;
+                    response.Message = $"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.";
+                    return response;
                 }
                 _logger.LogInformation("Trying to send Email.");
                 _emailEventInteractor.SendMail(emailInputs);

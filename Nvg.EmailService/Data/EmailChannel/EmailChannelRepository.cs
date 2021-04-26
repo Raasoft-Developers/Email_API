@@ -45,7 +45,6 @@ namespace Nvg.EmailService.Data.EmailChannel
                         response.Result = channelInput;
                     }
                 }
-                
                 return response;
             }
             catch (Exception ex)
