@@ -46,7 +46,7 @@ namespace Nvg.EmailService.EmailQuota
         }
         public bool CheckIfQuotaExceeded(string channelKey)
         {
-            _logger.LogInformation("GetEmailQuota interactor method.");
+            _logger.LogInformation("CheckIfQuotaExceeded interactor method.");
             var response = false;
             try
             {
@@ -72,7 +72,7 @@ namespace Nvg.EmailService.EmailQuota
                             _logger.LogDebug("Status: " + updatedQuotaResponse.Status + ", Message: " + updatedQuotaResponse.Message);
                             emailQuota = updatedQuotaResponse.Result;
                             //Check if quota is exceeded for current month
-                            if (emailQuota.MonthlyQuota != -1 && emailQuota.TotalQuota != -1 && emailQuota.MonthlyConsumption > emailQuota.MonthlyQuota && emailQuota.TotalConsumption > emailQuota.TotalConsumption)
+                            if (emailQuota.MonthlyQuota != -1 && emailQuota.TotalQuota != -1 && emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
                             {
                                 response = true;
                             }
@@ -95,7 +95,6 @@ namespace Nvg.EmailService.EmailQuota
             var response = new EmailResponseDto<EmailQuotaDto>();
             try
             {
-                var channelID = _emailChannelRepository.GetEmailChannelByKey(emailChannelDto.Key)?.Result?.ID;
                 var emailQuotaResponse = _emailQuotaRepository.AddEmailQuota(emailChannelDto);
                 _logger.LogDebug("Status: " + emailQuotaResponse.Status + "Message:" + emailQuotaResponse.Message);
                 var mappedResponse = _mapper.Map<EmailResponseDto<EmailQuotaDto>>(emailQuotaResponse);

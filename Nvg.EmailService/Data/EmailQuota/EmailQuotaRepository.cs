@@ -141,7 +141,7 @@ namespace Nvg.EmailService.Data.EmailQuota
                 if (_context.SaveChanges() == 1)
                 {
                     response.Status = true;
-                    response.Message = "Email Quota is updated";
+                    response.Message = "Email Quota is Added";
                     response.Result = emailQuota;
                 }
                 return response;
