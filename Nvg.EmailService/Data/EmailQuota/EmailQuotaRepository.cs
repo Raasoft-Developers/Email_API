@@ -78,9 +78,11 @@ namespace Nvg.EmailService.Data.EmailQuota
                 var emailQuota = _context.EmailQuotas.FirstOrDefault(q => q.EmailChannelID == channelID);
                 if (emailQuota != null)
                 {
-                    var countInt = Convert.ToInt32(emailQuota.TotalConsumption); // TODO Implement encryption 
-                    countInt += 1;
-                    emailQuota.TotalConsumption = countInt;
+                    var totalCountInt = Convert.ToInt32(emailQuota.TotalConsumption); // TODO Implement encryption 
+                    var monthCountInt = Convert.ToInt32(emailQuota.TotalConsumption); // TODO Implement encryption 
+                    monthCountInt += 1; totalCountInt += 1;
+                    emailQuota.MonthlyConsumption += 1;
+                    emailQuota.TotalConsumption = totalCountInt;
                     _context.EmailQuotas.Update(emailQuota);
                 }
                 else
@@ -88,8 +90,8 @@ namespace Nvg.EmailService.Data.EmailQuota
                     emailQuota = new EmailQuotaTable()
                     {
                         EmailChannelID = channelID,
-                        MonthlyQuota = 100,
-                        TotalQuota = 1000,
+                        MonthlyQuota = -1,
+                        TotalQuota = -1,
                         MonthlyConsumption = 1,
                         TotalConsumption = 1,
                         CurrentMonth = DateTime.Now.Month.ToString("MMM")
@@ -126,7 +128,7 @@ namespace Nvg.EmailService.Data.EmailQuota
                         MonthlyConsumption = 0,
                         TotalConsumption = 0,
                         TotalQuota = emailChannel.IsRestrictedByQuota ? emailChannel.TotalQuota : -1,
-                        CurrentMonth = DateTime.Now.Month.ToString("MMM")
+                        CurrentMonth = DateTime.Now.ToString("MMM").ToUpper()
                     };
                     _context.EmailQuotas.Add(emailQuota);
                 }

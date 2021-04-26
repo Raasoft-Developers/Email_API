@@ -94,12 +94,25 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
                 
-        public EmailResponseDto<EmailChannelTable> GetEmailChannelByKey(string channelKey)
+        public EmailResponseDto<EmailChannelDto> GetEmailChannelByKey(string channelKey)
         {
-            var response = new EmailResponseDto<EmailChannelTable>();
+            var response = new EmailResponseDto<EmailChannelDto>();
             try
             {
-                var emailChannel = _context.EmailChannels.FirstOrDefault(sp => sp.Key.ToLower().Equals(channelKey.ToLower()));
+                var emailChannel = (from ec in _context.EmailChannels 
+                                   from eq in _context.EmailQuotas.Where( quota => quota.EmailChannelID == ec.ID).DefaultIfEmpty()
+                                   select new EmailChannelDto { 
+                                   ID =ec.ID,
+                                   Key = ec.Key,
+                                   EmailPoolID = ec.EmailPoolID,
+                                   EmailProviderID = ec.EmailProviderID,
+                                   MonthlyQuota = eq.MonthlyQuota,
+                                   TotalQuota = eq.TotalQuota,
+                                   MonthlyConsumption = eq.MonthlyConsumption,
+                                   TotalConsumption = eq.TotalConsumption,
+                                   CurrentMonth = eq.CurrentMonth
+                                   }).FirstOrDefault();
+                //_context.EmailChannels.FirstOrDefault(sp => sp.Key.ToLower().Equals(channelKey.ToLower()));
                 if (emailChannel != null)
                 {
                     response.Status = true;

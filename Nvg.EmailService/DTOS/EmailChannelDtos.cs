@@ -17,6 +17,9 @@ namespace Nvg.EmailService.DTOS
         public string EmailProviderName { get; set; }
         public int MonthlyQuota { get; set; }
         public int TotalQuota { get; set; }
+        public int MonthlyConsumption { get; set; }
+        public int TotalConsumption { get; set; }
+        public string CurrentMonth { get; set; }
         public bool IsRestrictedByQuota { get; set; }
     }
 

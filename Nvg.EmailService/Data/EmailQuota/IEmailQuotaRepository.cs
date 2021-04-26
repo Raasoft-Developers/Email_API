@@ -36,7 +36,7 @@ namespace Nvg.EmailService.Data.EmailQuota
         /// <param name="channelID">Channel Id</param>
         /// <param name="currentMonth">Current Month</param>
         /// <returns><see cref="EmailResponseDto{EmailQuotaTable}"/></returns>
-        EmailResponseDto<EmailQuotaTable> UpdateCurrentMonth(string channelKey, string currentMonth)
+        EmailResponseDto<EmailQuotaTable> UpdateCurrentMonth(string channelKey, string currentMonth);
 
     }
 }

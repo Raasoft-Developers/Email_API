@@ -24,7 +24,7 @@ namespace Nvg.EmailService.Data.EmailChannel
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
         /// <returns><see cref="EmailResponseDto{T}"/> model</returns>
-        EmailResponseDto<EmailChannelTable> GetEmailChannelByKey(string channelKey);
+        EmailResponseDto<EmailChannelDto> GetEmailChannelByKey(string channelKey);
 
         /// <summary>
         /// Checks if the channel exists.
