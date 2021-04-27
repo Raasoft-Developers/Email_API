@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Nvg.EmailService.Data.Entities;
+using System.Collections.Generic;
 
 namespace Nvg.EmailService.DTOS
 {
@@ -19,7 +20,9 @@ namespace Nvg.EmailService.DTOS
         public EmailTemplateProfile()
         {
             CreateMap<EmailTemplateDto, EmailTemplateTable>().ReverseMap();
+            CreateMap<EmailTemplateTable, EmailTemplateDto>();
             CreateMap<EmailResponseDto<EmailTemplateTable>, EmailResponseDto<EmailTemplateDto>>();
+            CreateMap<EmailResponseDto<List<EmailTemplateTable>>, EmailResponseDto<List<EmailTemplateDto>>>();
         }
     }
 }

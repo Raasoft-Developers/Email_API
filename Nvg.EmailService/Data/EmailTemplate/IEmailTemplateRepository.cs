@@ -47,5 +47,19 @@ namespace Nvg.EmailService.Data.EmailTemplate
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<bool> CheckIfTemplateExist(string channelKey, string templateName);
 
+        /// <summary>
+        /// Gets the email template by pool name.
+        /// </summary>
+        /// <param name="poolID">Pool ID</param>
+        /// <returns><see cref="EmailTemplateTable"/></returns>
+        EmailResponseDto<List<EmailTemplateTable>> GetEmailTemplatesByPool(string poolID);
+
+        /// <summary>
+        /// Delete the email template by template Id.
+        /// </summary>
+        /// <param name="templateID">Template Id</param>
+        /// <returns><see cref="EmailTemplateTable"/></returns>
+        EmailResponseDto<string> DeleteEmailTemplate(string templateID);
+
     }
 }

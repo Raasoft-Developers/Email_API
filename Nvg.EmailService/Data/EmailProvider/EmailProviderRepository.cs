@@ -165,19 +165,64 @@ namespace Nvg.EmailService.Data.EmailProvider
             {
                 var emailProviders = (from p in _context.EmailProviders
                                     join sp in _context.EmailPools on p.EmailPoolID equals sp.ID
-                                    where sp.Name.ToLower().Equals(poolName.ToLower())
+                                    where sp.Name.ToLower().Equals(poolName.ToLower()) && (string.IsNullOrEmpty(providerName) || p.Name.ToLower().Equals(providerName.ToLower()))
                                     select p).ToList();
 
-                if (emailProviders.Count != 0)
-                {
-                    if (!string.IsNullOrEmpty(providerName))
-                        emailProviders = emailProviders.Where(s => s.Name.ToLower().Equals(providerName.ToLower())).ToList();
-                    response.Status = true;
-                }
-                else
-                    response.Status = false;
-
+                //if (emailProviders.Count != 0)
+                //{
+                //    if (!string.IsNullOrEmpty(providerName))
+                //        emailProviders = emailProviders.Where(s => s.Name.ToLower().Equals(providerName.ToLower())).ToList();                    
+                //}
+                response.Status = true;
                 response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolName}";
+                response.Result = emailProviders;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<List<EmailProviderSettingsTable>> GetEmailProviders(string poolID)
+        {
+            var response = new EmailResponseDto<List<EmailProviderSettingsTable>>();
+            try
+            {
+                var emailProviders = (from p in _context.EmailProviders
+                                      join sp in _context.EmailPools on p.EmailPoolID equals sp.ID
+                                      where sp.ID.ToLower().Equals(poolID.ToLower())
+                                      select p).ToList();
+
+                
+                response.Status = true;
+                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool";
+                response.Result = emailProviders;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<List<EmailProviderSettingsTable>> GetEmailProviderNames(string poolID)
+        {
+            var response = new EmailResponseDto<List<EmailProviderSettingsTable>>();
+            try
+            {
+                var emailProviders = (from p in _context.EmailProviders
+                                      join sp in _context.EmailPools on p.EmailPoolID equals sp.ID
+                                      where sp.ID.ToLower().Equals(poolID.ToLower())
+                                      select p).ToList();
+
+               
+                response.Status = true;
+                response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool";
                 response.Result = emailProviders;
                 return response;
             }
@@ -235,6 +280,42 @@ namespace Nvg.EmailService.Data.EmailProvider
                     response.Message = $"Invalid Provider ID and Provider Name {providerName}";
                     response.Result = "Email Provider Invalid.";
                 }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> DeleteEmailProvider(string providerID)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var emailProvider = _context.EmailProviders.Where(o => o.ID.ToLower().Equals(providerID.ToLower())).FirstOrDefault();
+
+                if (emailProvider != null)
+                {
+                    _context.EmailProviders.Remove(emailProvider);
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = $"Deleted successfully";
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = $"Delete failed";
+                    }
+                }
+                else
+                {
+                    response.Message = "No record found.";
+                    response.Status = false;
+                }               
                 return response;
             }
             catch (Exception ex)

@@ -153,5 +153,63 @@ namespace Nvg.EmailService.Data.EmailTemplate
             return emailTemplate;
         }
 
+        public EmailResponseDto<List<EmailTemplateTable>> GetEmailTemplatesByPool(string poolID)
+        {
+            var response = new EmailResponseDto<List<EmailTemplateTable>>();
+            try
+            {
+                var emailTemplates = (from t in _context.EmailTemplates
+                                     join p in _context.EmailPools on t.EmailPoolID equals p.ID
+                                     where p.ID.ToLower().Equals(poolID.ToLower())
+                                     select t).ToList();
+                
+                response.Status = true;
+                response.Message = $"Obtained {emailTemplates.Count} records";                
+                response.Result = emailTemplates;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> DeleteEmailTemplate(string templateID)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var emailTemplate = _context.EmailTemplates.Where(o => o.ID.ToLower().Equals(templateID.ToLower())).FirstOrDefault();
+                if (emailTemplate != null)
+                {
+                    _context.EmailTemplates.Remove(emailTemplate);
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = $"Deleted Template";
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = $"Failed to delete Template";
+                    }
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Found no record";
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
     }
 }
