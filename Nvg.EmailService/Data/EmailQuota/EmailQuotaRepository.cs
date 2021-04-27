@@ -153,5 +153,78 @@ namespace Nvg.EmailService.Data.EmailQuota
                 return response;
             }
         }
+
+        public EmailResponseDto<EmailQuotaTable> UpdateEmailQuota(EmailChannelDto emailChannel)
+        {
+            var response = new EmailResponseDto<EmailQuotaTable>();
+            try
+            {
+                var emailQuota = _context.EmailQuotas.FirstOrDefault(q => q.EmailChannelID == emailChannel.ID);
+                if (emailQuota != null)
+                {
+                    emailQuota.TotalQuota = emailChannel.IsRestrictedByQuota ? emailChannel.TotalQuota : -1;
+                    emailQuota.MonthlyQuota = emailChannel.IsRestrictedByQuota ? emailChannel.MonthlyQuota : -1;
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Email Quota does not exist for provided channel ID : {emailChannel.ID}";
+                    response.Result = emailQuota;
+                }
+                if (_context.SaveChanges() > 0)
+                {
+                    response.Status = true;
+                    response.Message = "Email Quota is Updated";
+                    response.Result = emailQuota;
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = "Email Quota is not Updated";
+                    response.Result = emailQuota;
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        public EmailResponseDto<string> DeleteEmailQuota(string channelID)
+        {
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var emailQuota = _context.EmailQuotas.Where(q => q.EmailChannelID.ToLower().Equals(channelID.ToLower())).FirstOrDefault();
+                if (emailQuota != null)
+                {
+                    _context.EmailQuotas.Remove(emailQuota);
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = $"Deleted Successfully";
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.Message = $"Failed to delete";
+                    }
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = $"Email Quota Data not found";
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
     }
 }

@@ -133,6 +133,13 @@ namespace Nvg.EmailService.Email
             {
                 _logger.LogInformation("Trying to update EmailChannel.");
                 channelResponse = _emailChannelInteractor.UpdateEmailChannel(channelInput);
+                var quotaResponse = _emailQuotaInteractor.UpdateEmailQuota(channelInput);
+                if (!channelResponse.Status)
+                {
+                    //if email channel is not updated , then take response of email quota updation
+                    channelResponse.Status = quotaResponse.Status;
+                    channelResponse.Message = quotaResponse.Message;
+                }
                 _logger.LogDebug("" + channelResponse.Message);
                 return channelResponse;
             }

@@ -4,6 +4,7 @@ using Nvg.EmailService.Data.EmailChannel;
 using Nvg.EmailService.Data.EmailHistory;
 using Nvg.EmailService.Data.EmailPool;
 using Nvg.EmailService.Data.EmailProvider;
+using Nvg.EmailService.Data.EmailQuota;
 using Nvg.EmailService.Data.EmailTemplate;
 using Nvg.EmailService.Data.Entities;
 using Nvg.EmailService.DTOS;
@@ -24,11 +25,12 @@ namespace Nvg.EmailService.Email
         private readonly IEmailTemplateRepository _emailTemplateRepository;
         private readonly IEmailProviderInteractor _emailProviderInteractor;
         private readonly IEmailHistoryRepository _emailHistoryRepository;
+        private readonly IEmailQuotaRepository _emailQuotaRepository;
         private readonly ILogger<EmailManagementInteractor> _logger;
 
         public EmailManagementInteractor(IMapper mapper, IEmailPoolRepository emailPoolRepository, IEmailProviderRepository emailProviderRepository,
             IEmailChannelRepository emailChannelRepository, IEmailTemplateRepository emailTemplateRepository, IEmailProviderInteractor emailProviderInteractor,
-            IEmailHistoryRepository emailHistoryRepository, ILogger<EmailManagementInteractor> logger)
+            IEmailHistoryRepository emailHistoryRepository, IEmailQuotaRepository emailQuotaRepository, ILogger<EmailManagementInteractor> logger)
         {
             _mapper = mapper;
             _emailPoolRepository = emailPoolRepository;
@@ -37,6 +39,7 @@ namespace Nvg.EmailService.Email
             _emailTemplateRepository = emailTemplateRepository;
             _emailProviderInteractor = emailProviderInteractor;
             _emailHistoryRepository = emailHistoryRepository;
+            _emailQuotaRepository = emailQuotaRepository;
             _logger = logger;
         }
         #region Email Pool
@@ -254,9 +257,9 @@ namespace Nvg.EmailService.Email
             {
                 _logger.LogInformation("Trying to get Email Channels.");
                 var response = _emailChannelRepository.GetEmailChannels(poolID);
-                channelResponse = _mapper.Map<EmailResponseDto<List<EmailChannelDto>>>(response);
-                _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
-                return channelResponse;
+                //channelResponse = _mapper.Map<EmailResponseDto<List<EmailChannelDto>>>(response);
+                _logger.LogDebug("Status: " + response.Status + ", " + response.Message);
+                return response;
             }
             catch (Exception ex)
             {
@@ -277,6 +280,12 @@ namespace Nvg.EmailService.Email
                 _logger.LogInformation("Trying to add EmailChannel.");
                 var mappedEmailInput = _mapper.Map<EmailChannelTable>(channelInput);
                 var response = _emailChannelRepository.AddEmailChannel(mappedEmailInput);
+                if (response.Status)
+                {
+                    channelInput.ID = response.Result.ID;
+                    //If channel has been added, add email quota for channel
+                    _emailQuotaRepository.AddEmailQuota(channelInput);
+                }
                 channelResponse = _mapper.Map<EmailResponseDto<EmailChannelDto>>(response);
                 _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                 return channelResponse;
@@ -299,6 +308,13 @@ namespace Nvg.EmailService.Email
                 _logger.LogInformation("Trying to update EmailChannel.");
                 var mappedEmailInput = _mapper.Map<EmailChannelTable>(channelInput);
                 var response = _emailChannelRepository.UpdateEmailChannel(mappedEmailInput);
+                var quotaResponse = _emailQuotaRepository.UpdateEmailQuota(channelInput);
+                if (!response.Status)
+                {
+                    //if email channel is not updated , then take response of email quota updation
+                    response.Status = quotaResponse.Status;
+                    response.Message = quotaResponse.Message;
+                }
                 channelResponse = _mapper.Map<EmailResponseDto<EmailChannelDto>>(response);
                 _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                 return channelResponse;
@@ -320,6 +336,7 @@ namespace Nvg.EmailService.Email
             try
             {
                 _logger.LogInformation("Trying to delete Email Channel.");
+                var quotaResponse = _emailQuotaRepository.DeleteEmailQuota(channelID);
                 channelResponse = _emailChannelRepository.DeleteEmailChannel(channelID);
                 _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                 return channelResponse;

@@ -30,10 +30,17 @@ namespace Nvg.EmailService.EmailQuota
         EmailResponseDto<EmailQuotaDto> AddEmailQuota(EmailChannelDto emailChannel);
 
         /// <summary>
-        /// Updates the email quota.
+        /// Updates the Consumption Value of Email Quota.
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
         /// <returns><see cref="EmailResponseDto{EmailQuotaDto}"/></returns>
         EmailResponseDto<EmailQuotaDto> UpdateEmailQuota(string channelKey);
+
+        /// <summary>
+        /// Updates the email quota.
+        /// </summary>
+        /// <param name="emailChannel">Email Channel </param>
+        /// <returns><see cref="EmailResponseDto{EmailQuotaDto}"/></returns>
+        EmailResponseDto<EmailQuotaDto> UpdateEmailQuota(EmailChannelDto emailChannel);
     }
 }

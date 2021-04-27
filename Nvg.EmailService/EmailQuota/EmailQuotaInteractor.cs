@@ -91,7 +91,7 @@ namespace Nvg.EmailService.EmailQuota
         }
         public EmailResponseDto<EmailQuotaDto> AddEmailQuota(EmailChannelDto emailChannelDto)
         {
-            _logger.LogInformation("UpdateEmailQuota interactor method.");
+            _logger.LogInformation("AddEmailQuota interactor method.");
             var response = new EmailResponseDto<EmailQuotaDto>();
             try
             {
@@ -117,6 +117,26 @@ namespace Nvg.EmailService.EmailQuota
                 var channelID = _emailChannelRepository.GetEmailChannelByKey(channelKey)?.Result?.ID;
                 var emailQuotaResponse = _emailQuotaRepository.UpdateEmailQuota(channelID);
                 _logger.LogDebug("Status: "+emailQuotaResponse.Status+"Message:" + emailQuotaResponse.Message);
+                var mappedResponse = _mapper.Map<EmailResponseDto<EmailQuotaDto>>(emailQuotaResponse);
+                return mappedResponse;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to Update Email Quota" + ex.Message);
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<EmailQuotaDto> UpdateEmailQuota(EmailChannelDto emailChannelDto)
+        {
+            _logger.LogInformation("UpdateEmailQuota interactor method.");
+            var response = new EmailResponseDto<EmailQuotaDto>();
+            try
+            {
+                var emailQuotaResponse = _emailQuotaRepository.UpdateEmailQuota(emailChannelDto);
+                _logger.LogDebug("Status: " + emailQuotaResponse.Status + "Message:" + emailQuotaResponse.Message);
                 var mappedResponse = _mapper.Map<EmailResponseDto<EmailQuotaDto>>(emailQuotaResponse);
                 return mappedResponse;
             }

@@ -120,7 +120,9 @@ namespace Nvg.EmailService.Data.EmailChannel
                                    TotalQuota = eq.TotalQuota,
                                    MonthlyConsumption = eq.MonthlyConsumption,
                                    TotalConsumption = eq.TotalConsumption,
-                                   CurrentMonth = eq.CurrentMonth
+                                   CurrentMonth = eq.CurrentMonth,
+                                    IsRestrictedByQuota = eq.TotalQuota != -1 && eq.MonthlyQuota != -1
+
                                    }).FirstOrDefault();
                 //_context.EmailChannels.FirstOrDefault(sp => sp.Key.ToLower().Equals(channelKey.ToLower()));
                 if (emailChannel != null)
@@ -200,23 +202,27 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
 
-        public EmailResponseDto<List<EmailChannelTable>> GetEmailChannels(string poolID)
+        public EmailResponseDto<List<EmailChannelDto>> GetEmailChannels(string poolID)
         {
-            var response = new EmailResponseDto<List<EmailChannelTable>>();
+            var response = new EmailResponseDto<List<EmailChannelDto>>();
             try
             {
                 var emailChannels = (from p in _context.EmailPools
                                     join c in _context.EmailChannels on p.ID equals c.EmailPoolID
                                     join pr in _context.EmailProviders on c.EmailProviderID equals pr.ID
                                     where p.ID.ToLower().Equals(poolID.ToLower())
-                                    select new EmailChannelTable
+                                    from q in _context.EmailQuotas.Where(eq => eq.EmailChannelID == c.ID).DefaultIfEmpty()
+                                    select new EmailChannelDto
                                     {
                                         ID=c.ID,
                                         Key=c.Key,
                                         EmailPoolID=c.EmailPoolID,
                                         EmailPoolName=p.Name,
                                         EmailProviderID=c.EmailProviderID,
-                                        EmailProviderName=pr.Name
+                                        EmailProviderName=pr.Name,
+                                        MonthlyQuota = q.MonthlyQuota,
+                                        TotalQuota = q.TotalQuota,
+                                        IsRestrictedByQuota = q.TotalQuota != -1 && q.MonthlyQuota != -1
                                     }).ToList();
                 
                 response.Status = true;
