@@ -51,23 +51,30 @@ namespace Nvg.EmailService.Data.EmailHistory
             {
                 var emailHistories = new List<EmailHistoryTable>();
 
-                if (!string.IsNullOrEmpty(tag))
                     emailHistories = (from h in _context.EmailHistories
                                     join c in _context.EmailChannels on h.EmailChannelID equals c.ID
-                                    where c.Key.ToLower().Equals(channelKey.ToLower()) && h.Tags.ToLower().Equals(tag.ToLower())
-                                    select h).ToList();
-                else
-                    emailHistories = (from h in _context.EmailHistories
-                                    join c in _context.EmailChannels on h.EmailChannelID equals c.ID
-                                    where c.Key.ToLower().Equals(channelKey.ToLower())
-                                    select h).ToList();
+                                    join pr in _context.EmailProviders on h.EmailProviderID equals pr.ID
+                                    where c.Key.ToLower().Equals(channelKey.ToLower()) && (string.IsNullOrEmpty(tag) || h.Tags.ToLower().Equals(tag.ToLower()))
+                                    select new EmailHistoryTable { 
+                                    ID=h.ID,
+                                    Sender=h.Sender,
+                                    SentOn=h.SentOn,
+                                    Recipients=h.Recipients,
+                                    Attempts=h.Attempts,
+                                    Tags=h.Tags,
+                                    Status=h.Status,
+                                    ChannelKey=c.Key,
+                                    ProviderName=pr.Name,
+                                    MessageSent=h.MessageSent,
+                                    EmailChannelID=h.EmailChannelID,
+                                    EmailProviderID=h.EmailProviderID,
+                                    TemplateName=h.TemplateName,
+                                    TemplateVariant=h.TemplateVariant
+                                    }).ToList();
 
-                if (emailHistories.Count != 0)
-                    response.Status = true;
-                else
-                    response.Status = false;
-
-                response.Message = $"Retrieved {emailHistories.Count} Email histories data for pool {tag}";
+                
+                response.Status = true;
+                response.Message = $"Retrieved {emailHistories.Count} Email histories data for pool";
                 response.Result = emailHistories;
                 return response;
             }

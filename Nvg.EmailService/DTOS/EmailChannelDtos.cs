@@ -29,6 +29,7 @@ namespace Nvg.EmailService.DTOS
         {
             CreateMap<EmailChannelDto, EmailChannelTable>().ReverseMap();
             CreateMap<EmailResponseDto<EmailChannelTable>, EmailResponseDto<EmailChannelDto>>();
+            CreateMap<EmailResponseDto<List<EmailChannelTable>>, EmailResponseDto<List<EmailChannelDto>>>();
         }
     }
 }

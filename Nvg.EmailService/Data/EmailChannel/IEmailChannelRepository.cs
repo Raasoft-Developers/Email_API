@@ -1,12 +1,13 @@
 ﻿using Nvg.EmailService.Data.Entities;
 using Nvg.EmailService.DTOS;
+using System.Collections.Generic;
 
 namespace Nvg.EmailService.Data.EmailChannel
 {
     public interface IEmailChannelRepository
     {
         /// <summary>
-        /// Adds the email channel to the database.
+        /// Adds/Updates the email channel to the database.
         /// </summary>
         /// <param name="channelInput"><see cref="EmailChannelTable"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/> model</returns>
@@ -32,6 +33,28 @@ namespace Nvg.EmailService.Data.EmailChannel
         /// <param name="channelKey">Channel Key</param>
         /// <returns><see cref="EmailResponseDto{T}"/> model</returns>
         EmailResponseDto<bool> CheckIfChannelExist(string channelKey);
+
+        /// <summary>
+        /// Gets the email channels in the database.
+        /// </summary>
+        /// <param name="poolID">Pool ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/> model</returns>
+        EmailResponseDto<List<EmailChannelTable>> GetEmailChannels(string poolID);
+
+        /// <summary>
+        /// Delete the email channel in the database.
+        /// </summary>
+        /// <param name="channelID">Channel ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/> model</returns>
+        EmailResponseDto<string> DeleteEmailChannel(string channelID);
+
+        /// <summary>
+        /// Gets the email channel keys in the database.
+        /// </summary>
+        /// <returns><see cref="EmailResponseDto{T}"/> model</returns>
+        EmailResponseDto<List<EmailChannelTable>> GetEmailChannelKeys();
+
+        EmailResponseDto<EmailChannelTable> GetEmailChannelByID(string channelID);
 
         /// <summary>
         /// Checks if Channel ID is valid.

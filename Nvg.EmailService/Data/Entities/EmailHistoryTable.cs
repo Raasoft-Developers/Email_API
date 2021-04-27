@@ -18,9 +18,13 @@ namespace Nvg.EmailService.Data.Entities
         public string TemplateName { get; set; }
         public string TemplateVariant { get; set; }
         public string EmailChannelID { get; set; }
+        [NotMapped]
+        public string ChannelKey { get; set; }
         [ForeignKey("EmailChannelID")]
         public EmailChannelTable EmailChannel { get; set; }
         public string EmailProviderID { get; set; }
+        [NotMapped]
+        public string ProviderName { get; set; }
         [ForeignKey("EmailProviderID")]
         public EmailProviderSettingsTable EmailProvider { get; set; }
         public string Tags { get; set; }

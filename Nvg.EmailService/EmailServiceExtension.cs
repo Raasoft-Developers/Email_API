@@ -27,7 +27,7 @@ namespace Nvg.EmailService
         public static void AddEmailServices(this IServiceCollection services, string microservice, string databaseProvider)
         {
             services.AddScoped<IEmailEventInteractor, EmailEventInteractor>();
-
+            services.AddScoped<IEmailManagementInteractor, EmailManagementInteractor>();
             services.AddScoped<IEmailInteractor, EmailInteractor>();
 
             services.AddScoped<IEmailChannelRepository, EmailChannelRepository>();

@@ -9,7 +9,7 @@ namespace Nvg.EmailService.Data.EmailProvider
     public interface IEmailProviderRepository
     {
         /// <summary>
-        /// Adds the email provider to the database.
+        /// Adds/Updates the email provider to the database.
         /// </summary>
         /// <param name="providerInput"><see cref="EmailProviderSettingsTable"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
@@ -43,6 +43,27 @@ namespace Nvg.EmailService.Data.EmailProvider
         /// <param name="providerName">Provider Name</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<List<EmailProviderSettingsTable>> GetEmailProvidersByPool(string poolName, string providerName);
+
+        /// <summary>
+        /// Gets all the email provider settings.
+        /// </summary>
+        /// <param name="poolName">Pool name</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<List<EmailProviderSettingsTable>> GetEmailProviders(string poolName);
+
+        /// <summary>
+        /// Gets all the email provider Names.
+        /// </summary>
+        /// <param name="poolID">Pool ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<List<EmailProviderSettingsTable>> GetEmailProviderNames(string poolID);
+
+        /// <summary>
+        /// Delete the email provider to the database.
+        /// </summary>
+        /// <param name="providerInput"><see cref="EmailProviderSettingsTable"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<string> DeleteEmailProvider(string providerID);
 
         /// <summary>
         /// Checks if the Provider ID exists in the database.

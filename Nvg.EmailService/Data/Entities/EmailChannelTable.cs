@@ -14,10 +14,14 @@ namespace Nvg.EmailService.Data.Entities
         public string Key { get; set; }
 
         public string EmailPoolID { get; set; }
+        [NotMapped]
+        public string EmailPoolName { get; set; }
         [ForeignKey("EmailPoolID")]
         public EmailPoolTable EmailPool { get; set; }
 
         public string EmailProviderID { get; set; }
+        [NotMapped]
+        public string EmailProviderName { get; set; }
         [ForeignKey("EmailProviderID")]
         public EmailProviderSettingsTable EmailProvider { get; set; }
     }

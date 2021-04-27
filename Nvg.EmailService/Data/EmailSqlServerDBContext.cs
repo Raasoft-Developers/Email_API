@@ -24,6 +24,9 @@ namespace Nvg.EmailService.Data
             modelBuilder.Entity<EmailPoolTable>()
                 .HasIndex(p => p.Name)
                 .IsUnique(true);
+            modelBuilder.Entity<EmailChannelTable>()
+             .HasIndex(x => x.Key).IsUnique(true);
+
         }
     }
 }
