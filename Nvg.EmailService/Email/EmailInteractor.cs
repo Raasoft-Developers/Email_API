@@ -291,7 +291,7 @@ namespace Nvg.EmailService.Email
                 if (isExceeded)
                 {
                     _logger.LogError($"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.");
-                    response.Status = isExceeded;
+                    response.Status = !isExceeded;
                     response.Message = $"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.";
                     return response;
                 }
