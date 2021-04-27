@@ -104,7 +104,7 @@ namespace Nvg.EmailService.Data.EmailChannel
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
         /// <returns><see cref="EmailResponseDto{EmailChannelTable}"/> model</returns>
-        public EmailResponseDto<EmailChannelTable> GetEmailChannelByKey(string channelKey)
+        public EmailResponseDto<EmailChannelDto> GetEmailChannelByKey(string channelKey)
         {
             var response = new EmailResponseDto<EmailChannelDto>();
             try
