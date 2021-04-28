@@ -59,7 +59,7 @@ namespace Nvg.EmailService.EmailQuota
                     if(emailQuota.CurrentMonth == currentMonth)
                     {
                         //Check if quota is exceeded for current month
-                        if (emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
+                        if (emailQuota.TotalQuota != -1 && emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
                         {
                             response = true;
                         }
@@ -72,7 +72,7 @@ namespace Nvg.EmailService.EmailQuota
                             _logger.LogDebug("Status: " + updatedQuotaResponse.Status + ", Message: " + updatedQuotaResponse.Message);
                             emailQuota = updatedQuotaResponse.Result;
                             //Check if quota is exceeded for current month
-                            if (emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
+                            if (emailQuota.TotalQuota != -1 && emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
                             {
                                 response = true;
                             }
