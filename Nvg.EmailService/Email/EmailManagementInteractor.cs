@@ -280,10 +280,10 @@ namespace Nvg.EmailService.Email
                 _logger.LogInformation("Trying to add EmailChannel.");
                 var mappedEmailInput = _mapper.Map<EmailChannelTable>(channelInput);
                 var response = _emailChannelRepository.AddEmailChannel(mappedEmailInput);
-                if (response.Status)
+                if (response.Status && channelInput.IsRestrictedByQuota)
                 {
                     channelInput.ID = response.Result.ID;
-                    //If channel has been added, add email quota for channel
+                    //If channel has been added and channel isRestrictedByQuota, add email quota for channel
                     _emailQuotaRepository.AddEmailQuota(channelInput);
                 }
                 channelResponse = _mapper.Map<EmailResponseDto<EmailChannelDto>>(response);

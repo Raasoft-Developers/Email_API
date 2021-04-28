@@ -108,9 +108,9 @@ namespace Nvg.EmailService.Email
             {
                 _logger.LogInformation("Trying to add EmailChannel.");
                 channelResponse = _emailChannelInteractor.AddEmailChannel(channelInput);
-                if(channelResponse.Status)
+                if(channelResponse.Status && channelInput.IsRestrictedByQuota)
                 {
-                    //If channel has been added, add email quota for channel
+                    //If channel has been added and channel isRestrictedByQuota, add email quota for channel
                     _emailQuotaInteractor.AddEmailQuota(channelInput);
                 }
                 _logger.LogDebug("" + channelResponse.Message);

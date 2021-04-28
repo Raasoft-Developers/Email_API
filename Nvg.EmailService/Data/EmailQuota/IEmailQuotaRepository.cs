@@ -16,11 +16,11 @@ namespace Nvg.EmailService.Data.EmailQuota
         EmailResponseDto<EmailQuotaTable> GetEmailQuota(string channelKey);
 
         /// <summary>
-        /// Updates the Consumption value in Email Quota .
+        /// Increments the Consumption value in Email Quota .
         /// </summary>
         /// <param name="channelID">Channel Id</param>
         /// <returns><see cref="EmailResponseDto{EmailQuotaTable}"/></returns>
-        EmailResponseDto<EmailQuotaTable> UpdateEmailQuota(string channelID);
+        EmailResponseDto<EmailQuotaTable> IncrementEmailQuota(string channelID);
 
         /// <summary>
         /// Updates the Email Quota.

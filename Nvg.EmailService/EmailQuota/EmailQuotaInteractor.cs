@@ -59,7 +59,7 @@ namespace Nvg.EmailService.EmailQuota
                     if(emailQuota.CurrentMonth == currentMonth)
                     {
                         //Check if quota is exceeded for current month
-                        if (emailQuota.MonthlyQuota != -1 && emailQuota.TotalQuota != -1 && emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
+                        if (emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
                         {
                             response = true;
                         }
@@ -72,7 +72,7 @@ namespace Nvg.EmailService.EmailQuota
                             _logger.LogDebug("Status: " + updatedQuotaResponse.Status + ", Message: " + updatedQuotaResponse.Message);
                             emailQuota = updatedQuotaResponse.Result;
                             //Check if quota is exceeded for current month
-                            if (emailQuota.MonthlyQuota != -1 && emailQuota.TotalQuota != -1 && emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
+                            if (emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
                             {
                                 response = true;
                             }
@@ -108,14 +108,14 @@ namespace Nvg.EmailService.EmailQuota
                 return response;
             }
         }
-        public EmailResponseDto<EmailQuotaDto> UpdateEmailQuota(string channelKey)
+        public EmailResponseDto<EmailQuotaDto> IncrementEmailQuota(string channelKey)
         {
             _logger.LogInformation("UpdateEmailQuota interactor method.");
             var response = new EmailResponseDto<EmailQuotaDto>();
             try
             {
                 var channelID = _emailChannelRepository.GetEmailChannelByKey(channelKey)?.Result?.ID;
-                var emailQuotaResponse = _emailQuotaRepository.UpdateEmailQuota(channelID);
+                var emailQuotaResponse = _emailQuotaRepository.IncrementEmailQuota(channelID);
                 _logger.LogDebug("Status: "+emailQuotaResponse.Status+"Message:" + emailQuotaResponse.Message);
                 var mappedResponse = _mapper.Map<EmailResponseDto<EmailQuotaDto>>(emailQuotaResponse);
                 return mappedResponse;

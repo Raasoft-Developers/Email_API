@@ -70,7 +70,7 @@ namespace Nvg.EmailService.Data.EmailQuota
                 return response;
             }
         }
-        public EmailResponseDto<EmailQuotaTable> UpdateEmailQuota(string channelID)
+        public EmailResponseDto<EmailQuotaTable> IncrementEmailQuota(string channelID)
         {
             var response = new EmailResponseDto<EmailQuotaTable>();
             try
@@ -87,16 +87,9 @@ namespace Nvg.EmailService.Data.EmailQuota
                 }
                 else
                 {
-                    emailQuota = new EmailQuotaTable()
-                    {
-                        EmailChannelID = channelID,
-                        MonthlyQuota = -1,
-                        TotalQuota = -1,
-                        MonthlyConsumption = 1,
-                        TotalConsumption = 1,
-                        CurrentMonth = DateTime.Now.ToString("MMM").ToUpper()
-                    };
-                    _context.EmailQuotas.Add(emailQuota);
+                    response.Status = false;
+                    response.Message = $"Email Quota does not exist for Channel ID {channelID}";
+                    response.Result = emailQuota;
                 }
                 if (_context.SaveChanges() == 1)
                 {
@@ -124,10 +117,10 @@ namespace Nvg.EmailService.Data.EmailQuota
                     emailQuota = new EmailQuotaTable()
                     {
                         EmailChannelID = emailChannel.ID,
-                        MonthlyQuota = emailChannel.IsRestrictedByQuota ? emailChannel.MonthlyQuota : -1,
+                        MonthlyQuota =  emailChannel.MonthlyQuota ,
                         MonthlyConsumption = 0,
                         TotalConsumption = 0,
-                        TotalQuota = emailChannel.IsRestrictedByQuota ? emailChannel.TotalQuota : -1,
+                        TotalQuota =  emailChannel.TotalQuota ,
                         CurrentMonth = DateTime.Now.ToString("MMM").ToUpper()
                     };
                     _context.EmailQuotas.Add(emailQuota);
@@ -162,14 +155,31 @@ namespace Nvg.EmailService.Data.EmailQuota
                 var emailQuota = _context.EmailQuotas.FirstOrDefault(q => q.EmailChannelID == emailChannel.ID);
                 if (emailQuota != null)
                 {
-                    emailQuota.TotalQuota = emailChannel.IsRestrictedByQuota ? emailChannel.TotalQuota : -1;
-                    emailQuota.MonthlyQuota = emailChannel.IsRestrictedByQuota ? emailChannel.MonthlyQuota : -1;
+                    if (emailChannel.IsRestrictedByQuota)
+                    {
+                        emailQuota.TotalQuota = emailChannel.TotalQuota;
+                        emailQuota.MonthlyQuota =emailChannel.MonthlyQuota;
+                    }
+                    else
+                    {
+                        _context.EmailQuotas.Remove(emailQuota);
+                    }
                 }
                 else
                 {
-                    response.Status = false;
-                    response.Message = $"Email Quota does not exist for provided channel ID : {emailChannel.ID}";
-                    response.Result = emailQuota;
+                    if (!emailChannel.IsRestrictedByQuota)
+                    {
+                        emailQuota = new EmailQuotaTable()
+                        {
+                            EmailChannelID = emailChannel.ID,
+                            MonthlyQuota = emailChannel.IsRestrictedByQuota ? emailChannel.MonthlyQuota : -1,
+                            MonthlyConsumption = 0,
+                            TotalConsumption = 0,
+                            TotalQuota = emailChannel.IsRestrictedByQuota ? emailChannel.TotalQuota : -1,
+                            CurrentMonth = DateTime.Now.ToString("MMM").ToUpper()
+                        };
+                        _context.EmailQuotas.Add(emailQuota);
+                    }
                 }
                 if (_context.SaveChanges() > 0)
                 {
