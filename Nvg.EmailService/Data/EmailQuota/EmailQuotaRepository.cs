@@ -167,15 +167,15 @@ namespace Nvg.EmailService.Data.EmailQuota
                 }
                 else
                 {
-                    if (!emailChannel.IsRestrictedByQuota)
+                    if (emailChannel.IsRestrictedByQuota)
                     {
                         emailQuota = new EmailQuotaTable()
                         {
                             EmailChannelID = emailChannel.ID,
-                            MonthlyQuota = emailChannel.IsRestrictedByQuota ? emailChannel.MonthlyQuota : -1,
+                            MonthlyQuota =  emailChannel.MonthlyQuota ,
                             MonthlyConsumption = 0,
                             TotalConsumption = 0,
-                            TotalQuota = emailChannel.IsRestrictedByQuota ? emailChannel.TotalQuota : -1,
+                            TotalQuota = emailChannel.TotalQuota ,
                             CurrentMonth = DateTime.Now.ToString("MMM").ToUpper()
                         };
                         _context.EmailQuotas.Add(emailQuota);
