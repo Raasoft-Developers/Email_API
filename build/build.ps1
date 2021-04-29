@@ -3,12 +3,8 @@ Param(
 )
 #$basePath=".."
 $dockerFiles=@(
-@{name='apivts';path='/Api.VTS/Dockerfile'}
-@{name='websharelink';path='/Services/ShareLink/Web.ShareLink/Dockerfile'}
-@{name='apigeofence';path='/Services/Geofence/API.Geofence/Dockerfile'}
-@{name='apinotifier';path='/Services/NotifierService/API.Notifier/Dockerfile'}
-@{name='apireports';path='/Services/Reports/API.Reports/Dockerfile'}
-
+@{name='nvgapiemail';path='/Nvg.Api.Email/Dockerfile'}
+@{name='nvgemailbackgroundtask';path='/Nvg.EmailBackgroundTask/Dockerfile'}
 )
 if($num -eq "*"){
 For($i=0;$i -lt $dockerFiles.Count;$i++){
