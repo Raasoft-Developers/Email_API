@@ -30,7 +30,7 @@ steps:
       ./get_helm.sh
       #Add kubeconfig file  
       mkdir .kube
-      sudo cp $(Build.SourcesDirectory)/helm/config $HOME/.kube/
+      sudo cp $(Build.SourcesDirectory)/pipelines/config $HOME/.kube/
 
 - task: PowerShell@2
   inputs:
@@ -82,5 +82,5 @@ steps:
       $commitMessage="$(Build.SourceVersionMessage)"
       $commitMessage
       if($commitMessage -Match "{deploy}"){
-        #helm/rollout.ps1 -imageTag ${env:VERSIONNUMBER} -num ${env:SERVICES}
+        helm/rollout.ps1 -imageTag ${env:VERSIONNUMBER} -num ${env:SERVICES}
       }
