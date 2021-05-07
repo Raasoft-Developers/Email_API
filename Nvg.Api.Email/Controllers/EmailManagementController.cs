@@ -20,15 +20,13 @@ namespace Nvg.Api.Email.Controllers
     public class EmailManagementController : ControllerBase
     {
         private readonly IEmailManagementInteractor _emailManagementInteractor;
-        private readonly IEmailInteractor _emailInteractor;
         private readonly ILogger<EmailManagementController> _logger;
         private IConfiguration _config;
 
-        public EmailManagementController(IEmailManagementInteractor emailManagementInteractor, IEmailInteractor emailInteractor,
+        public EmailManagementController(IEmailManagementInteractor emailManagementInteractor,
             IConfiguration config, ILogger<EmailManagementController> logger)
         {
             _emailManagementInteractor = emailManagementInteractor;
-            _emailInteractor = emailInteractor;
             _logger = logger;
             _config = config;
         }
@@ -88,6 +86,48 @@ namespace Nvg.Api.Email.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("Internal server error: Error occurred while getting email pool names: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        /// <summary>
+        /// API to add email pool to the database table.
+        /// </summary>
+        /// <param name="poolInput"><see cref="EmailPoolDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        [HttpPost]
+        public ActionResult AddEmailPool(EmailPoolDto poolInput)
+        {
+            _logger.LogInformation("AddEmailPool action method.");
+            _logger.LogDebug("EmailPoolName: " + poolInput.Name);
+            EmailResponseDto<EmailPoolDto> poolResponse = new EmailResponseDto<EmailPoolDto>();
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(poolInput.Name))
+                {
+                    poolResponse = _emailManagementInteractor.AddEmailPool(poolInput);
+                    if (poolResponse.Status)
+                    {
+                        _logger.LogDebug("Status: " + poolResponse.Status + ", " + poolResponse.Message);
+                        return Ok(poolResponse);
+                    }
+                    else
+                    {
+                        _logger.LogError("Status: " + poolResponse.Status + ", " + poolResponse.Message);
+                        return StatusCode((int)HttpStatusCode.PreconditionFailed, poolResponse);
+                    }
+                }
+                else
+                {
+                    poolResponse.Status = false;
+                    poolResponse.Message = "Pool Name cannot be empty or whitespace.";
+                    _logger.LogError("Status: " + poolResponse.Status + ", " + poolResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, poolResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while adding email pool: " + ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
         }
@@ -807,6 +847,37 @@ namespace Nvg.Api.Email.Controllers
             }
         }
         #endregion
+
+        /// <summary>
+        /// API to send emails.
+        /// </summary>
+        /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        [HttpPost]
+        public ActionResult SendMail(EmailDto emailInputs)
+        {
+            _logger.LogInformation("SendMail action method.");
+            //_logger.LogDebug($"Recipients: {emailInputs.Recipients}, ChannelKey: {emailInputs.ChannelKey}, Body: {emailInputs.Body}, Sender: {emailInputs.Sender}, TemplateName: {emailInputs.TemplateName}");
+            try
+            {
+                var emailResponse = _emailManagementInteractor.SendMail(emailInputs);
+                if (emailResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + emailResponse.Status + ", " + emailResponse.Message);
+                    return Ok(emailResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + emailResponse.Status + ", " + emailResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, emailResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while trying to send email: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
 
         /// <summary>
         /// Gets the API document URL.

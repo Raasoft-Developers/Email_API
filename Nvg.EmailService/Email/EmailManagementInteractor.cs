@@ -18,6 +18,7 @@ namespace Nvg.EmailService.Email
     public class EmailManagementInteractor : IEmailManagementInteractor
     {
         private readonly IMapper _mapper;
+        private readonly IEmailEventInteractor _emailEventInteractor;
         private readonly IEmailPoolRepository _emailPoolRepository;
         private readonly IEmailProviderRepository _emailProviderRepository;
         private readonly IEmailChannelRepository _emailChannelRepository;
@@ -26,11 +27,12 @@ namespace Nvg.EmailService.Email
         private readonly IEmailHistoryRepository _emailHistoryRepository;
         private readonly ILogger<EmailManagementInteractor> _logger;
 
-        public EmailManagementInteractor(IMapper mapper, IEmailPoolRepository emailPoolRepository, IEmailProviderRepository emailProviderRepository,
+        public EmailManagementInteractor(IMapper mapper, IEmailEventInteractor emailEventInteractor, IEmailPoolRepository emailPoolRepository, IEmailProviderRepository emailProviderRepository,
             IEmailChannelRepository emailChannelRepository, IEmailTemplateRepository emailTemplateRepository, IEmailProviderInteractor emailProviderInteractor,
             IEmailHistoryRepository emailHistoryRepository, ILogger<EmailManagementInteractor> logger)
         {
             _mapper = mapper;
+            _emailEventInteractor = emailEventInteractor;
             _emailPoolRepository = emailPoolRepository;
             _emailProviderRepository = emailProviderRepository;
             _emailChannelRepository = emailChannelRepository;
@@ -40,6 +42,29 @@ namespace Nvg.EmailService.Email
             _logger = logger;
         }
         #region Email Pool
+
+        public EmailResponseDto<EmailPoolDto> AddEmailPool(EmailPoolDto poolInput)
+        {
+            _logger.LogInformation("AddEmailPool interactor method.");
+            EmailResponseDto<EmailPoolDto> poolResponse = new EmailResponseDto<EmailPoolDto>();
+            try
+            {
+                _logger.LogInformation("Trying to add EmailPool.");
+                var mappedEmailInput = _mapper.Map<EmailPoolTable>(poolInput);
+                var response = _emailPoolRepository.AddEmailPool(mappedEmailInput);
+                poolResponse = _mapper.Map<EmailResponseDto<EmailPoolDto>>(response);
+                _logger.LogDebug("Status: " + poolResponse.Status + ", " + poolResponse.Message);
+                return poolResponse;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred in Email Interactor while adding email pool: ", ex.Message);
+                poolResponse.Message = "Error occurred while adding email pool: " + ex.Message;
+                poolResponse.Status = false;
+                return poolResponse;
+            }
+        }
+
         public EmailResponseDto<List<EmailPoolDto>> GetEmailPools()
         {
             _logger.LogInformation("GetEmailPools interactor method.");
@@ -549,62 +574,62 @@ namespace Nvg.EmailService.Email
         }
         #endregion
 
-        //public EmailResponseDto<string> SendMail(EmailDto emailInputs)
-        //{
-        //    _logger.LogInformation("SendMail interactor method.");
-        //    var response = new EmailResponseDto<string>();
-        //    try
-        //    {
-        //        if (string.IsNullOrEmpty(emailInputs.ChannelKey))
-        //        {
-        //            _logger.LogError("Channel key cannot be blank.");
-        //            response.Status = false;
-        //            response.Message = "Channel key cannot be blank.";
-        //            return response;
-        //        }
-        //        else
-        //        {
-        //            var channelExist = _emailChannelInteractor.CheckIfChannelExist(emailInputs.ChannelKey).Result;
-        //            if (!channelExist)
-        //            {
-        //                _logger.LogError($"Invalid Channel key {emailInputs.ChannelKey}.");
-        //                response.Status = channelExist;
-        //                response.Message = $"Invalid Channel key {emailInputs.ChannelKey}.";
-        //                return response;
-        //            }
-        //        }
-        //        if (string.IsNullOrEmpty(emailInputs.TemplateName))
-        //        {
-        //            _logger.LogError($"Template name cannot be blank.");
-        //            response.Status = false;
-        //            response.Message = "Template name cannot be blank.";
-        //            return response;
-        //        }
-        //        else
-        //        {
-        //            var templateExist = _emailTemplateInteractor.CheckIfTemplateExist(emailInputs.ChannelKey, emailInputs.TemplateName).Result;
-        //            if (!templateExist)
-        //            {
-        //                _logger.LogError($"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.");
-        //                response.Status = templateExist;
-        //                response.Message = $"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.";
-        //                return response;
-        //            }
-        //        }
-        //        _logger.LogInformation("Trying to send Email.");
-        //        _emailEventInteractor.SendMail(emailInputs);
-        //        response.Status = true;
-        //        response.Message = $"Email is sent successfully to {emailInputs.Recipients}.";
-        //        _logger.LogDebug("" + response.Message);
-        //        return response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError("Error occurred in Email Interactor while sending email: ", ex.Message);
-        //        response.Status = false;
-        //        response.Message = ex.Message;
-        //        return response;
-        //    }
-        //}
+        public EmailResponseDto<string> SendMail(EmailDto emailInputs)
+        {
+            _logger.LogInformation("SendMail interactor method.");
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                if (string.IsNullOrEmpty(emailInputs.ChannelKey))
+                {
+                    _logger.LogError("Channel key cannot be blank.");
+                    response.Status = false;
+                    response.Message = "Channel key cannot be blank.";
+                    return response;
+                }
+                else
+                {
+                    var channelExist = _emailChannelRepository.CheckIfChannelExist(emailInputs.ChannelKey).Result;
+                    if (!channelExist)
+                    {
+                        _logger.LogError($"Invalid Channel key {emailInputs.ChannelKey}.");
+                        response.Status = channelExist;
+                        response.Message = $"Invalid Channel key {emailInputs.ChannelKey}.";
+                        return response;
+                    }
+                }
+                if (string.IsNullOrEmpty(emailInputs.TemplateName))
+                {
+                    _logger.LogError($"Template name cannot be blank.");
+                    response.Status = false;
+                    response.Message = "Template name cannot be blank.";
+                    return response;
+                }
+                else
+                {
+                    var templateExist = _emailTemplateRepository.CheckIfTemplateExist(emailInputs.ChannelKey, emailInputs.TemplateName).Result;
+                    if (!templateExist)
+                    {
+                        _logger.LogError($"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.");
+                        response.Status = templateExist;
+                        response.Message = $"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.";
+                        return response;
+                    }
+                }
+                _logger.LogInformation("Trying to send Email.");
+                _emailEventInteractor.SendMail(emailInputs);
+                response.Status = true;
+                response.Message = $"Email is sent successfully to {emailInputs.Recipients}.";
+                _logger.LogDebug("" + response.Message);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred in Email Interactor while sending email: ", ex.Message);
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
     }
 }

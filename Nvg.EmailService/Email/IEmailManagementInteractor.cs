@@ -21,6 +21,13 @@ namespace Nvg.EmailService.Email
         EmailResponseDto<List<EmailPoolDto>> GetEmailPoolNames();
 
         /// <summary>
+        /// Adds the email pool to database.
+        /// </summary>
+        /// <param name="poolInput"><see cref="EmailPoolDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<EmailPoolDto> AddEmailPool(EmailPoolDto poolInput);
+
+        /// <summary>
         /// Updates the email pool into the database.
         /// </summary>
         /// <param name="emailPoolInput"><see cref="EmailPoolDto"/> model</param>
@@ -156,5 +163,13 @@ namespace Nvg.EmailService.Email
 
         EmailResponseDto<List<EmailHistoryDto>> GetEmailHistories(string channelID, string tag);
         #endregion
+
+
+        /// <summary>
+        /// Method to send an email.
+        /// </summary>
+        /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<string> SendMail(EmailDto emailInputs);
     }
 }
