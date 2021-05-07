@@ -19,7 +19,7 @@ namespace Nvg.EmailService.Data
             //string connectionString = "host=db-postgresql-blr1-95081-do-user-7578230-0.a.db.ondigitalocean.com;Database=tv_etms;User ID =nyletech;Password=Nyle@123;Port=25061;Integrated Security=true;Pooling=true;sslmode=Require;Trust Server Certificate=true;Server Compatibility Mode=Redshift;";
             //optionsBuilder.UseNpgsql(connectionString);
 
-            optionsBuilder.UseNpgsql("Email-ConnectionString");
+            //optionsBuilder.UseNpgsql("Email-ConnectionString");
             return new EmailPgSqlDBContext(optionsBuilder.Options,"Email"); // TODO: Should avoid hardcoding of schema.
         }
     }
@@ -30,8 +30,8 @@ namespace Nvg.EmailService.Data
         {
             var optionsBuilder = new DbContextOptionsBuilder<EmailSqlServerDBContext>();
             // For Removing migration or Updating the database, uncomment line number 33 and 34 and comment 36.
-            //string connectionString = "host=db-postgresql-blr1-95081-do-user-7578230-0.a.db.ondigitalocean.com;Database=tv_etms;User ID =nyletech;Password=Nyle@123;Port=25061;Integrated Security=true;Pooling=true;sslmode=Require;Trust Server Certificate=true;Server Compatibility Mode=Redshift;";
-            //optionsBuilder.UseNpgsql(connectionString);
+            //string connectionString = "Server=LAP00257\\SQLEXPRESS17;Database=TestEmailDB;Trusted_Connection=true;MultipleActiveResultSets=true";
+            //optionsBuilder.UseSqlServer(connectionString);
 
             // Comment line number 33 and 34 and uncomment 36 before creating new migration
             optionsBuilder.UseSqlServer("Email-ConnectionString");
