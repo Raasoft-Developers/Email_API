@@ -16,7 +16,7 @@ namespace Nvg.Api.Email.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "SuperAdmin")]
     public class EmailManagementController : ControllerBase
     {
         private readonly IEmailManagementInteractor _emailManagementInteractor;
