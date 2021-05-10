@@ -16,11 +16,6 @@ namespace Nvg.EmailService.Data.EmailChannel
             _context = context;
         }
 
-        /// <summary>
-        /// Adds the email channel to the database.
-        /// </summary>
-        /// <param name="channelInput"><see cref="EmailChannelTable"/> model</param>
-        /// <returns><see cref="EmailResponseDto{EmailChannelTable}"/> model</returns>
         public EmailResponseDto<EmailChannelTable> AddEmailChannel(EmailChannelTable channelInput)
         {
             var response = new EmailResponseDto<EmailChannelTable>();
@@ -100,11 +95,6 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
 
-        /// <summary>
-        /// Gets the Channel by Channel Key.
-        /// </summary>
-        /// <param name="channelKey">Channel Key</param>
-        /// <returns><see cref="EmailResponseDto{EmailChannelTable}"/> model</returns>
         public EmailResponseDto<EmailChannelTable> GetEmailChannelByKey(string channelKey)
         {
             var response = new EmailResponseDto<EmailChannelTable>();
@@ -132,11 +122,6 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
 
-        /// <summary>
-        /// Gets the Channel by Channel ID.
-        /// </summary>
-        /// <param name="channelID">Channel Key</param>
-        /// <returns><see cref="EmailResponseDto{EmailChannelTable}"/> model</returns>
         public EmailResponseDto<EmailChannelTable> GetEmailChannelByID(string channelID)
         {
             var response = new EmailResponseDto<EmailChannelTable>();
@@ -163,11 +148,6 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
 
-        /// <summary>
-        /// Checks if the channel exists.
-        /// </summary>
-        /// <param name="channelKey">Channel Key</param>
-        /// <returns><see cref="EmailResponseDto{bool}"/> model</returns>
         public EmailResponseDto<bool> CheckIfChannelExist(string channelKey)
         {
             var response = new EmailResponseDto<bool>();

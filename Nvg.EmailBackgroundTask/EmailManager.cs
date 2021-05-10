@@ -28,6 +28,11 @@ namespace Nvg.EmailBackgroundTask
             _emailProviderConnectionString = emailProviderConnectionString;
             _logger = logger;
         }
+
+        /// <summary>
+        /// Sends the email via the respective provider mentioned in provider settings and updates the history and quota tables.
+        /// </summary>
+        /// <param name="email"><see cref="Email"/> model</param>
         public void SendEmail(Email email)
         {
             _logger.LogInformation($"SendEmail method hit.");

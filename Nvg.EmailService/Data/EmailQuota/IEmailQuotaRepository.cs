@@ -12,14 +12,14 @@ namespace Nvg.EmailService.Data.EmailQuota
         /// Gets the Email Quota by channel key.
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
-        /// <returns><see cref="EmailResponseDto{EmailQuotaTable}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<EmailQuotaTable> GetEmailQuota(string channelKey);
 
         /// <summary>
         /// Updates the Email Quota.
         /// </summary>
         /// <param name="channelID">Channel Id</param>
-        /// <returns><see cref="EmailResponseDto{EmailQuotaTable}"/></returns>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<EmailQuotaTable> UpdateEmailQuota(string channelID);
     }
 }

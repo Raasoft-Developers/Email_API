@@ -168,11 +168,6 @@ namespace Nvg.EmailService.Data.EmailProvider
                                     where sp.Name.ToLower().Equals(poolName.ToLower()) && (string.IsNullOrEmpty(providerName) || p.Name.ToLower().Equals(providerName.ToLower()))
                                     select p).ToList();
 
-                //if (emailProviders.Count != 0)
-                //{
-                //    if (!string.IsNullOrEmpty(providerName))
-                //        emailProviders = emailProviders.Where(s => s.Name.ToLower().Equals(providerName.ToLower())).ToList();                    
-                //}
                 response.Status = true;
                 response.Message = $"Retrieved {emailProviders.Count} Email providers data for pool {poolName}";
                 response.Result = emailProviders;

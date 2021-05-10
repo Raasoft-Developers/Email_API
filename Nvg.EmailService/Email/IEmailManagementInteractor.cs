@@ -160,7 +160,12 @@ namespace Nvg.EmailService.Email
         #endregion
 
         #region Email Histories
-
+        /// <summary>
+        /// Get the email histories by Channel.
+        /// </summary>
+        /// <param name="channelID">Channel ID</param>
+        /// <param name="tag">Tag</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<List<EmailHistoryDto>> GetEmailHistories(string channelID, string tag);
         #endregion
 

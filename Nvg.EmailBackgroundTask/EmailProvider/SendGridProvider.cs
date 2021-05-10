@@ -9,6 +9,9 @@ using SendGrid.Helpers.Mail;
 
 namespace Nvg.EmailBackgroundTask.EmailProvider
 {
+    /// <summary>
+    /// Send Grid Email Provider.
+    /// </summary>
     public class SendGridProvider : IEmailProvider
     {
         private readonly EmailProviderConnectionString _emailProviderCS;

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Nvg.EmailBackgroundTask.EmailProvider
 {
+    /// <summary>
+    /// SMTP Email Provider.
+    /// </summary>
     public class SMTPProvider : IEmailProvider
     {
         private readonly EmailProviderConnectionString _emailProviderCS;

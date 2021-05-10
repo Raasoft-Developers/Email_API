@@ -54,6 +54,11 @@ namespace Nvg.EmailService.Data.EmailChannel
         /// <returns><see cref="EmailResponseDto{T}"/> model</returns>
         EmailResponseDto<List<EmailChannelTable>> GetEmailChannelKeys();
 
+        /// <summary>
+        /// Gets the email channel details by channel ID.
+        /// </summary>
+        /// <param name="channelID">Channel ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/> model</returns>
         EmailResponseDto<EmailChannelTable> GetEmailChannelByID(string channelID);
 
         /// <summary>
