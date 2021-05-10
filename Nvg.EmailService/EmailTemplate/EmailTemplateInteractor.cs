@@ -39,8 +39,8 @@ namespace Nvg.EmailService.EmailTemplate
                 }
                 else
                 {
-                    var smsPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(templateInput.EmailPoolID, templateInput.EmailPoolName);
-                    if (!smsPool.Status)
+                    var emailPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(templateInput.EmailPoolID, templateInput.EmailPoolName);
+                    if (!emailPool.Status)
                     {
                         response.Status = false;
                         response.Message = "Email Pool ID and Name do not match.";
@@ -51,8 +51,8 @@ namespace Nvg.EmailService.EmailTemplate
             }
             else if (!string.IsNullOrEmpty(templateInput.EmailPoolID))
             {
-                var smsPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(templateInput.EmailPoolID);
-                if (!smsPool.Status)
+                var emailPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(templateInput.EmailPoolID);
+                if (!emailPool.Status)
                 {
                     response.Status = false;
                     response.Message = "Invalid Email Pool ID.";
@@ -93,8 +93,8 @@ namespace Nvg.EmailService.EmailTemplate
                 }
                 else
                 {
-                    var smsPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(templateInput.EmailPoolID, templateInput.EmailPoolName);
-                    if (!smsPool.Status)
+                    var emailPool = _emailPoolRepository.CheckIfEmailPoolIDNameValid(templateInput.EmailPoolID, templateInput.EmailPoolName);
+                    if (!emailPool.Status)
                     {
                         response.Status = false;
                         response.Message = "Email Pool ID and Name do not match.";
@@ -105,8 +105,8 @@ namespace Nvg.EmailService.EmailTemplate
             }
             else if (!string.IsNullOrEmpty(templateInput.EmailPoolID))
             {
-                var smsPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(templateInput.EmailPoolID);
-                if (!smsPool.Status)
+                var emailPool = _emailPoolRepository.CheckIfEmailPoolIDIsValid(templateInput.EmailPoolID);
+                if (!emailPool.Status)
                 {
                     response.Status = false;
                     response.Message = "Invalid Email Pool ID.";

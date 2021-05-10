@@ -280,8 +280,8 @@ namespace Nvg.EmailService.Data.EmailChannel
             var response = new EmailResponseDto<string>();
             try
             {
-                var smsPool = _context.EmailChannels.Any(sp => sp.ID.ToLower().Equals(channelID.ToLower()));
-                if (smsPool)
+                var emailPool = _context.EmailChannels.Any(sp => sp.ID.ToLower().Equals(channelID.ToLower()));
+                if (emailPool)
                 {
                     response.Status = true;
                     response.Message = $"Email Channel ID is valid.";
@@ -308,8 +308,8 @@ namespace Nvg.EmailService.Data.EmailChannel
             var response = new EmailResponseDto<string>();
             try
             {
-                var smsPool = _context.EmailChannels.Any(sp => sp.ID.ToLower().Equals(channelID.ToLower()) && sp.Key.ToLower().Equals(channelKey.ToLower()));
-                if (smsPool)
+                var emailPool = _context.EmailChannels.Any(sp => sp.ID.ToLower().Equals(channelID.ToLower()) && sp.Key.ToLower().Equals(channelKey.ToLower()));
+                if (emailPool)
                 {
                     response.Status = true;
                     response.Message = $"Valid Channel ID and Channel Key {channelKey}.";

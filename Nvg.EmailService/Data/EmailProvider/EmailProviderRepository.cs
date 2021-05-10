@@ -239,8 +239,8 @@ namespace Nvg.EmailService.Data.EmailProvider
             var response = new EmailResponseDto<string>();
             try
             {
-                var smsPool = _context.EmailProviders.Any(sp => sp.ID.ToLower().Equals(providerID.ToLower()));
-                if (smsPool)
+                var emailPool = _context.EmailProviders.Any(sp => sp.ID.ToLower().Equals(providerID.ToLower()));
+                if (emailPool)
                 {
                     response.Status = true;
                     response.Message = $"Email Provider ID is valid.";
@@ -267,8 +267,8 @@ namespace Nvg.EmailService.Data.EmailProvider
             var response = new EmailResponseDto<string>();
             try
             {
-                var smsPool = _context.EmailProviders.Any(sp => sp.ID.ToLower().Equals(providerID.ToLower()) && sp.Name.ToLower().Equals(providerName.ToLower()));
-                if (smsPool)
+                var emailPool = _context.EmailProviders.Any(sp => sp.ID.ToLower().Equals(providerID.ToLower()) && sp.Name.ToLower().Equals(providerName.ToLower()));
+                if (emailPool)
                 {
                     response.Status = true;
                     response.Message = $"Valid Provider ID and Provider Name {providerName}.";

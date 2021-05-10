@@ -198,8 +198,8 @@ namespace Nvg.EmailService.Data.EmailPool
             var response = new EmailResponseDto<string>();
             try
             {
-                var smsPool = _context.EmailPools.Any(sp => sp.ID.ToLower().Equals(poolID.ToLower()));
-                if (smsPool)
+                var emailPool = _context.EmailPools.Any(sp => sp.ID.ToLower().Equals(poolID.ToLower()));
+                if (emailPool)
                 {
                     response.Status = true;
                     response.Message = $"Email Pool ID is valid.";
@@ -226,8 +226,8 @@ namespace Nvg.EmailService.Data.EmailPool
             var response = new EmailResponseDto<string>();
             try
             {
-                var smsPool = _context.EmailPools.Any(sp => sp.ID.ToLower().Equals(poolID.ToLower()) && sp.Name.ToLower().Equals(poolName.ToLower()));
-                if (smsPool)
+                var emailPool = _context.EmailPools.Any(sp => sp.ID.ToLower().Equals(poolID.ToLower()) && sp.Name.ToLower().Equals(poolName.ToLower()));
+                if (emailPool)
                 {
                     response.Status = true;
                     response.Message = $"Valid Pool ID and Pool Name {poolName}.";

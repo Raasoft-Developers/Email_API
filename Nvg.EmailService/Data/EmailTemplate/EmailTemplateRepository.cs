@@ -145,9 +145,6 @@ namespace Nvg.EmailService.Data.EmailTemplate
             else
                 emailTemplate = emailQry.FirstOrDefault();
 
-            /*if (smsTemplate == null)
-                smsTemplate = _context.SMSTemplate.FirstOrDefault(t => t.Name == defaultTemplate);*/
-
             _logger.LogDebug($"Template used : {emailTemplate?.Name}");
 
             return emailTemplate;

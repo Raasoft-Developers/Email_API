@@ -814,7 +814,7 @@ namespace Nvg.Api.Email.Controllers
         }
         #endregion
 
-        #region email histores
+        #region email histories
         /// <summary>
         /// API to get the email history by channel key and tag.
         /// </summary>
