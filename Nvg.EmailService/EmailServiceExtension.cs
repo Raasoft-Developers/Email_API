@@ -84,7 +84,7 @@ namespace Nvg.EmailService
                     });
                     break;
             }
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
         }
 
     }

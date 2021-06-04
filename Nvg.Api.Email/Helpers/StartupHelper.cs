@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using AutoMapper;
 using EventBus.Abstractions;
 using EventBus.Subscription;
 using EventBusRabbitMQ;
@@ -7,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nvg.EmailService;
 using Nvg.EmailService.Data;
+using Nvg.EmailService.Data.Entities;
+using Nvg.EmailService.DTOS;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -63,6 +66,19 @@ namespace Nvg.Api.Email.Helpers
                 return new EventBusRabbitMQ.EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
             });
             services.AddSingleton<ISubscriptionManager, SubscriptionManager>();
+        }
+
+        public static void ConfigureAutoMapper(this IServiceCollection services)
+        {
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            var emailConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<EmailHistoryProfile>();
+                cfg.CreateMap<EmailHistoryTable, EmailHistoryDto>();
+            });
+            IMapper notificationMapper = new Mapper(emailConfig);
+            notificationMapper.Map<EmailHistoryTable, EmailHistoryDto>(new EmailHistoryTable());
         }
     }
 }

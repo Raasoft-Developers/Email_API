@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nvg.Api.Email.Models;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.Email;
 
@@ -21,13 +23,15 @@ namespace Nvg.Api.Email.Controllers
     {
         private readonly IEmailManagementInteractor _emailManagementInteractor;
         private readonly ILogger<EmailManagementController> _logger;
+        private readonly IMapper _mapper;
         private IConfiguration _config;
 
         public EmailManagementController(IEmailManagementInteractor emailManagementInteractor,
-            IConfiguration config, ILogger<EmailManagementController> logger)
+            IConfiguration config, ILogger<EmailManagementController> logger, IMapper mapper)
         {
             _emailManagementInteractor = emailManagementInteractor;
             _logger = logger;
+            _mapper = mapper;
             _config = config;
         }
 
@@ -93,10 +97,10 @@ namespace Nvg.Api.Email.Controllers
         /// <summary>
         /// API to add email pool to the database table.
         /// </summary>
-        /// <param name="poolInput"><see cref="EmailPoolDto"/> model</param>
+        /// <param name="poolInput"><see cref="PoolInput"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
-        public ActionResult AddEmailPool(EmailPoolDto poolInput)
+        public ActionResult AddEmailPool(PoolInput poolInput)
         {
             _logger.LogInformation("AddEmailPool action method.");
             _logger.LogDebug("EmailPoolName: " + poolInput.Name);
@@ -105,7 +109,8 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(poolInput.Name))
                 {
-                    poolResponse = _emailManagementInteractor.AddEmailPool(poolInput);
+                    var mappedInput = _mapper.Map<EmailPoolDto>(poolInput);
+                    poolResponse = _emailManagementInteractor.AddEmailPool(mappedInput);
                     if (poolResponse.Status)
                     {
                         _logger.LogDebug("Status: " + poolResponse.Status + ", " + poolResponse.Message);
@@ -135,10 +140,10 @@ namespace Nvg.Api.Email.Controllers
         /// <summary>
         /// API to update the Email Pool data.
         /// </summary>
-        /// <param name="poolInput"><see cref="EmailPoolDto"/></param>
+        /// <param name="poolInput"><see cref="PoolMgmtInput"/></param>
         /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
-        public ActionResult UpdateEmailPool(EmailPoolDto poolInput)
+        public ActionResult UpdateEmailPool(PoolMgmtInput poolInput)
         {
             _logger.LogInformation("UpdateEmailPool action method.");
             EmailResponseDto<EmailPoolDto> poolResponse = new EmailResponseDto<EmailPoolDto>();
@@ -146,7 +151,8 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(poolInput.Name))
                 {
-                    poolResponse = _emailManagementInteractor.UpdateEmailPool(poolInput);
+                    var mappedInput = _mapper.Map<EmailPoolDto>(poolInput);
+                    poolResponse = _emailManagementInteractor.UpdateEmailPool(mappedInput);
                     if (poolResponse.Status)
                     {
                         _logger.LogDebug("Status: " + poolResponse.Status + ", " + poolResponse.Message);
@@ -283,10 +289,10 @@ namespace Nvg.Api.Email.Controllers
         /// <summary>
         /// API to add the Email Providers.
         /// </summary>
-        /// <param name="providerInput"><see cref="EmailProviderSettingsDto"/> model</param>
+        /// <param name="providerInput"><see cref="ProviderInput"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
-        public ActionResult AddEmailProvider(EmailProviderSettingsDto providerInput)
+        public ActionResult AddEmailProvider(ProviderInput providerInput)
         {
             _logger.LogInformation("AddEmailProvider action method.");
             _logger.LogDebug("Pool Name: " + providerInput.EmailPoolName);
@@ -295,7 +301,8 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(providerInput.Configuration) && !string.IsNullOrWhiteSpace(providerInput.Type) && !string.IsNullOrWhiteSpace(providerInput.Name))
                 {
-                    providerResponse = _emailManagementInteractor.AddEmailProvider(providerInput);
+                    var mappedInput = _mapper.Map<EmailProviderSettingsDto>(providerInput);
+                    providerResponse = _emailManagementInteractor.AddEmailProvider(mappedInput);
                     if (providerResponse.Status)
                     {
                         _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
@@ -325,10 +332,10 @@ namespace Nvg.Api.Email.Controllers
         /// <summary>
         /// API to update the Email Providers.
         /// </summary>
-        /// <param name="providerInput"><see cref="EmailProviderSettingsDto"/> model</param>
+        /// <param name="providerInput"><see cref="ProviderMgmtInput"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
-        public ActionResult UpdateEmailProvider(EmailProviderSettingsDto providerInput)
+        public ActionResult UpdateEmailProvider(ProviderMgmtInput providerInput)
         {
             _logger.LogInformation("UpdateEmailProviders action method.");
             _logger.LogDebug("Pool Name: " + providerInput.EmailPoolName);
@@ -337,7 +344,8 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(providerInput.Configuration))
                 {
-                    providerResponse = _emailManagementInteractor.UpdateEmailProvider(providerInput);
+                    var mappedInput = _mapper.Map<EmailProviderSettingsDto>(providerInput);
+                    providerResponse = _emailManagementInteractor.UpdateEmailProvider(mappedInput);
                     if (providerResponse.Status)
                     {
                         _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
@@ -469,10 +477,10 @@ namespace Nvg.Api.Email.Controllers
         /// <summary>
         /// API to add the Email Channel.
         /// </summary>
-        /// <param name="channelInput"><see cref="EmailChannelDto"/></param>
+        /// <param name="channelInput"><see cref="ChannelInput"/></param>
         /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
-        public ActionResult AddEmailChannel(EmailChannelDto channelInput)
+        public ActionResult AddEmailChannel(ChannelInput channelInput)
         {
             _logger.LogInformation("AddEmailChannel action method.");
             _logger.LogDebug("Pool Name: " + channelInput.EmailPoolName);
@@ -481,7 +489,8 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(channelInput.Key))
                 {
-                    channelResponse = _emailManagementInteractor.AddEmailChannel(channelInput);
+                    var mappedInput = _mapper.Map<EmailChannelDto>(channelInput);
+                    channelResponse = _emailManagementInteractor.AddEmailChannel(mappedInput);
                     if (channelResponse.Status)
                     {
                         _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
@@ -511,10 +520,10 @@ namespace Nvg.Api.Email.Controllers
         /// <summary>
         /// API to update the Email Channel.
         /// </summary>
-        /// <param name="channelInput"><see cref="EmailChannelDto"/></param>
+        /// <param name="channelInput"><see cref="ChannelMgmtInput"/></param>
         /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
-        public ActionResult UpdateEmailChannel(EmailChannelDto channelInput)
+        public ActionResult UpdateEmailChannel(ChannelMgmtInput channelInput)
         {
             _logger.LogInformation("UpdateEmailChannel action method.");
             _logger.LogDebug("Pool Name: " + channelInput.EmailPoolName);
@@ -523,7 +532,8 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(channelInput.Key))
                 {
-                    channelResponse = _emailManagementInteractor.UpdateEmailChannel(channelInput);
+                    var mappedInput = _mapper.Map<EmailChannelDto>(channelInput);
+                    channelResponse = _emailManagementInteractor.UpdateEmailChannel(mappedInput);
                     if (channelResponse.Status)
                     {
                         _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
@@ -690,10 +700,10 @@ namespace Nvg.Api.Email.Controllers
         /// <summary>
         /// API to add the Email Template data.
         /// </summary>
-        /// <param name="templateInput"><see cref="EmailTemplateDto"/></param>
+        /// <param name="templateInput"><see cref="TemplateInput"/></param>
         /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
-        public ActionResult AddEmailTemplate(EmailTemplateDto templateInput)
+        public ActionResult AddEmailTemplate(TemplateInput templateInput)
         {
             _logger.LogInformation("AddEmailTemplate action method.");
             _logger.LogDebug("Pool ID: " + templateInput.EmailPoolID);
@@ -702,7 +712,8 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(templateInput.Name) && !string.IsNullOrWhiteSpace(templateInput.MessageTemplate))
                 {
-                    templateResponse = _emailManagementInteractor.AddEmailTemplate(templateInput);
+                    var mappedInput = _mapper.Map<EmailTemplateDto>(templateInput);
+                    templateResponse = _emailManagementInteractor.AddEmailTemplate(mappedInput);
                     if (templateResponse.Status)
                     {
                         _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
@@ -732,10 +743,10 @@ namespace Nvg.Api.Email.Controllers
         /// <summary>
         /// API to update the Email Template data.
         /// </summary>
-        /// <param name="templateInput"><see cref="EmailTemplateDto"/></param>
+        /// <param name="templateInput"><see cref="TemplateMgmtInput"/></param>
         /// <returns><see cref="EmailResponseDto{T}"></see></returns>
         [HttpPost]
-        public ActionResult UpdateEmailTemplate(EmailTemplateDto templateInput)
+        public ActionResult UpdateEmailTemplate(TemplateMgmtInput templateInput)
         {
             _logger.LogInformation("UpdateEmailTemplate action method.");
             _logger.LogDebug("Pool ID: " + templateInput.EmailPoolID);
@@ -744,7 +755,8 @@ namespace Nvg.Api.Email.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(templateInput.Name) && !string.IsNullOrWhiteSpace(templateInput.MessageTemplate))
                 {
-                    templateResponse = _emailManagementInteractor.UpdateEmailTemplate(templateInput);
+                    var mappedInput = _mapper.Map<EmailTemplateDto>(templateInput);
+                    templateResponse = _emailManagementInteractor.UpdateEmailTemplate(mappedInput);
                     if (templateResponse.Status)
                     {
                         _logger.LogDebug("Status: " + templateResponse.Status + ", " + templateResponse.Message);
@@ -851,16 +863,17 @@ namespace Nvg.Api.Email.Controllers
         /// <summary>
         /// API to send emails.
         /// </summary>
-        /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
+        /// <param name="emailInputs"><see cref="EmailInput"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
-        public ActionResult SendMail(EmailDto emailInputs)
+        public ActionResult SendMail(EmailInput emailInputs)
         {
             _logger.LogInformation("SendMail action method.");
             //_logger.LogDebug($"Recipients: {emailInputs.Recipients}, ChannelKey: {emailInputs.ChannelKey}, Body: {emailInputs.Body}, Sender: {emailInputs.Sender}, TemplateName: {emailInputs.TemplateName}");
             try
             {
-                var emailResponse = _emailManagementInteractor.SendMail(emailInputs);
+                var mappedInput = _mapper.Map<EmailDto>(emailInputs);
+                var emailResponse = _emailManagementInteractor.SendMail(mappedInput);
                 if (emailResponse.Status)
                 {
                     _logger.LogDebug("Status: " + emailResponse.Status + ", " + emailResponse.Message);
