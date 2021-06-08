@@ -192,14 +192,16 @@ namespace Nvg.Api.Email
             //{
             //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             //});
-            app.UseSwagger(c => {
-                c.RouteTemplate = "email/swagger/{documentname}/swagger.json";
-            });
+            app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/email/swagger/v1/swagger.json", "Email API V1"); //remote
-                c.RoutePrefix = "email/swagger";
+#if DEBUG
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Email API V1");
+#else
+                c.SwaggerEndpoint("../swagger/v1/swagger.json", "Email API V1");
+#endif
+                //c.RoutePrefix = string.Empty;
             });
 
             app.UseHttpsRedirection();
