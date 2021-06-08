@@ -49,7 +49,11 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             _logger.LogInformation("to: " + to);
             _logger.LogInformation("ApiKey: " + APIKey);
             _logger.LogInformation("Sending Email...");
+            email.SetClickTracking(enable: false, enableText: false);
+
             var apiResponse = await client.SendEmailAsync(email);
+
+
             _logger.LogInformation("Response: " + apiResponse.ToString());
             return apiResponse.ToString();
         }

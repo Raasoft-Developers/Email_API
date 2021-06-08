@@ -8,6 +8,8 @@ using Nvg.EmailService.Data.EmailPool;
 using Nvg.EmailService.Data.EmailProvider;
 using Nvg.EmailService.Data.EmailQuota;
 using Nvg.EmailService.Data.EmailTemplate;
+using Nvg.EmailService.Data.Entities;
+using Nvg.EmailService.DTOS;
 using Nvg.EmailService.Email;
 using Nvg.EmailService.EmailChannel;
 using Nvg.EmailService.EmailHistory;
@@ -85,6 +87,15 @@ namespace Nvg.EmailService
                     break;
             }
             //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            var emailConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<EmailHistoryProfile>();
+                cfg.CreateMap<EmailHistoryTable, EmailHistoryDto>();
+            });
+            IMapper notificationMapper = new Mapper(emailConfig);
+            notificationMapper.Map<EmailHistoryTable, EmailHistoryDto>(new EmailHistoryTable());
         }
 
     }

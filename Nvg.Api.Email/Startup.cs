@@ -97,7 +97,7 @@ namespace Nvg.Api.Email
             services.AddControllers();
             ConfigureIdentityServer(services);
             services.RegisterEventBus(Configuration);
-            services.ConfigureAutoMapper();
+            //services.ConfigureAutoMapper();
             services.AddEmailService(Program.AppName, Configuration);
             services.AddCors(options =>
             {
