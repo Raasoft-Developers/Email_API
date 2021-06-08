@@ -68,17 +68,17 @@ namespace Nvg.Api.Email.Helpers
             services.AddSingleton<ISubscriptionManager, SubscriptionManager>();
         }
 
-        public static void ConfigureAutoMapper(this IServiceCollection services)
-        {
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        //public static void ConfigureAutoMapper(this IServiceCollection services)
+        //{
+        //    services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            var emailConfig = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<EmailHistoryProfile>();
-                cfg.CreateMap<EmailHistoryTable, EmailHistoryDto>();
-            });
-            IMapper notificationMapper = new Mapper(emailConfig);
-            notificationMapper.Map<EmailHistoryTable, EmailHistoryDto>(new EmailHistoryTable());
-        }
+        //    var emailConfig = new MapperConfiguration(cfg =>
+        //    {
+        //        cfg.AddProfile<EmailHistoryProfile>();
+        //        cfg.CreateMap<EmailHistoryTable, EmailHistoryDto>();
+        //    });
+        //    IMapper notificationMapper = new Mapper(emailConfig);
+        //    notificationMapper.Map<EmailHistoryTable, EmailHistoryDto>(new EmailHistoryTable());
+        //}
     }
 }
