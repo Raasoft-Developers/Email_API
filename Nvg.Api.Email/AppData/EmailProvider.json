@@ -4,7 +4,7 @@
     "name": "MasterEmailProvider",
     "type": "smtp",
     //"configuration": "SmtpServer=smtp.office365.com;Sender=jassimofficial@outlook.com;Password=Officework13;Port=587;",
-    "configuration": "SmtpServer=smtp.gmail.com;Sender=jassimofficial111@gmail.com;Password=officework;Port=587",
+    "configuration": "SmtpServer=smtp.gmail.com;Sender=jassimofficial111@gmail.com;Password=plxvjtwdjmextupn;Port=587",
     "emailPoolID": "f6aee3d2-5b17-4a4d-be0e-71f8bf81bda0"
   }
 ]
