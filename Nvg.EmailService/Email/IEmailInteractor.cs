@@ -1,4 +1,5 @@
-﻿using Nvg.EmailService.DTOS;
+﻿using Microsoft.AspNetCore.Http.Internal;
+using Nvg.EmailService.DTOS;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +14,14 @@ namespace Nvg.EmailService.Email
         /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<string> SendMail(EmailDto emailInputs);
+
+        /// <summary>
+        /// Method to send an email.
+        /// </summary>
+        /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<string> SendMailWithAttachments(EmailDto emailInputs);
+
 
         /// <summary>
         /// Adds the email pool to database.

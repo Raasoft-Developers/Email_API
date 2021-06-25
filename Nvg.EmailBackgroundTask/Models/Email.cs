@@ -1,8 +1,12 @@
-﻿using Nvg.EmailService;
+﻿using Microsoft.AspNetCore.Http;
+using Nvg.EmailService;
+using Nvg.EmailService.DTOS;
 using Nvg.EmailService.EmailTemplate;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Nvg.EmailBackgroundTask.Events.SendEmailEvent;
+
 
 namespace Nvg.EmailBackgroundTask.Models
 {
@@ -21,7 +25,7 @@ namespace Nvg.EmailBackgroundTask.Models
         public string ChannelKey { get; internal set; }
         public string ProviderName { get; internal set; }
         public string Tag { get; set; }
-
+        public List<EmailAttachment> Files { get; set; }
         public string GetMessage(IEmailTemplateInteractor emailTemplateInteractor)
         {
             var template = emailTemplateInteractor.GetEmailTemplate(TemplateName, ChannelKey, Variant);

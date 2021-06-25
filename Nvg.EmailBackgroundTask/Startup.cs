@@ -66,6 +66,7 @@ namespace Nvg.EmailBackgroundTask
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
             eventBus.Subscribe<SendEmailEvent, SendEmailEventHandler>();
+            eventBus.Subscribe<SendEmailWithAttachmentEvent, SendEmailWithAttachmentEventHandler>();
         }
     }
 }

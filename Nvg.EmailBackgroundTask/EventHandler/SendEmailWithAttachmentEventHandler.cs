@@ -19,16 +19,16 @@ using Nvg.EmailService.EmailProvider;
 
 namespace Nvg.EmailBackgroundTask.EventHandler
 {
-    public class SendEmailEventHandler : IIntegrationEventHandler<SendEmailEvent>
+    public class SendEmailWithAttachmentEventHandler : IIntegrationEventHandler<SendEmailWithAttachmentEvent>
     {
-        private readonly ILogger<SendEmailEventHandler> _logger;
+        private readonly ILogger<SendEmailWithAttachmentEventHandler> _logger;
 
-        public SendEmailEventHandler(ILogger<SendEmailEventHandler> logger)
+        public SendEmailWithAttachmentEventHandler(ILogger<SendEmailWithAttachmentEventHandler> logger)
         {
             _logger = logger;
         }
 
-        public async Task<dynamic> Handle(SendEmailEvent @event)
+        public async Task<dynamic> Handle(SendEmailWithAttachmentEvent @event)
         {
             _logger.LogDebug($"Subscriber received a SendEmailEvent notification.");
             if (@event.Id != Guid.Empty)
@@ -56,10 +56,11 @@ namespace Nvg.EmailBackgroundTask.EventHandler
                     MessageParts = @event.MessageParts,
                     ProviderName = providerName,
                     Subject= @event.Subject,
-                    Tag = @event.Tag
+                    Tag = @event.Tag,
+                    Files = @event.Files
                 };
-                _logger.LogInformation($"Trying to send email.");
-                emailManager.SendEmail(email);
+                _logger.LogInformation($"Trying to send email with attachments.");
+                emailManager.SendEmailWithAttachments(email);
                 //emailManager.SendEmail(email);
                 /*}
                 else

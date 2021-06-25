@@ -1,4 +1,5 @@
 ﻿using EventBus.Abstractions;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Logging;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.Events;
@@ -35,6 +36,25 @@ namespace Nvg.EmailService.Email
             sendEmailEvent.Tag = emailInputs.Tag;
             _logger.LogInformation("Publishing Email data.");
             _eventBus.Publish(sendEmailEvent);            
+        }
+
+        public void SendMailWithAttachment(EmailDto emailInputs)
+        {
+            _logger.LogInformation($"SendMailWithAttachments method hit");
+            _logger.LogInformation($"Channel Key: {emailInputs.ChannelKey} , Template Name: {emailInputs.TemplateName}, Variant: {emailInputs.Variant}, Recipients: {emailInputs.Recipients}, Sender: {emailInputs.Sender}.");
+            //string user = (!string.IsNullOrEmpty(emailInputs.Username) ? emailInputs.Username : emailInputs.Recipients);
+            var sendEmailWithAttachmentEvent = new SendEmailWithAttachmentEvent();
+            sendEmailWithAttachmentEvent.ChannelKey = emailInputs.ChannelKey;
+            sendEmailWithAttachmentEvent.TemplateName = emailInputs.TemplateName;
+            sendEmailWithAttachmentEvent.Variant = emailInputs.Variant;
+            sendEmailWithAttachmentEvent.Sender = emailInputs.Sender;
+            sendEmailWithAttachmentEvent.Recipients = emailInputs.Recipients;
+            sendEmailWithAttachmentEvent.Subject = emailInputs.Subject;
+            sendEmailWithAttachmentEvent.MessageParts = emailInputs.MessageParts;
+            sendEmailWithAttachmentEvent.Files = emailInputs.Files;
+            sendEmailWithAttachmentEvent.Tag = emailInputs.Tag;
+            _logger.LogInformation("Publishing Email data.");
+            _eventBus.Publish(sendEmailWithAttachmentEvent);
         }
     }
 }

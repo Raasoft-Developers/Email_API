@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.Extensions.Logging;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.EmailChannel;
 using Nvg.EmailService.EmailHistory;
@@ -282,6 +284,65 @@ namespace Nvg.EmailService.Email
                 response.Status = true;
                 response.Message = $"Email is sent successfully to {string.Join(",", emailInputs.Recipients)}.";
                 _logger.LogDebug(""+response.Message);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred in Email Interactor while sending email: ", ex.Message);
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> SendMailWithAttachments(EmailDto emailInputs)
+        {
+            _logger.LogInformation("SendMailWithAttachments interactor method.");
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                if (string.IsNullOrEmpty(emailInputs.ChannelKey))
+                {
+                    _logger.LogError("Channel key cannot be blank.");
+                    response.Status = false;
+                    response.Message = "Channel key cannot be blank.";
+                    return response;
+                }
+                else
+                {
+                    var channelExist = _emailChannelInteractor.CheckIfChannelExist(emailInputs.ChannelKey).Result;
+                    if (!channelExist)
+                    {
+                        _logger.LogError($"Invalid Channel key {emailInputs.ChannelKey}.");
+                        response.Status = channelExist;
+                        response.Message = $"Invalid Channel key {emailInputs.ChannelKey}.";
+                        return response;
+                    }
+                }
+                if (string.IsNullOrEmpty(emailInputs.TemplateName))
+                {
+                    _logger.LogError($"Template name cannot be blank.");
+                    response.Status = false;
+                    response.Message = "Template name cannot be blank.";
+                    return response;
+                }
+                else
+                {
+                    var templateExist = _emailTemplateInteractor.CheckIfTemplateExist(emailInputs.ChannelKey, emailInputs.TemplateName).Result;
+                    if (!templateExist)
+                    {
+                        _logger.LogError($"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.");
+                        response.Status = templateExist;
+                        response.Message = $"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.";
+                        return response;
+                    }
+                }
+                _logger.LogInformation("Trying to send Email.");
+                _emailEventInteractor.SendMailWithAttachment(emailInputs);
+
+                response.Status = true;
+                response.Message = $"Email is sent successfully to {string.Join(",", emailInputs.Recipients)}.";
+                _logger.LogDebug("" + response.Message);
                 return response;
             }
             catch (Exception ex)

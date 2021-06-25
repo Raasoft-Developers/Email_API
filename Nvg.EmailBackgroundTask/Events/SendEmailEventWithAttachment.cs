@@ -8,7 +8,7 @@ using Nvg.EmailService.DTOS;
 
 namespace Nvg.EmailBackgroundTask.Events
 {
-    public class SendEmailEvent : IntegrationEvent
+    public class SendEmailWithAttachmentEvent : IntegrationEvent
     {
         public string ChannelKey { get; set; }
         public string Variant { get; set; }
@@ -18,8 +18,9 @@ namespace Nvg.EmailBackgroundTask.Events
         public string Subject { get; set; }
         public string Tag { get; set; }
         public Dictionary<string, string> MessageParts { get; set; }
+        public List<EmailAttachment> Files { get; set; }
 
-        public SendEmailEvent(string sender, List<string> recipients, string templateName)
+        public SendEmailWithAttachmentEvent(string sender, List<string> recipients, string templateName)
         {
             Sender = sender;
             Recipients = recipients;

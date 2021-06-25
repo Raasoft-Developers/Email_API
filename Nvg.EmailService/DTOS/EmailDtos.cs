@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Nvg.EmailService.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -14,8 +16,15 @@ namespace Nvg.EmailService.DTOS
         public string Sender { get; set; }
         public List<string> Recipients { get; set; }
         public string Subject { get; set; }
-        public Dictionary<string,string> MessageParts { get; set; }
+        public Dictionary<string, string> MessageParts { get; set; }
+        public List<EmailAttachment> Files { get; set; }
         public string Tag { get; set; }
+    }
+    public class EmailAttachment 
+    {
+        public string FileContent { get; set; }
+        public string ContentType { get; set; }
+        public string FileName { get; set; }
     }
 
     public class EmailResponseDto<T>

@@ -176,5 +176,7 @@ namespace Nvg.EmailService.Email
         /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<string> SendMail(EmailDto emailInputs);
+
+
     }
 }

@@ -73,5 +73,50 @@ namespace Nvg.EmailBackgroundTask
             _emailQuotaInteractor.UpdateEmailQuota(email.ChannelKey);
 
         }
+
+        /// <summary>
+        /// Sends the email with attachments via the respective provider mentioned in provider settings and updates the history and quota tables.
+        /// </summary>
+        /// <param name="email"><see cref="Email"/> model</param>
+        public void SendEmailWithAttachments(Email email)
+        {
+            _logger.LogInformation($"SendEmail method hit.");
+            string sender = string.Empty;
+            string message = email.GetMessage(_emailTemplateInteractor);
+            _logger.LogInformation($"Message: {message}");
+            // If external application didnot send the sender value, get it from template.
+            if (string.IsNullOrEmpty(email.Sender))
+                sender = email.GetSender(_emailTemplateInteractor);
+            else
+                sender = email.Sender;
+
+            if (string.IsNullOrEmpty(sender))
+                sender = _emailProviderConnectionString.Fields["Sender"];
+            _logger.LogInformation($"Sender: {sender}");
+            string emailResponseStatus = _emailProvider.SendEmailWithAttachments(email.Recipients,email.Files, message, email.Subject, sender).Result;
+            _logger.LogDebug($"Email response status: {emailResponseStatus}");
+
+            foreach (var recipient in email.Recipients)
+            {
+                var emailObj = new EmailHistoryDto()
+                {
+                    MessageSent = message,
+                    Sender = sender,
+                    Recipients = recipient,
+                    TemplateName = email.TemplateName,
+                    TemplateVariant = email.Variant,
+                    ChannelKey = email.ChannelKey,
+                    ProviderName = email.ProviderName,
+                    Tags = email.Tag,
+                    SentOn = DateTime.UtcNow,
+                    Status = emailResponseStatus,
+                    Attempts = 1,
+                };
+                _emailHistoryInteractor.AddEmailHistory(emailObj);
+            }
+            //Update Quota Implemented Outside The Loop--revisit
+            _emailQuotaInteractor.UpdateEmailQuota(email.ChannelKey);
+
+        }
     }
 }

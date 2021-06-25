@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MimeTypes;
 using Nvg.Api.Email.Models;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.Email;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 
 namespace Nvg.Api.Email.Controllers
@@ -446,6 +451,51 @@ namespace Nvg.Api.Email.Controllers
                 _logger.LogError("Internal server error: Error occurred while trying to send email: " + ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
-        }       
+        }
+
+        [HttpPost]
+        public ActionResult SendMailWithAttachments(EmailInput emailInputs)
+        {
+            _logger.LogInformation("SendMailWithAttachments action method.");
+            //_logger.LogDebug($"Recipients: {emailInputs.Recipients}, ChannelKey: {emailInputs.ChannelKey}, Body: {emailInputs.Body}, Sender: {emailInputs.Sender}, TemplateName: {emailInputs.TemplateName}");
+            try
+            {
+                var mappedInput = _mapper.Map<EmailDto>(emailInputs);
+                var files = ( Request.HasFormContentType && Request.Form.Files.Any() ) ? Request.Form.Files : new FormFileCollection();
+                mappedInput.Files = new List<EmailAttachment>();
+                if (files != null)
+                {
+                    foreach (var file in files)
+                    {
+                        if (file.Length > 0)
+                        {
+                            using (var ms = new MemoryStream())
+                            {
+                                file.CopyTo(ms);
+                                var fileBytes = ms.ToArray();
+                                var fileContent = Convert.ToBase64String(fileBytes);
+                                mappedInput.Files.Add(new EmailAttachment { ContentType = MimeTypeMap.GetMimeType(file.FileName), FileContent = fileContent, FileName = file.FileName });
+                            }
+                        }
+                    }
+                }
+                var emailResponse = _emailInteractor.SendMailWithAttachments(mappedInput);
+                if (emailResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + emailResponse.Status + ", " + emailResponse.Message);
+                    return Ok(emailResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + emailResponse.Status + ", " + emailResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, emailResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while trying to send email: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
     }
 }

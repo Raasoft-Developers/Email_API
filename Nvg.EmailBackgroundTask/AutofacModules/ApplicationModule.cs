@@ -17,7 +17,8 @@ namespace Nvg.EmailBackgroundTask.AutofacModules
         }
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(typeof(SendEmailEventHandler).GetTypeInfo().Assembly)
+            builder.RegisterAssemblyTypes(typeof(SendEmailEventHandler).GetTypeInfo().Assembly,
+                                          typeof(SendEmailWithAttachmentEventHandler).GetTypeInfo().Assembly)
                 .AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
         }
     }
