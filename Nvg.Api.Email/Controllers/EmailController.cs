@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MimeTypes;
+using Newtonsoft.Json;
 using Nvg.Api.Email.Models;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.Email;
@@ -453,15 +454,29 @@ namespace Nvg.Api.Email.Controllers
             }
         }
 
+        /// <summary>
+        /// API to send emails with Attachments. Attachments to be added to FormFileCollection. Email input to be sent along with Form Input with key as "EmailInput" . 
+        /// </summary>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
         [HttpPost]
-        public ActionResult SendMailWithAttachments(EmailInput emailInputs)
+        public ActionResult SendMailWithAttachments()
         {
             _logger.LogInformation("SendMailWithAttachments action method.");
             //_logger.LogDebug($"Recipients: {emailInputs.Recipients}, ChannelKey: {emailInputs.ChannelKey}, Body: {emailInputs.Body}, Sender: {emailInputs.Sender}, TemplateName: {emailInputs.TemplateName}");
             try
             {
-                var mappedInput = _mapper.Map<EmailDto>(emailInputs);
                 var files = ( Request.HasFormContentType && Request.Form.Files.Any() ) ? Request.Form.Files : new FormFileCollection();
+                var json = Request.Form["EmailInput"];
+                if (string.IsNullOrEmpty(json))
+                {
+                    var errorResponse = new CustomResponse<string>();
+                    errorResponse.Message = "Email Input Must Be Provied";
+                    errorResponse.Status = false;
+                    _logger.LogError("Status: " + errorResponse.Status + ", " + errorResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, errorResponse);
+                }
+                var emailInputs = JsonConvert.DeserializeObject<EmailInput>(json);
+                var mappedInput = _mapper.Map<EmailDto>(emailInputs);
                 mappedInput.Files = new List<EmailAttachment>();
                 if (files != null)
                 {
