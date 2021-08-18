@@ -51,7 +51,7 @@ namespace Nvg.EmailService.EmailQuota
             try
             {
                 var emailQuotaResponse = _emailQuotaRepository.GetEmailQuota(channelKey);
-                if (emailQuotaResponse.Status)
+                if (emailQuotaResponse.Status && emailQuotaResponse.Result != null)
                 {
                     var emailQuota = emailQuotaResponse.Result;
                     var currentMonth = DateTime.Now.ToString("MMM").ToUpper();
@@ -59,7 +59,7 @@ namespace Nvg.EmailService.EmailQuota
                     if(emailQuota.CurrentMonth == currentMonth)
                     {
                         //Check if quota is exceeded for current month
-                        if (emailQuota.TotalQuota != -1 && emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
+                        if (emailQuota.TotalQuota != -1 && (emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota || emailQuota.TotalConsumption >= emailQuota.TotalQuota))
                         {
                             response = true;
                         }
@@ -72,10 +72,14 @@ namespace Nvg.EmailService.EmailQuota
                             _logger.LogDebug("Status: " + updatedQuotaResponse.Status + ", Message: " + updatedQuotaResponse.Message);
                             emailQuota = updatedQuotaResponse.Result;
                             //Check if quota is exceeded for current month
-                            if (emailQuota.TotalQuota != -1 && emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota && emailQuota.TotalConsumption >= emailQuota.TotalConsumption)
+                            if (emailQuota.TotalQuota != -1 && (emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota || emailQuota.TotalConsumption >= emailQuota.TotalQuota))
                             {
                                 response = true;
                             }
+                        }
+                        else
+                        {
+                            throw new Exception(updatedQuotaResponse.Message);
                         }
                     }
                 }
@@ -135,6 +139,13 @@ namespace Nvg.EmailService.EmailQuota
             var response = new EmailResponseDto<EmailQuotaDto>();
             try
             {
+                if (emailChannelDto.IsRestrictedByQuota && (emailChannelDto.MonthlyQuota == 0 || emailChannelDto.TotalQuota == 0))
+                {
+                    response.Status = false;
+                    response.Message = "Monthly quota and/or Total quota cannot have value as 0. Quota has not been updated in the database.";
+                    _logger.LogDebug("Status: " + response.Status + "Message:" + response.Message);
+                    return response;
+                }
                 var emailQuotaResponse = _emailQuotaRepository.UpdateEmailQuota(emailChannelDto);
                 _logger.LogDebug("Status: " + emailQuotaResponse.Status + "Message:" + emailQuotaResponse.Message);
                 var mappedResponse = _mapper.Map<EmailResponseDto<EmailQuotaDto>>(emailQuotaResponse);

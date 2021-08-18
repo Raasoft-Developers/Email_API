@@ -106,14 +106,37 @@ namespace Nvg.EmailService.Email
             EmailResponseDto<EmailChannelDto> channelResponse = new EmailResponseDto<EmailChannelDto>();
             try
             {
+                if (channelInput.IsRestrictedByQuota && channelInput.MonthlyQuota > 0 && channelInput.TotalQuota > 0 && channelInput.MonthlyQuota > channelInput.TotalQuota)
+                {
+                    channelResponse.Status = false;
+                    channelResponse.Message = "Monthly quota cannot be greater than Total quota. Channel and Quota have not been added to the database.";
+                    return channelResponse;
+                }
+                else if (channelInput.IsRestrictedByQuota && (channelInput.MonthlyQuota == 0 || channelInput.TotalQuota == 0))
+                {
+                    channelResponse.Status = false;
+                    channelResponse.Message = "Monthly quota and/or Total quota cannot have value as 0. Channel and Quota have not been added to the database.";
+                    return channelResponse;
+                }
                 _logger.LogInformation("Trying to add EmailChannel.");
                 channelResponse = _emailChannelInteractor.AddEmailChannel(channelInput);
                 if (channelResponse.Status && channelInput.IsRestrictedByQuota)
                 {
+                    channelInput.ID = channelResponse.Result.ID;
                     //If channel has been added and channel isRestrictedByQuota, add email quota for channel
-                    _emailQuotaInteractor.AddEmailQuota(channelInput);
+                    var quotaResponse =_emailQuotaInteractor.AddEmailQuota(channelInput);
+                    channelResponse.Message += quotaResponse.Message;
+                    if (quotaResponse.Status)
+                    {
+                        channelResponse.Result.TotalQuota = quotaResponse.Result.TotalQuota;
+                        channelResponse.Result.TotalConsumption = quotaResponse.Result.TotalConsumption;
+                        channelResponse.Result.MonthlyConsumption = quotaResponse.Result.MonthylConsumption;
+                        channelResponse.Result.MonthlyQuota = quotaResponse.Result.MonthlyQuota;
+                        channelResponse.Result.CurrentMonth = quotaResponse.Result.CurrentMonth;
+                        channelResponse.Result.IsRestrictedByQuota = channelInput.IsRestrictedByQuota;
+                    }
                 }
-                _logger.LogDebug("" + channelResponse.Message);
+                _logger.LogDebug("Status: " + channelResponse.Status + ",Message: " + channelResponse.Message);
                 return channelResponse;
             }
             catch (Exception ex)
@@ -131,16 +154,55 @@ namespace Nvg.EmailService.Email
             EmailResponseDto<EmailChannelDto> channelResponse = new EmailResponseDto<EmailChannelDto>();
             try
             {
+                if (channelInput.IsRestrictedByQuota && channelInput.MonthlyQuota > 0 && channelInput.TotalQuota > 0 && channelInput.MonthlyQuota > channelInput.TotalQuota)
+                {
+                    channelResponse.Status = false;
+                    channelResponse.Message = "Monthly quota cannot be greater than Total quota. Channel and Quota have not been added to the database.";
+                    return channelResponse;
+                }
                 _logger.LogInformation("Trying to update EmailChannel.");
                 channelResponse = _emailChannelInteractor.UpdateEmailChannel(channelInput);
-                var quotaResponse = _emailQuotaInteractor.UpdateEmailQuota(channelInput);
-                if (!channelResponse.Status)
+                if (channelInput.IsRestrictedByQuota && channelInput.MonthlyQuota == 0 && channelInput.TotalQuota == 0)
                 {
-                    //if email channel is not updated , then take response of email quota updation
-                    channelResponse.Status = quotaResponse.Status;
-                    channelResponse.Message = quotaResponse.Message;
+                    _logger.LogDebug("Status: " + channelResponse.Status + ",Message: " + channelResponse.Message);
+                    return channelResponse;
                 }
-                _logger.LogDebug("" + channelResponse.Message);
+                channelInput.ID = _emailChannelInteractor.GetEmailChannelByKey(channelInput.Key).Result?.ID;
+                if (!string.IsNullOrEmpty(channelInput.ID))
+                {
+                    var quotaResponse = _emailQuotaInteractor.UpdateEmailQuota(channelInput);
+                    if (!channelResponse.Status && quotaResponse.Status)
+                    {
+                        //if sms channel is not updated , then take response of sms quota updation
+                        channelResponse.Status = quotaResponse.Status;
+                        channelResponse.Message = quotaResponse.Message;
+                    }
+                    else if (channelResponse.Status && !quotaResponse.Status)
+                    {
+                        channelResponse.Status = channelResponse.Status;
+                        channelResponse.Message += quotaResponse.Message;
+                    }
+                    else
+                    {
+                        channelResponse.Status = channelResponse.Status && quotaResponse.Status;
+                        channelResponse.Message += quotaResponse.Message;
+                    }
+                    if (quotaResponse.Status)
+                    {
+                        channelResponse.Result.TotalQuota = quotaResponse.Result.TotalQuota;
+                        channelResponse.Result.TotalConsumption = quotaResponse.Result.TotalConsumption;
+                        channelResponse.Result.MonthlyConsumption = quotaResponse.Result.MonthylConsumption;
+                        channelResponse.Result.MonthlyQuota = quotaResponse.Result.MonthlyQuota;
+                        channelResponse.Result.CurrentMonth = quotaResponse.Result.CurrentMonth;
+                        channelResponse.Result.IsRestrictedByQuota = channelInput.IsRestrictedByQuota;
+                    }
+                }
+                else
+                {
+                    channelResponse.Status = false;
+                    channelResponse.Message = "Invalid Channel Key.";
+                }
+                _logger.LogDebug("Status: " + channelResponse.Status + ",Message: " + channelResponse.Message);
                 return channelResponse;
             }
             catch (Exception ex)

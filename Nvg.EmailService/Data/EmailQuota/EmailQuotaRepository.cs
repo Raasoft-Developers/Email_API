@@ -153,6 +153,7 @@ namespace Nvg.EmailService.Data.EmailQuota
                     {
                         emailQuota.TotalQuota = emailChannel.TotalQuota;
                         emailQuota.MonthlyQuota =emailChannel.MonthlyQuota;
+                        emailQuota.CurrentMonth = DateTime.Now.ToString("MMM").ToUpper();
                     }
                     else
                     {

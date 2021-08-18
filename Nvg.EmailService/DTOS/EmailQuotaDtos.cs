@@ -11,7 +11,9 @@ namespace Nvg.EmailService.DTOS
         public string ID { get; set; }
         public string ChannelID { get; set; }
         public int TotalConsumption { get; set; }
+        public int TotalQuota { get; set; }
         public int MonthylConsumption { get; set; }
+        public string CurrentMonth { get; set; }
         public int MonthlyQuota { get; set; }
     }
 
