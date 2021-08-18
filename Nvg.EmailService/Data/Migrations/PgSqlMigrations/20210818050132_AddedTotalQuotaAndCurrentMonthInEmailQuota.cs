@@ -2,7 +2,7 @@
 
 namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
 {
-    public partial class AddedCurrentMonthAndTotalQuotaToEmailQuotaTable : Migration
+    public partial class AddedTotalQuotaAndCurrentMonthInEmailQuota : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,7 +17,7 @@ namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
                 schema: "Email",
                 table: "EmailQuota",
                 nullable: false,
-                defaultValue: -1);
+                defaultValue: 0);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

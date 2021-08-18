@@ -6,6 +6,7 @@ using Nvg.EmailService.EmailChannel;
 using Nvg.EmailService.EmailHistory;
 using Nvg.EmailService.EmailPool;
 using Nvg.EmailService.EmailProvider;
+using Nvg.EmailService.EmailQuota;
 using Nvg.EmailService.EmailTemplate;
 using System;
 using System.Collections.Generic;
@@ -21,12 +22,13 @@ namespace Nvg.EmailService.Email
         private readonly IEmailChannelInteractor _emailChannelInteractor;
         private readonly IEmailTemplateInteractor _emailTemplateInteractor;
         private readonly IEmailHistoryInteractor _emailHistoryInteractor;
+        private readonly IEmailQuotaInteractor _emailQuotaInteractor;
         private readonly ILogger<EmailInteractor> _logger;
 
         public EmailInteractor(IEmailEventInteractor emailEventInteractor,
             IEmailPoolInteractor emailPoolInteractor, IEmailProviderInteractor emailProviderInteractor,
             IEmailChannelInteractor emailChannelInteractor, IEmailTemplateInteractor emailTemplateInteractor,
-            IEmailHistoryInteractor emailHistoryInteractor, ILogger<EmailInteractor> logger)
+            IEmailHistoryInteractor emailHistoryInteractor, IEmailQuotaInteractor emailQuotaInteractor, ILogger<EmailInteractor> logger)
         {
             _emailEventInteractor = emailEventInteractor;
             _emailPoolInteractor = emailPoolInteractor;
@@ -34,6 +36,7 @@ namespace Nvg.EmailService.Email
             _emailChannelInteractor = emailChannelInteractor;
             _emailTemplateInteractor = emailTemplateInteractor;
             _emailHistoryInteractor = emailHistoryInteractor;
+            _emailQuotaInteractor = emailQuotaInteractor;
             _logger = logger;
         }
 
@@ -48,7 +51,7 @@ namespace Nvg.EmailService.Email
                 _logger.LogDebug("Status: " + poolResponse.Status + ", " + poolResponse.Message);
                 return poolResponse;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("Error occurred in Email Interactor while adding email pool: ", ex.Message);
                 poolResponse.Message = "Error occurred while adding email pool: " + ex.Message;
@@ -65,10 +68,10 @@ namespace Nvg.EmailService.Email
             {
                 _logger.LogInformation("Trying to add EmailProvider.");
                 providerResponse = _emailProviderInteractor.AddEmailProvider(providerInput);
-                _logger.LogDebug("Status: "+ providerResponse.Status+", " + providerResponse.Message);
+                _logger.LogDebug("Status: " + providerResponse.Status + ", " + providerResponse.Message);
                 return providerResponse;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("Error occurred in Email Interactor while adding email provider: ", ex.Message);
                 providerResponse.Message = "Error occurred while adding email provider: " + ex.Message;
@@ -105,7 +108,7 @@ namespace Nvg.EmailService.Email
             {
                 _logger.LogInformation("Trying to add EmailChannel.");
                 channelResponse = _emailChannelInteractor.AddEmailChannel(channelInput);
-                if(channelResponse.Status && channelInput.IsRestrictedByQuota)
+                if (channelResponse.Status && channelInput.IsRestrictedByQuota)
                 {
                     //If channel has been added and channel isRestrictedByQuota, add email quota for channel
                     _emailQuotaInteractor.AddEmailQuota(channelInput);
@@ -113,7 +116,7 @@ namespace Nvg.EmailService.Email
                 _logger.LogDebug("" + channelResponse.Message);
                 return channelResponse;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("Error occurred in Email Interactor while adding email channel: ", ex.Message);
                 channelResponse.Message = "Error occurred while adding email channel: " + ex.Message;
@@ -160,7 +163,7 @@ namespace Nvg.EmailService.Email
                 _logger.LogDebug("" + templateResponse.Message);
                 return templateResponse;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("Error occurred in Email Interactor while adding email template: ", ex.Message);
                 templateResponse.Message = "Error occurred while adding email template: " + ex.Message;
@@ -200,7 +203,7 @@ namespace Nvg.EmailService.Email
                 _logger.LogDebug("" + channelResponse.Message);
                 return channelResponse;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("Error occurred in Email Interactor while getting email channel by key: ", ex.Message);
                 channelResponse.Message = "Error occurred while getting email channel by key: " + ex.Message;
@@ -220,7 +223,7 @@ namespace Nvg.EmailService.Email
                 _logger.LogDebug("" + providerResponse.Message);
                 return providerResponse;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("Error occurred in Email Interactor while getting email provider by pool: ", ex.Message);
                 providerResponse.Message = "Error occurred while getting email provider by pool: " + ex.Message;
@@ -240,7 +243,7 @@ namespace Nvg.EmailService.Email
                 _logger.LogDebug("" + poolResponse.Message);
                 return poolResponse;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("Error occurred in Email Interactor while getting email histories: ", ex.Message);
                 poolResponse.Message = "Error occurred while getting email histories: " + ex.Message;
@@ -291,7 +294,7 @@ namespace Nvg.EmailService.Email
                         return response;
                     }
                 }
-                var isExceeded= _emailQuotaInteractor.CheckIfQuotaExceeded(emailInputs.ChannelKey);
+                var isExceeded = _emailQuotaInteractor.CheckIfQuotaExceeded(emailInputs.ChannelKey);
                 if (isExceeded)
                 {
                     _logger.LogError($"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.");
@@ -299,12 +302,12 @@ namespace Nvg.EmailService.Email
                     response.Message = $"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.";
                     return response;
                 }
-                }
+
                 _logger.LogInformation("Trying to send Email.");
                 _emailEventInteractor.SendMail(emailInputs);
                 response.Status = true;
                 response.Message = $"Email is sent successfully to {string.Join(",", emailInputs.Recipients)}.";
-                _logger.LogDebug(""+response.Message);
+                _logger.LogDebug("" + response.Message);
                 return response;
             }
             catch (Exception ex)
@@ -357,6 +360,14 @@ namespace Nvg.EmailService.Email
                         response.Message = $"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.";
                         return response;
                     }
+                }
+                var isExceeded = _emailQuotaInteractor.CheckIfQuotaExceeded(emailInputs.ChannelKey);
+                if (isExceeded)
+                {
+                    _logger.LogError($"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.");
+                    response.Status = !isExceeded;
+                    response.Message = $"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.";
+                    return response;
                 }
                 _logger.LogInformation("Trying to send Email.");
                 _emailEventInteractor.SendMailWithAttachment(emailInputs);

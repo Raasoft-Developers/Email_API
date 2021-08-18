@@ -10,8 +10,8 @@ using Nvg.EmailService.Data;
 namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
 {
     [DbContext(typeof(EmailPgSqlDBContext))]
-    [Migration("20210426084157_AddedCurrentMonthAndTotalQuotaToEmailQuotaTable")]
-    partial class AddedCurrentMonthAndTotalQuotaToEmailQuotaTable
+    [Migration("20210818050132_AddedTotalQuotaAndCurrentMonthInEmailQuota")]
+    partial class AddedTotalQuotaAndCurrentMonthInEmailQuota
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,6 +41,9 @@ namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
                     b.HasIndex("EmailPoolID");
 
                     b.HasIndex("EmailProviderID");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
 
                     b.ToTable("EmailChannel");
                 });
@@ -129,6 +132,9 @@ namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
 
                     b.HasIndex("EmailPoolID");
 
+                    b.HasIndex("Name", "EmailPoolID")
+                        .IsUnique();
+
                     b.ToTable("EmailProviderSettings");
                 });
 
@@ -155,8 +161,7 @@ namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
                         .HasColumnType("integer");
 
                     b.Property<int>("TotalQuota")
-                        .HasColumnType("integer")
-                        .HasDefaultValue(-1);
+                        .HasColumnType("integer");
 
                     b.HasKey("ID");
 
@@ -188,6 +193,9 @@ namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
                     b.HasKey("ID");
 
                     b.HasIndex("EmailPoolID");
+
+                    b.HasIndex("Name", "EmailPoolID")
+                        .IsUnique();
 
                     b.ToTable("EmailTemplate");
                 });

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nvg.EmailService.Data;
 
 namespace Nvg.EmailService.data.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(EmailSqlServerDBContext))]
-    partial class EmailSqlServerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210818050609_AddedTotalQuotaAndCurrentMonthInEmailQuota")]
+    partial class AddedTotalQuotaAndCurrentMonthInEmailQuota
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

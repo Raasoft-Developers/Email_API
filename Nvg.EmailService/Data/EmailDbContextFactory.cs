@@ -16,10 +16,10 @@ namespace Nvg.EmailService.Data
         {
             var optionsBuilder = new DbContextOptionsBuilder<EmailPgSqlDBContext>();
             // For Removing migration or Updating the database, uncomment the hardcoded connection string.
-            //string connectionString = "host=db-postgresql-blr1-95081-do-user-7578230-0.a.db.ondigitalocean.com;Database=tv_etms;User ID =nyletech;Password=Nyle@123;Port=25061;Integrated Security=true;Pooling=true;sslmode=Require;Trust Server Certificate=true;Server Compatibility Mode=Redshift;";
+            //string connectionString = "Server=localhost;Database=TestEmail;User ID=postgres;Password=Novigo@123;Port=5432;Integrated Security=true;Pooling=true;No Reset On Close=true;Trust Server Certificate=true;Server Compatibility Mode=Redshift;";
             //optionsBuilder.UseNpgsql(connectionString);
 
-            //optionsBuilder.UseNpgsql("Email-ConnectionString");
+            optionsBuilder.UseNpgsql("Email-ConnectionString");
             return new EmailPgSqlDBContext(optionsBuilder.Options,"Email"); // TODO: Should avoid hardcoding of schema.
         }
     }
