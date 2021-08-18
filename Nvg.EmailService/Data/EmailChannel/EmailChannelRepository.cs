@@ -95,12 +95,27 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
 
-        public EmailResponseDto<EmailChannelTable> GetEmailChannelByKey(string channelKey)
+        public EmailResponseDto<EmailChannelDto> GetEmailChannelByKey(string channelKey)
         {
-            var response = new EmailResponseDto<EmailChannelTable>();
+            var response = new EmailResponseDto<EmailChannelDto>();
             try
             {
-                var emailChannel = _context.EmailChannels.FirstOrDefault(sp => sp.Key.ToLower().Equals(channelKey.ToLower()));
+                var emailChannel = (from ec in _context.EmailChannels where ec.Key.ToLower() == channelKey.ToLower()
+                                   from eq in _context.EmailQuotas.Where(quota => quota.EmailChannelID == ec.ID).DefaultIfEmpty()
+                                   select new EmailChannelDto
+                                   {
+                                       ID = ec.ID,
+                                       Key = ec.Key,
+                                       EmailPoolID = ec.EmailPoolID,
+                                       EmailProviderID = ec.EmailProviderID,
+                                       MonthlyQuota = eq.MonthlyQuota,
+                                       TotalQuota = eq.TotalQuota,
+                                       MonthlyConsumption = eq.MonthlyConsumption,
+                                       TotalConsumption = eq.TotalConsumption,
+                                       CurrentMonth = eq.CurrentMonth,
+                                       IsRestrictedByQuota = eq.TotalQuota > 0 && eq.MonthlyQuota > 0
+                                   }).FirstOrDefault();
+                //_context.EmailChannels.FirstOrDefault(sp => sp.Key.ToLower().Equals(channelKey.ToLower()));
                 if (emailChannel != null)
                 {
                     response.Status = true;
@@ -168,23 +183,27 @@ namespace Nvg.EmailService.Data.EmailChannel
             }
         }
 
-        public EmailResponseDto<List<EmailChannelTable>> GetEmailChannels(string poolID)
+        public EmailResponseDto<List<EmailChannelDto>> GetEmailChannels(string poolID)
         {
-            var response = new EmailResponseDto<List<EmailChannelTable>>();
+            var response = new EmailResponseDto<List<EmailChannelDto>>();
             try
             {
                 var emailChannels = (from p in _context.EmailPools
                                     join c in _context.EmailChannels on p.ID equals c.EmailPoolID
                                     join pr in _context.EmailProviders on c.EmailProviderID equals pr.ID
                                     where p.ID.ToLower().Equals(poolID.ToLower())
-                                    select new EmailChannelTable
+                                    from q in _context.EmailQuotas.Where(eq => eq.EmailChannelID == c.ID).DefaultIfEmpty()
+                                    select new EmailChannelDto
                                     {
                                         ID=c.ID,
                                         Key=c.Key,
                                         EmailPoolID=c.EmailPoolID,
                                         EmailPoolName=p.Name,
                                         EmailProviderID=c.EmailProviderID,
-                                        EmailProviderName=pr.Name
+                                        EmailProviderName=pr.Name,
+                                        MonthlyQuota = q.MonthlyQuota,
+                                        TotalQuota = q.TotalQuota,
+                                        IsRestrictedByQuota = q.TotalQuota >0 && q.MonthlyQuota >0 
                                     }).ToList();
                 
                 response.Status = true;

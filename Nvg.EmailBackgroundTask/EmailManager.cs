@@ -70,7 +70,7 @@ namespace Nvg.EmailBackgroundTask
                 _emailHistoryInteractor.AddEmailHistory(emailObj);
             }
             //Update Quota Implemented Outside The Loop--revisit
-            _emailQuotaInteractor.UpdateEmailQuota(email.ChannelKey);
+            _emailQuotaInteractor.IncrementEmailQuota(email.ChannelKey);
 
         }
 

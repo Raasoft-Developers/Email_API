@@ -105,6 +105,11 @@ namespace Nvg.EmailService.Email
             {
                 _logger.LogInformation("Trying to add EmailChannel.");
                 channelResponse = _emailChannelInteractor.AddEmailChannel(channelInput);
+                if(channelResponse.Status && channelInput.IsRestrictedByQuota)
+                {
+                    //If channel has been added and channel isRestrictedByQuota, add email quota for channel
+                    _emailQuotaInteractor.AddEmailQuota(channelInput);
+                }
                 _logger.LogDebug("" + channelResponse.Message);
                 return channelResponse;
             }
@@ -125,6 +130,13 @@ namespace Nvg.EmailService.Email
             {
                 _logger.LogInformation("Trying to update EmailChannel.");
                 channelResponse = _emailChannelInteractor.UpdateEmailChannel(channelInput);
+                var quotaResponse = _emailQuotaInteractor.UpdateEmailQuota(channelInput);
+                if (!channelResponse.Status)
+                {
+                    //if email channel is not updated , then take response of email quota updation
+                    channelResponse.Status = quotaResponse.Status;
+                    channelResponse.Message = quotaResponse.Message;
+                }
                 _logger.LogDebug("" + channelResponse.Message);
                 return channelResponse;
             }
@@ -278,6 +290,15 @@ namespace Nvg.EmailService.Email
                         response.Message = $"No template found for template name {emailInputs.TemplateName} and channel key {emailInputs.ChannelKey}.";
                         return response;
                     }
+                }
+                var isExceeded= _emailQuotaInteractor.CheckIfQuotaExceeded(emailInputs.ChannelKey);
+                if (isExceeded)
+                {
+                    _logger.LogError($"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.");
+                    response.Status = !isExceeded;
+                    response.Message = $"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.";
+                    return response;
+                }
                 }
                 _logger.LogInformation("Trying to send Email.");
                 _emailEventInteractor.SendMail(emailInputs);
