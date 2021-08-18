@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Nvg.EmailService.DTOS;
-using System;
+﻿using Nvg.EmailService.DTOS;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using static Nvg.EmailBackgroundTask.Events.SendEmailEvent;
 
-namespace Nvg.EmailBackgroundTask.EmailProvider
+namespace Nvg.EmailService.EmailServiceProviders
 {
     public interface IEmailProvider
     {
@@ -30,6 +26,6 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
         /// <param name="subject">Subject</param>
         /// <param name="sender">Sender</param>
         /// <returns><see cref="Task{TResult}"/></returns>
-        public Task<string> SendEmailWithAttachments(List<string> recipients,List<EmailAttachment> files, string message, string subject, string sender = null);
+        public Task<string> SendEmailWithAttachments(List<string> recipients, List<EmailAttachment> files, string message, string subject, string sender = null);
     }
 }

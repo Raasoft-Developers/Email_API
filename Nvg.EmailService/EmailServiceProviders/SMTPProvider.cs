@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Nvg.EmailService.DTOS;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Mail;
-using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nvg.EmailBackgroundTask.EmailProvider
+namespace Nvg.EmailService.EmailServiceProviders
 {
     /// <summary>
     /// SMTP Email Provider.
@@ -18,6 +16,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
     {
         private readonly EmailProviderConnectionString _emailProviderCS;
         private readonly ILogger<SMTPProvider> _logger;
+
         public SMTPProvider(EmailProviderConnectionString emailProviderConnectionString, ILogger<SMTPProvider> logger)
         {
             _emailProviderCS = emailProviderConnectionString;
@@ -26,37 +25,11 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
 
         public async Task<string> SendEmail(List<string> recipients, string message, string subject, string sender = null)
         {
-            _logger.LogInformation("SendEmail method.");
+            //_logger.LogInformation("SendEmail method.");
             if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
                 sender = _emailProviderCS.Fields["Sender"];
 
-            _logger.LogInformation("Sender: " + sender);
-            /*
-            // Gmail SMTP implementation
-            var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress(sender, sender));
-            emailMessage.To.Add(new MailboxAddress(recipients, recipients));
-            emailMessage.Subject = subject;
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = string.Format("{0} : {1}", message, htmlContent) };
-            */
-
-            MailMessage emailMessage = new MailMessage();
-            foreach(var recipient in recipients)
-                emailMessage.To.Add(new MailAddress(recipient));
-            emailMessage.From = new MailAddress(sender);
-            emailMessage.Subject = subject;
-            emailMessage.Body = message;
-            emailMessage.IsBodyHtml = true;
-            await SendAsync(emailMessage, sender);
-            return "Success";
-        }
-        public async Task<string> SendEmailWithAttachments(List<string> recipients,List<EmailAttachment> files, string message, string subject, string sender = null)
-        {
-            _logger.LogInformation("SendEmail method.");
-            if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
-                sender = _emailProviderCS.Fields["Sender"];
-
-            _logger.LogInformation("Sender: " + sender);
+            //_logger.LogInformation("Sender: " + sender);
             /*
             // Gmail SMTP implementation
             var emailMessage = new MimeMessage();
@@ -73,20 +46,46 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             emailMessage.Subject = subject;
             emailMessage.Body = message;
             emailMessage.IsBodyHtml = true;
-            if(files != null)
+            await SendAsync(emailMessage, sender);
+            return "Success";
+        }
+        public async Task<string> SendEmailWithAttachments(List<string> recipients, List<EmailAttachment> files, string message, string subject, string sender = null)
+        {
+            // _logger.LogInformation("SendEmail method.");
+            if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
+                sender = _emailProviderCS.Fields["Sender"];
+
+            //_logger.LogInformation("Sender: " + sender);
+            /*
+            // Gmail SMTP implementation
+            var emailMessage = new MimeMessage();
+            emailMessage.From.Add(new MailboxAddress(sender, sender));
+            emailMessage.To.Add(new MailboxAddress(recipients, recipients));
+            emailMessage.Subject = subject;
+            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = string.Format("{0} : {1}", message, htmlContent) };
+            */
+
+            MailMessage emailMessage = new MailMessage();
+            foreach (var recipient in recipients)
+                emailMessage.To.Add(new MailAddress(recipient));
+            emailMessage.From = new MailAddress(sender);
+            emailMessage.Subject = subject;
+            emailMessage.Body = message;
+            emailMessage.IsBodyHtml = true;
+            if (files != null)
             {
                 foreach (var file in files)
                 {
                     try
                     {
                         MemoryStream ms = new MemoryStream(Convert.FromBase64String(file.FileContent));
-                        Attachment attachment = new Attachment(ms, file.FileName,file.ContentType);
+                        Attachment attachment = new Attachment(ms, file.FileName, file.ContentType);
                         emailMessage.Attachments.Add(attachment);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogInformation("Failed to Attach File: " + ex.Message);
-
+                        // _logger.LogInformation("Failed to Attach File: " + ex.Message);
+                        throw ex;
                     }
                 }
             }
@@ -99,6 +98,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             var password = _emailProviderCS.Fields["Password"];
             var port = _emailProviderCS.Fields["Port"];
             _logger.LogInformation("smtpServer: " + smtpServer);
+            _logger.LogInformation("sender: " + sender);
             _logger.LogInformation("password: " + password);
             _logger.LogInformation("port: " + port);
             // Office365/Outlook SMTP implementation.
@@ -119,11 +119,11 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
                     client.EnableSsl = true;
                     _logger.LogInformation("Sending Email");
                     client.Send(mailMessage);
-                    _logger.LogInformation("Email Sent");
+                    //_logger.LogInformation("Email Sent");
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError("Error occurred when sending email: " +ex.Message);
+                    _logger.LogError("Error occurred when sending email: " + ex);
                     throw ex;
                 }
                 finally

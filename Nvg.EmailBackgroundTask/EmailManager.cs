@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using Nvg.EmailBackgroundTask.EmailProvider;
 using Nvg.EmailBackgroundTask.Models;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.EmailHistory;
 using Nvg.EmailService.EmailQuota;
+using Nvg.EmailService.EmailServiceProviders;
 using Nvg.EmailService.EmailTemplate;
 using System;
 
@@ -68,9 +68,10 @@ namespace Nvg.EmailBackgroundTask
                     Attempts = 1,
                 };
                 _emailHistoryInteractor.AddEmailHistory(emailObj);
+
+                _emailQuotaInteractor.IncrementEmailQuota(email.ChannelKey);
             }
-            //Update Quota Implemented Outside The Loop--revisit
-            _emailQuotaInteractor.IncrementEmailQuota(email.ChannelKey);
+            
 
         }
 
@@ -113,9 +114,10 @@ namespace Nvg.EmailBackgroundTask
                     Attempts = 1,
                 };
                 _emailHistoryInteractor.AddEmailHistory(emailObj);
+
+                _emailQuotaInteractor.IncrementEmailQuota(email.ChannelKey);
             }
-            //Update Quota Implemented Outside The Loop--revisit
-            _emailQuotaInteractor.IncrementEmailQuota(email.ChannelKey);
+            
 
         }
     }

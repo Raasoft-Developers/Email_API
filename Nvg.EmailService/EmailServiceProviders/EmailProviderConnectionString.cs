@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nvg.EmailBackgroundTask.EmailProvider
+namespace Nvg.EmailService.EmailServiceProviders
 {
     public class EmailProviderConnectionString
     {
-        //public string Provider { get; set; } = string.Empty;
-        //public string ApiUrl { get; set; } = string.Empty;
-        //public string Sender { get; set; } = string.Empty;
         public Dictionary<string, string> Fields { get; set; }
 
         public EmailProviderConnectionString(string connectionString)
@@ -37,21 +34,6 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
                     var value = splitString[1];
                     Fields[key] = value;
 
-                    //switch (key)
-                    //{
-                    //    case "Provider":
-                    //        Provider = value;
-                    //        break;
-                    //    case "ApiUrl":
-                    //        ApiUrl = value;
-                    //        break;
-                    //    case "Sender":
-                    //        Sender = value;
-                    //        break;
-                    //    default:
-                    //        Fields[key] = value;
-                    //        break;
-                    //}
                 }
             }
         }

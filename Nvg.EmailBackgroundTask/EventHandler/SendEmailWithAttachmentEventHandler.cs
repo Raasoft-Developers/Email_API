@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Reflection;
 using Nvg.EmailBackgroundTask.Extensions;
-using Nvg.EmailBackgroundTask.EmailProvider;
 using Nvg.EmailBackgroundTask.Events;
 using Nvg.EmailService;
 using Nvg.EmailService.Data;
 using Nvg.EmailBackgroundTask.Models;
 using Nvg.EmailService.EmailQuota;
 using Nvg.EmailService.EmailProvider;
+using Nvg.EmailService.EmailServiceProviders;
 
 namespace Nvg.EmailBackgroundTask.EventHandler
 {

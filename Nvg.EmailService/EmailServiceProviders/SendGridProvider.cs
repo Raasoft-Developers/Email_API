@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Nvg.EmailService.DTOS;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Nvg.EmailBackgroundTask.EmailProvider
+namespace Nvg.EmailService.EmailServiceProviders
 {
     /// <summary>
     /// Send Grid Email Provider.
@@ -19,7 +16,7 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
     {
         private readonly EmailProviderConnectionString _emailProviderCS;
         private readonly ILogger<SendGridProvider> _logger;
-             
+
         public SendGridProvider(EmailProviderConnectionString emailProviderConnectionString, ILogger<SendGridProvider> logger)
         {
             _emailProviderCS = emailProviderConnectionString;
@@ -28,10 +25,10 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
 
         public async Task<string> SendEmail(List<string> recipients, string message, string subject, string sender = "")
         {
-            _logger.LogInformation("SendEmail method.");
+            // _logger.LogInformation("SendEmail method.");
             if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
                 sender = _emailProviderCS.Fields["Sender"];
-            _logger.LogInformation("Sender: " + sender);
+            // _logger.LogInformation("Sender: " + sender);
             var APIKey = _emailProviderCS.Fields["ApiKey"];
             var client = new SendGridClient(APIKey);
             var from = new EmailAddress(sender);
@@ -42,15 +39,15 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             var email = MailHelper.CreateSingleEmailToMultipleRecipients(
                 from,
                 to,
-                subject, 
+                subject,
                 null,
-                message, 
+                message,
                 showAllRecipients
             );
             _logger.LogInformation("client: " + client);
             _logger.LogInformation("from: " + from);
             _logger.LogInformation("to: " + to);
-            _logger.LogInformation("ApiKey: " + APIKey);
+           // _logger.LogInformation("ApiKey: " + APIKey);
             _logger.LogInformation("Sending Email...");
             email.SetClickTracking(enable: false, enableText: false);
 
@@ -61,12 +58,12 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             return apiResponse.ToString();
         }
 
-        public async Task<string> SendEmailWithAttachments(List<string> recipients, List<EmailAttachment> files,string message, string subject, string sender = "")
+        public async Task<string> SendEmailWithAttachments(List<string> recipients, List<EmailAttachment> files, string message, string subject, string sender = "")
         {
-            _logger.LogInformation("SendEmail method.");
+            // _logger.LogInformation("SendEmail method.");
             if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
                 sender = _emailProviderCS.Fields["Sender"];
-            _logger.LogInformation("Sender: " + sender);
+            // _logger.LogInformation("Sender: " + sender);
             var APIKey = _emailProviderCS.Fields["ApiKey"];
             var client = new SendGridClient(APIKey);
             var from = new EmailAddress(sender);
@@ -100,9 +97,10 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogInformation("Failed to Attach Image: " + ex.Message);
+                throw ex;
             }
             _logger.LogInformation("client: " + client);
             _logger.LogInformation("from: " + from);
@@ -112,7 +110,6 @@ namespace Nvg.EmailBackgroundTask.EmailProvider
             email.SetClickTracking(enable: false, enableText: false);
 
             var apiResponse = await client.SendEmailAsync(email);
-
 
             _logger.LogInformation("Response: " + apiResponse.ToString());
             return apiResponse.ToString();

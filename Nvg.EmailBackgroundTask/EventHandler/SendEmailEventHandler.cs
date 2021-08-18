@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EventBus.Abstractions;
+﻿using EventBus.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using AutoMapper;
-using System.Reflection;
-using Nvg.EmailBackgroundTask.Extensions;
-using Nvg.EmailBackgroundTask.EmailProvider;
 using Nvg.EmailBackgroundTask.Events;
+using Nvg.EmailBackgroundTask.Extensions;
+using Nvg.EmailBackgroundTask.Models;
 using Nvg.EmailService;
 using Nvg.EmailService.Data;
-using Nvg.EmailBackgroundTask.Models;
-using Nvg.EmailService.EmailQuota;
 using Nvg.EmailService.EmailProvider;
+using Nvg.EmailService.EmailServiceProviders;
+using System;
+using System.Threading.Tasks;
 
 namespace Nvg.EmailBackgroundTask.EventHandler
 {

@@ -1,19 +1,14 @@
 ﻿using Autofac;
-using Microsoft.Azure.ServiceBus;
-using EventBus;
-using EventBus.Events;
-using EventBus.Subscription;
 using EventBus.Abstractions;
+using EventBus.Subscription;
+using EventBusRabbitMQ;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using Nvg.EmailService.EmailProvider;
+using Nvg.EmailService.EmailServiceProviders;
 using RabbitMQ.Client;
 using Serilog;
-using Nvg.EmailBackgroundTask;
-using Nvg.EmailBackgroundTask.EmailProvider;
-using EventBusRabbitMQ;
-using Nvg.EmailService.EmailProvider;
 
 namespace Nvg.EmailBackgroundTask.Extensions
 {
