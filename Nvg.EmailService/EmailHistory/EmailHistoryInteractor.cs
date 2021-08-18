@@ -131,6 +131,24 @@ namespace Nvg.EmailService.EmailHistory
             }
         }
 
+        public EmailResponseDto<List<EmailHistoryDto>> GetEmailHistoriesByDateRange(string channelKey, string tag, string fromDate, string toDate)
+        {
+            _logger.LogInformation("GetEmailHistoriesByDateRange interactor method.");
+            EmailResponseDto<List<EmailHistoryDto>> responseDto = new EmailResponseDto<List<EmailHistoryDto>>();
+            try
+            {
+                var histories = _emailHistoryRepository.GetEmailHistoriesByDateRange(channelKey, tag, fromDate, toDate);
+                return _mapper.Map<EmailResponseDto<List<EmailHistoryDto>>>(histories);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while getting email history by date range:" + ex.Message);
+                responseDto.Message = "Failed to get histories by date range: " + ex.Message;
+                responseDto.Status = false;
+                return responseDto;
+            }
+        }
+
         public EmailResponseDto<List<EmailHistoryDto>> GetEmailHistoriesByTag(string channelKey, string tag)
         {
             _logger.LogInformation("AddEmailHistory interactor method.");

@@ -130,7 +130,7 @@ namespace Nvg.EmailService.Email
                     {
                         channelResponse.Result.TotalQuota = quotaResponse.Result.TotalQuota;
                         channelResponse.Result.TotalConsumption = quotaResponse.Result.TotalConsumption;
-                        channelResponse.Result.MonthlyConsumption = quotaResponse.Result.MonthylConsumption;
+                        channelResponse.Result.MonthlyConsumption = quotaResponse.Result.MonthlyConsumption;
                         channelResponse.Result.MonthlyQuota = quotaResponse.Result.MonthlyQuota;
                         channelResponse.Result.CurrentMonth = quotaResponse.Result.CurrentMonth;
                         channelResponse.Result.IsRestrictedByQuota = channelInput.IsRestrictedByQuota;
@@ -173,7 +173,7 @@ namespace Nvg.EmailService.Email
                     var quotaResponse = _emailQuotaInteractor.UpdateEmailQuota(channelInput);
                     if (!channelResponse.Status && quotaResponse.Status)
                     {
-                        //if sms channel is not updated , then take response of sms quota updation
+                        //if email channel is not updated , then take response of email quota updation
                         channelResponse.Status = quotaResponse.Status;
                         channelResponse.Message = quotaResponse.Message;
                     }
@@ -191,7 +191,7 @@ namespace Nvg.EmailService.Email
                     {
                         channelResponse.Result.TotalQuota = quotaResponse.Result.TotalQuota;
                         channelResponse.Result.TotalConsumption = quotaResponse.Result.TotalConsumption;
-                        channelResponse.Result.MonthlyConsumption = quotaResponse.Result.MonthylConsumption;
+                        channelResponse.Result.MonthlyConsumption = quotaResponse.Result.MonthlyConsumption;
                         channelResponse.Result.MonthlyQuota = quotaResponse.Result.MonthlyQuota;
                         channelResponse.Result.CurrentMonth = quotaResponse.Result.CurrentMonth;
                         channelResponse.Result.IsRestrictedByQuota = channelInput.IsRestrictedByQuota;
@@ -446,6 +446,52 @@ namespace Nvg.EmailService.Email
                 response.Message = ex.Message;
                 return response;
             }
+        }
+
+        public EmailResponseDto<List<EmailHistoryDto>> GetEmailHistoriesByDateRange(string channelKey, string tag, string fromDate, string toDate)
+        {
+            _logger.LogInformation("GetEmailHistoriesByDateRange interactor method.");
+            EmailResponseDto<List<EmailHistoryDto>> poolResponse = new EmailResponseDto<List<EmailHistoryDto>>();
+            try
+            {
+                poolResponse = _emailHistoryInteractor.GetEmailHistoriesByDateRange(channelKey, tag, fromDate, toDate);
+                _logger.LogDebug("Status: " + poolResponse.Status + ",Message: " + poolResponse.Message);
+                return poolResponse;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred in Email Interactor while getting Email histories by date range: ", ex.Message);
+                poolResponse.Message = "Error occurred while getting Email histories by date range: " + ex.Message;
+                poolResponse.Status = false;
+                return poolResponse;
+            }
+        }
+
+        public EmailResponseDto<EmailQuotaDto> GetEmailQuota(string channelKey)
+        {
+            _logger.LogInformation("GetEmailQuota interactor method.");
+            EmailResponseDto<EmailQuotaDto> quotaResponse = new EmailResponseDto<EmailQuotaDto>();
+            try
+            {
+                var channelExist = _emailChannelInteractor.CheckIfChannelExist(channelKey).Result;
+                if (!channelExist)
+                {
+                    quotaResponse.Status = channelExist;
+                    quotaResponse.Message = $"Invalid Channel key {channelKey}.";
+                }
+                else
+                {
+                    quotaResponse = _emailQuotaInteractor.GetEmailQuota(channelKey);
+                }
+                _logger.LogDebug("Status: " + quotaResponse.Status + ",Message: " + quotaResponse.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred in Email Interactor while getting Email Quota: ", ex.Message);
+                quotaResponse.Message = "Error occurred while getting Email Quota: " + ex.Message;
+                quotaResponse.Status = false;
+            }
+            return quotaResponse;
         }
     }
 }

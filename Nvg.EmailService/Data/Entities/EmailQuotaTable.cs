@@ -19,6 +19,7 @@ namespace Nvg.EmailService.Data.Entities
         public string CurrentMonth { get; set; }
         public int MonthlyQuota { get; set; }
         public int TotalQuota { get; set; }
-
+        [NotMapped]
+        public string EmailChannelKey { get; set; }
     }
 }

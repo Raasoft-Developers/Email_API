@@ -94,5 +94,22 @@ namespace Nvg.EmailService.Email
         /// <param name="providerName">Provider name</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<List<EmailProviderSettingsDto>> GetEmailProvidersByPool(string poolName, string providerName);
+
+        /// <summary>
+        /// Gets the Email History data by date range.
+        /// </summary>
+        /// <param name="channelKey">Channel Key</param>
+        /// <param name="tag">Tag</param>
+        /// <param name="fromDate">From Date</param>
+        /// <param name="toDate">To Date</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<List<EmailHistoryDto>> GetEmailHistoriesByDateRange(string channelKey, string tag, string fromDate, string toDate);
+
+        /// <summary>
+        /// Gets the Email Quota.
+        /// </summary>
+        /// <param name="channelKey">Channel Key</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<EmailQuotaDto> GetEmailQuota(string channelKey);
     }
 }

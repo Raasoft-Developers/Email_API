@@ -423,6 +423,90 @@ namespace Nvg.Api.Email.Controllers
         }
 
         /// <summary>
+        /// API to get the Email Histories data by date range.
+        /// </summary>
+        /// <param name="historyInput"><see cref="HistoryInput"/> model.</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
+        [HttpPost]
+        public ActionResult GetEmailHistoriesByDateRange(HistoryInput historyInput)
+        {
+            _logger.LogInformation("GetEmailHistoriesByDateRange action method.");
+            _logger.LogInformation($"ChannelKey: {historyInput.ChannelKey}, Tag: {historyInput.Tag}, FromDate: {historyInput.FromDate}, ToDate: {historyInput.ToDate}");
+            EmailResponseDto<List<EmailHistoryDto>> historiesResponse = new EmailResponseDto<List<EmailHistoryDto>>();
+            try
+            {
+                if (string.IsNullOrEmpty(historyInput.ChannelKey))
+                {
+                    historiesResponse.Status = false;
+                    historiesResponse.Message = "Channel Key cannot be null or empty.";
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, historiesResponse);
+                }
+                if (string.IsNullOrEmpty(historyInput.FromDate) || string.IsNullOrEmpty(historyInput.ToDate))
+                {
+                    historiesResponse.Status = false;
+                    historiesResponse.Message = "From Date and To Date cannot be null or empty.";
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, historiesResponse);
+                }
+
+                historiesResponse = _emailInteractor.GetEmailHistoriesByDateRange(historyInput.ChannelKey, historyInput.Tag, historyInput.FromDate, historyInput.ToDate);
+                if (historiesResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + historiesResponse.Status + ", Message:" + historiesResponse.Message);
+                    return Ok(historiesResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + historiesResponse.Status + ", Message:" + historiesResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, historiesResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while getting Email histories by date range: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        /// <summary>
+        /// API to get the Email Quota.
+        /// </summary>
+        /// <param name="channelKey">Channel Key.</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
+        [HttpGet("{channelKey}")]
+        public ActionResult GetEmailQuota(string channelKey)
+        {
+            _logger.LogInformation("GetEmailQuota action method.");
+            _logger.LogInformation($"ChannelKey: {channelKey}");
+            EmailResponseDto<EmailQuotaDto> quotaResponse = new EmailResponseDto<EmailQuotaDto>();
+            try
+            {
+                if (string.IsNullOrEmpty(channelKey))
+                {
+                    quotaResponse.Status = false;
+                    quotaResponse.Message = "Channel Key cannot be null or empty.";
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, quotaResponse);
+                }
+
+                quotaResponse = _emailInteractor.GetEmailQuota(channelKey);
+                if (quotaResponse.Status)
+                {
+                    _logger.LogDebug("Status: " + quotaResponse.Status + ", Message:" + quotaResponse.Message);
+                    return Ok(quotaResponse);
+                }
+                else
+                {
+                    _logger.LogError("Status: " + quotaResponse.Status + ", Message:" + quotaResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, quotaResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while getting Email Quota: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        /// <summary>
         /// API to send emails.
         /// </summary>
         /// <param name="emailInputs"><see cref="EmailInput"/> model</param>

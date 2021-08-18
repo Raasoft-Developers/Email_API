@@ -24,7 +24,17 @@ namespace Nvg.EmailService.Data.EmailQuota
                 var emailQuota = (from q in _context.EmailQuotas
                                 join c in _context.EmailChannels on q.EmailChannelID equals c.ID
                                 where c.Key.ToLower().Equals(channelKey.ToLower())
-                                select q).FirstOrDefault();
+                                select new EmailQuotaTable
+                                {
+                                    ID = q.ID,
+                                    MonthlyQuota = q.MonthlyQuota,
+                                    MonthlyConsumption = q.MonthlyConsumption,
+                                    TotalQuota = q.TotalQuota,
+                                    EmailChannelID = q.EmailChannelID,
+                                    EmailChannelKey = c.Key,
+                                    CurrentMonth = q.CurrentMonth,
+                                    TotalConsumption = q.TotalConsumption
+                                }).FirstOrDefault();
                 response.Status = true;
                 response.Message = $"Retrieved Email Quota";
                 response.Result = emailQuota;
@@ -131,6 +141,12 @@ namespace Nvg.EmailService.Data.EmailQuota
                     response.Message = "Email Quota is Added";
                     response.Result = emailQuota;
                 }
+                else
+                {
+                    response.Status = true;
+                    response.Message = "Email Quota is not added";
+                    response.Result = emailQuota;
+                }
                 return response;
             }
             catch (Exception ex)
@@ -179,13 +195,13 @@ namespace Nvg.EmailService.Data.EmailQuota
                 if (_context.SaveChanges() > 0)
                 {
                     response.Status = true;
-                    response.Message = "Email Quota is Updated";
+                    response.Message = "Email Quota is Updated.";
                     response.Result = emailQuota;
                 }
                 else
                 {
                     response.Status = false;
-                    response.Message = "Email Quota is not Updated";
+                    response.Message = "Email Quota is not Updated.";
                     response.Result = emailQuota;
                 }
                 return response;

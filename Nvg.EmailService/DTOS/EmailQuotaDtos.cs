@@ -9,10 +9,11 @@ namespace Nvg.EmailService.DTOS
     public class EmailQuotaDto
     {
         public string ID { get; set; }
-        public string ChannelID { get; set; }
+        public string EmailChannelID { get; set; }
+        public string EmailChannelKey { get; set; }
         public int TotalConsumption { get; set; }
         public int TotalQuota { get; set; }
-        public int MonthylConsumption { get; set; }
+        public int MonthlyConsumption { get; set; }
         public string CurrentMonth { get; set; }
         public int MonthlyQuota { get; set; }
     }

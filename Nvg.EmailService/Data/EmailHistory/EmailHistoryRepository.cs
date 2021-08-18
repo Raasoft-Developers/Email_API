@@ -25,15 +25,65 @@ namespace Nvg.EmailService.Data.EmailHistory
                 if (_context.SaveChanges() == 1)
                 {
                     response.Status = true;
-                    response.Message = "Added";
+                    response.Message = "Email history has been Added.";
                     response.Result = historyInput;
                 }
                 else
                 {
                     response.Status = false;
-                    response.Message = "Not Added";
+                    response.Message = "Email history has not been Added";
                     response.Result = historyInput;
                 }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<List<EmailHistoryTable>> GetEmailHistoriesByDateRange(string channelKey, string tag, string fromDate, string toDate)
+        {
+            var response = new EmailResponseDto<List<EmailHistoryTable>>();
+            try
+            {
+                var fromDateDateTime = Convert.ToDateTime(fromDate);
+                if (fromDate.Contains("Z"))
+                    fromDateDateTime = fromDateDateTime.ToUniversalTime();
+                var toDateDateTime = Convert.ToDateTime(toDate);
+                if (toDate.Contains("Z"))
+                    toDateDateTime = toDateDateTime.ToUniversalTime();
+
+                var emailHistories = new List<EmailHistoryTable>();
+                emailHistories = (from h in _context.EmailHistories
+                                join c in _context.EmailChannels on h.EmailChannelID equals c.ID
+                                join pr in _context.EmailProviders on h.EmailProviderID equals pr.ID
+                                where c.Key.ToLower().Equals(channelKey.ToLower()) && (string.IsNullOrEmpty(tag) || h.Tags.ToLower().Equals(tag.ToLower()))
+                                && h.SentOn >= fromDateDateTime && h.SentOn <= toDateDateTime
+                                select new EmailHistoryTable
+                                {
+                                    ID = h.ID,
+                                    Sender = h.Sender,
+                                    Recipients = h.Recipients,
+                                    SentOn = h.SentOn,
+                                    MessageSent = h.MessageSent,
+                                    Attempts = h.Attempts,
+                                    Status = h.Status,
+                                    Tags = h.Tags,
+                                    EmailProviderID = h.EmailProviderID,
+                                    EmailChannelID = h.EmailChannelID,
+                                    TemplateName = h.TemplateName,
+                                    TemplateVariant = h.TemplateVariant,
+                                    ChannelKey = c.Key,
+                                    ProviderName = pr.Name
+                                }).ToList();
+
+                response.Status = true;
+
+                response.Message = $"Retrieved {emailHistories.Count} Email histories data for the given date range.";
+                response.Result = emailHistories;
                 return response;
             }
             catch (Exception ex)

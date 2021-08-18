@@ -35,13 +35,13 @@ namespace Nvg.EmailService.Data.EmailChannel
                     if (_context.SaveChanges() == 1)
                     {
                         response.Status = true;
-                        response.Message = "Added";
+                        response.Message = "Email channel has been added.";
                         response.Result = channelInput;
                     }
                     else
                     {
                         response.Status = false;
-                        response.Message = "Not Added";
+                        response.Message = "Email Channel has not been added.";
                         response.Result = channelInput;
                     }
                 }
@@ -68,13 +68,13 @@ namespace Nvg.EmailService.Data.EmailChannel
                     if (_context.SaveChanges() == 1)
                     {
                         response.Status = true;
-                        response.Message = "Updated";
+                        response.Message = "Email channek has been Updated.";
                         response.Result = channelInput;
                     }
                     else
                     {
                         response.Status = false;
-                        response.Message = "Failed To Update";
+                        response.Message = "Failed To Update Email Channel.";
                         response.Result = channelInput;
                     }
                 }
