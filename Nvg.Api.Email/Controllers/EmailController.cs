@@ -202,17 +202,28 @@ namespace Nvg.Api.Email.Controllers
         {
             _logger.LogInformation("UpdateEmailChannel action method.");
             _logger.LogDebug($"EmailPoolName: {channelInput.EmailPoolName}, EmailProviderName: {channelInput.EmailProviderName}");
+            EmailResponseDto<EmailChannelDto> channelResponse = new EmailResponseDto<EmailChannelDto>();
             try
             {
-                var mappedInput = _mapper.Map<EmailChannelDto>(channelInput);
-                var channelResponse = _emailInteractor.UpdateEmailChannel(mappedInput);
-                if (channelResponse.Status)
+                if (!string.IsNullOrWhiteSpace(channelInput.Key))
                 {
-                    _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
-                    return Ok(channelResponse);
+                    var mappedInput = _mapper.Map<EmailChannelDto>(channelInput);
+                    channelResponse = _emailInteractor.UpdateEmailChannel(mappedInput);
+                    if (channelResponse.Status)
+                    {
+                        _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return Ok(channelResponse);
+                    }
+                    else
+                    {
+                        _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                    }
                 }
                 else
                 {
+                    channelResponse.Status = false;
+                    channelResponse.Message = "Channel Key cannot be empty or whitespace.";
                     _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
                     return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
                 }

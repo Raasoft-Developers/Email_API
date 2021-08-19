@@ -11,7 +11,7 @@ namespace Nvg.EmailService.EmailPool
         /// Adds the email pool to the table.
         /// </summary>
         /// <param name="emailPoolInput"><see cref="EmailPoolDto"/> model</param>
-        /// <returns><<see cref="EmailResponseDto{EmailPoolDto}"/>/returns>
+        /// <returns><<see cref="EmailResponseDto{T}"/>/returns>
         EmailResponseDto<EmailPoolDto> AddEmailPool(EmailPoolDto emailPoolInput);
     }
 }
