@@ -71,8 +71,6 @@ namespace Nvg.EmailBackgroundTask
 
                 _emailQuotaInteractor.IncrementEmailQuota(email.ChannelKey);
             }
-            
-
         }
 
         /// <summary>

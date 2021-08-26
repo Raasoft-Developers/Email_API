@@ -51,5 +51,12 @@ namespace Nvg.EmailService.Data.EmailQuota
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<string> DeleteEmailQuota(string channelID);
 
+        /// <summary>
+        /// Gets the Email Quota by channel ID.
+        /// </summary>
+        /// <param name="channelKey">Channel Key</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<List<EmailQuotaTable>> GetEmailQuotaList(string channelID);
+
     }
 }

@@ -48,6 +48,38 @@ namespace Nvg.EmailService.Data.EmailQuota
             }
         }
 
+        public EmailResponseDto<List<EmailQuotaTable>> GetEmailQuotaList(string channelID)
+        {
+            var response = new EmailResponseDto<List<EmailQuotaTable>>();
+            try
+            {
+                var emailQuota = (from q in _context.EmailQuotas
+                                  join c in _context.EmailChannels on q.EmailChannelID equals c.ID
+                                  where q.EmailChannelID.Equals(channelID)
+                                  select new EmailQuotaTable
+                                  {
+                                      ID = q.ID,
+                                      MonthlyQuota = q.MonthlyQuota,
+                                      MonthlyConsumption = q.MonthlyConsumption,
+                                      TotalQuota = q.TotalQuota,
+                                      EmailChannelID = q.EmailChannelID,
+                                      EmailChannelKey = c.Key,
+                                      CurrentMonth = q.CurrentMonth,
+                                      TotalConsumption = q.TotalConsumption
+                                  }).ToList();
+                response.Status = true;
+                response.Message = $"Retrieved Email Quota";
+                response.Result = emailQuota;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
         public EmailResponseDto<EmailQuotaTable> UpdateCurrentMonth(string channelKey,string currentMonth)
         {
             var response = new EmailResponseDto<EmailQuotaTable>();
@@ -89,9 +121,10 @@ namespace Nvg.EmailService.Data.EmailQuota
                 if (emailQuota != null)
                 {
                     var totalCountInt = Convert.ToInt32(emailQuota.TotalConsumption); // TODO Implement encryption 
-                    var monthCountInt = Convert.ToInt32(emailQuota.TotalConsumption); // TODO Implement encryption 
-                    monthCountInt += 1; totalCountInt += 1;
-                    emailQuota.MonthlyConsumption += 1;
+                    var monthCountInt = Convert.ToInt32(emailQuota.MonthlyConsumption); // TODO Implement encryption 
+                    monthCountInt += 1; 
+                    totalCountInt += 1;
+                    emailQuota.MonthlyConsumption = monthCountInt;
                     emailQuota.TotalConsumption = totalCountInt;
                     _context.EmailQuotas.Update(emailQuota);
                 }
@@ -127,24 +160,31 @@ namespace Nvg.EmailService.Data.EmailQuota
                     emailQuota = new EmailQuotaTable()
                     {
                         EmailChannelID = emailChannel.ID,
-                        MonthlyQuota =  emailChannel.MonthlyQuota ,
+                        MonthlyQuota = emailChannel.MonthlyQuota,
                         MonthlyConsumption = 0,
                         TotalConsumption = 0,
-                        TotalQuota =  emailChannel.TotalQuota ,
+                        TotalQuota = emailChannel.TotalQuota,
                         CurrentMonth = DateTime.Now.ToString("MMM").ToUpper()
                     };
                     _context.EmailQuotas.Add(emailQuota);
-                }
-                if (_context.SaveChanges() == 1)
-                {
-                    response.Status = true;
-                    response.Message = "Email Quota is Added";
-                    response.Result = emailQuota;
+
+                    if (_context.SaveChanges() == 1)
+                    {
+                        response.Status = true;
+                        response.Message = "Email Quota is Added";
+                        response.Result = emailQuota;
+                    }
+                    else
+                    {
+                        response.Status = true;
+                        response.Message = "Email Quota is not added";
+                        response.Result = emailQuota;
+                    }
                 }
                 else
                 {
-                    response.Status = true;
-                    response.Message = "Email Quota is not added";
+                    response.Status = false;
+                    response.Message = "Email Quota is already exists";
                     response.Result = emailQuota;
                 }
                 return response;

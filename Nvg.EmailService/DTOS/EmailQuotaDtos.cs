@@ -24,6 +24,7 @@ namespace Nvg.EmailService.DTOS
         {
             CreateMap<EmailQuotaDto, EmailQuotaTable>().ReverseMap();
             CreateMap<EmailResponseDto<EmailQuotaTable>, EmailResponseDto<EmailQuotaDto>>();
+            CreateMap<EmailResponseDto<List<EmailQuotaTable>>, EmailResponseDto<List<EmailQuotaDto>>>();
 
         }
     }

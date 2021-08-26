@@ -591,6 +591,122 @@ namespace Nvg.EmailService.Email
         }
         #endregion
 
+        #region Email Quota
+        public EmailResponseDto<List<EmailQuotaDto>> GetEmailQuotaList(string channelID)
+        {
+            _logger.LogInformation("GetEmailQuota interactor method.");
+            var response = new EmailResponseDto<List<EmailQuotaDto>>();
+            try
+            {
+                var emailQuotaResponse = _emailQuotaRepository.GetEmailQuotaList(channelID);
+                _logger.LogDebug("Status: " + emailQuotaResponse.Status + ", Message: " + emailQuotaResponse.Message);
+                var mappedResponse = _mapper.Map<EmailResponseDto<List<EmailQuotaDto>>>(emailQuotaResponse);
+                return mappedResponse;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to get Email Quota" + ex.Message);
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<EmailQuotaDto> AddEmailQuota(EmailChannelDto emailChannelDto)
+        {
+            _logger.LogInformation("AddEmailQuota interactor method.");
+            var response = new EmailResponseDto<EmailQuotaDto>();
+            try
+            {
+                if (emailChannelDto.IsRestrictedByQuota && (emailChannelDto.MonthlyQuota == 0 || emailChannelDto.TotalQuota == 0))
+                {
+                    response.Status = false;
+                    response.Message = "Monthly quota and/or Total quota cannot have value as 0. Quota has not been updated in the database.";
+                    _logger.LogDebug("Status: " + response.Status + "Message:" + response.Message);
+                    return response;
+                }
+                emailChannelDto.ID = _emailChannelRepository.GetEmailChannelByKey(emailChannelDto.Key)?.Result?.ID;
+                if (!string.IsNullOrEmpty(emailChannelDto.ID))
+                {
+                    var emailQuotaResponse = _emailQuotaRepository.AddEmailQuota(emailChannelDto);
+                    _logger.LogDebug("Status: " + emailQuotaResponse.Status + "Message:" + emailQuotaResponse.Message);
+                    var mappedResponse = _mapper.Map<EmailResponseDto<EmailQuotaDto>>(emailQuotaResponse);
+                    return mappedResponse;
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = "Invalid Channel Key.";
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to Add Email Quota" + ex.Message);
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<EmailQuotaDto> UpdateEmailQuota(EmailChannelDto emailChannelDto)
+        {
+            _logger.LogInformation("UpdateEmailQuota interactor method.");
+            var response = new EmailResponseDto<EmailQuotaDto>();
+            try
+            {
+                if (emailChannelDto.IsRestrictedByQuota && (emailChannelDto.MonthlyQuota == 0 || emailChannelDto.TotalQuota == 0))
+                {
+                    response.Status = false;
+                    response.Message = "Monthly quota and/or Total quota cannot have value as 0. Quota has not been updated in the database.";
+                    _logger.LogDebug("Status: " + response.Status + "Message:" + response.Message);
+                    return response;
+                }
+                emailChannelDto.ID = _emailChannelRepository.GetEmailChannelByKey(emailChannelDto.Key)?.Result?.ID;
+                if (!string.IsNullOrEmpty(emailChannelDto.ID))
+                {
+                    var emailQuotaResponse = _emailQuotaRepository.UpdateEmailQuota(emailChannelDto);
+                    _logger.LogDebug("Status: " + emailQuotaResponse.Status + "Message:" + emailQuotaResponse.Message);
+
+                    var mappedResponse = _mapper.Map<EmailResponseDto<EmailQuotaDto>>(emailQuotaResponse);
+                    return mappedResponse;
+                }
+                else
+                {
+                    response.Status = false;
+                    response.Message = "Invalid Channel Key.";
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to Update Email Quota" + ex.Message);
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public EmailResponseDto<string> DeleteEmailQuota(string channelID)
+        {
+            _logger.LogInformation("DeleteEmailQuota interactor method.");
+            var response = new EmailResponseDto<string>();
+            try
+            {
+                var emailQuotaResponse = _emailQuotaRepository.DeleteEmailQuota(channelID);
+                _logger.LogDebug("Status: " + emailQuotaResponse.Status + "Message:" + emailQuotaResponse.Message);
+                //var mappedResponse = _mapper.Map<EmailResponseDto<EmailQuotaDto>>(emailQuotaResponse);
+                return emailQuotaResponse;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to Add Email Quota" + ex.Message);
+                response.Status = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        #endregion
         public EmailResponseDto<string> SendMail(EmailDto emailInputs)
         {
             _logger.LogInformation("SendMail interactor method.");

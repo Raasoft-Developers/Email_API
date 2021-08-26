@@ -860,6 +860,178 @@ namespace Nvg.Api.Email.Controllers
         }
         #endregion
 
+        #region Email Quota
+        /// <summary>
+        /// API to gets the Email Quota.
+        /// </summary>
+        /// <param name="channelID">Channel ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
+        [HttpGet("{channelID}")]
+        public ActionResult GetEmailQuotaList(string channelID)
+        {
+            _logger.LogInformation("GetEmailQuotaList action method.");
+            _logger.LogDebug("Channel ID: " + channelID);
+            EmailResponseDto<List<EmailQuotaDto>> channelResponse = new EmailResponseDto<List<EmailQuotaDto>>();
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(channelID))
+                {
+                    channelResponse = _emailManagementInteractor.GetEmailQuotaList(channelID);
+                    if (channelResponse.Status)
+                    {
+                        _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return Ok(channelResponse);
+                    }
+                    else
+                    {
+                        _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                    }
+                }
+                else
+                {
+                    channelResponse.Status = false;
+                    channelResponse.Message = "Channel Key cannot be empty or whitespace.";
+                    _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while getting email quota: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        /// <summary>
+        /// API to add the Email Quota.
+        /// </summary>
+        /// <param name="channelInput"><see cref="ChannelInput"/></param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
+        [HttpPost]
+        public ActionResult AddEmailQuota(ChannelInput channelInput)
+        {
+            _logger.LogInformation("AddEmailChannel action method.");
+            _logger.LogDebug("Pool Name: " + channelInput.EmailPoolName);
+            EmailResponseDto<EmailQuotaDto> channelResponse = new EmailResponseDto<EmailQuotaDto>();
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(channelInput.Key))
+                {
+                    var mappedInput = _mapper.Map<EmailChannelDto>(channelInput);
+                    channelResponse = _emailManagementInteractor.AddEmailQuota(mappedInput);
+                    if (channelResponse.Status)
+                    {
+                        _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return Ok(channelResponse);
+                    }
+                    else
+                    {
+                        _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                    }
+                }
+                else
+                {
+                    channelResponse.Status = false;
+                    channelResponse.Message = "Channel Key cannot be empty or whitespace.";
+                    _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while adding email quota: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        /// <summary>
+        /// API to update the Email Quota.
+        /// </summary>
+        /// <param name="channelInput"><see cref="ChannelInput"/></param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
+        [HttpPost]
+        public ActionResult UpdateEmailQuota(ChannelInput channelInput)
+        {
+            _logger.LogInformation("UpdateEmailQuota action method.");
+            _logger.LogDebug("Pool Name: " + channelInput.EmailPoolName);
+            EmailResponseDto<EmailQuotaDto> channelResponse = new EmailResponseDto<EmailQuotaDto>();
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(channelInput.Key))
+                {
+                    var mappedInput = _mapper.Map<EmailChannelDto>(channelInput);
+                    channelResponse = _emailManagementInteractor.UpdateEmailQuota(mappedInput);
+                    if (channelResponse.Status)
+                    {
+                        _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return Ok(channelResponse);
+                    }
+                    else
+                    {
+                        _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                    }
+                }
+                else
+                {
+                    channelResponse.Status = false;
+                    channelResponse.Message = "Channel Key cannot be empty or whitespace.";
+                    _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while updating email quota: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        /// <summary>
+        /// API to Delete the Email Quota.
+        /// </summary>
+        /// <param name="channelID">Channel ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"></see></returns>
+        [HttpDelete("{channelID}")]
+        public ActionResult DeleteEmailQuota(string channelID)
+        {
+            _logger.LogInformation("DeleteEmailQuota action method.");
+            _logger.LogDebug("Channel ID: " + channelID);
+            EmailResponseDto<string> channelResponse = new EmailResponseDto<string>();
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(channelID))
+                {
+                    channelResponse = _emailManagementInteractor.DeleteEmailQuota(channelID);
+                    if (channelResponse.Status)
+                    {
+                        _logger.LogDebug("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return Ok(channelResponse);
+                    }
+                    else
+                    {
+                        _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                        return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                    }
+                }
+                else
+                {
+                    channelResponse.Status = false;
+                    channelResponse.Message = "Channel Key cannot be empty or whitespace.";
+                    _logger.LogError("Status: " + channelResponse.Status + ", " + channelResponse.Message);
+                    return StatusCode((int)HttpStatusCode.PreconditionFailed, channelResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Internal server error: Error occurred while deleting email quota: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
+        #endregion
+
         /// <summary>
         /// API to send emails.
         /// </summary>

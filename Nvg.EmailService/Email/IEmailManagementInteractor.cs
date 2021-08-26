@@ -169,6 +169,36 @@ namespace Nvg.EmailService.Email
         EmailResponseDto<List<EmailHistoryDto>> GetEmailHistories(string channelID, string tag);
         #endregion
 
+        #region Email Quota
+        /// <summary>
+        /// Gets the Email Quota.
+        /// </summary>
+        /// <param name="channelID">Channel ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<List<EmailQuotaDto>> GetEmailQuotaList(string channelID);
+
+        /// <summary>
+        /// Adds the Email Quota Values for Channel.
+        /// </summary>
+        /// <param name="emailChannel">Email Channel </param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<EmailQuotaDto> AddEmailQuota(EmailChannelDto emailChannel);
+
+        /// <summary>
+        /// Updates the email quota.
+        /// </summary>
+        /// <param name="emailChannel">Email Channel </param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<EmailQuotaDto> UpdateEmailQuota(EmailChannelDto emailChannel);
+
+        /// <summary>
+        /// Deletes the email quota.
+        /// </summary>
+        /// <param name="channelID">Channel ID</param>
+        /// <returns><see cref="EmailResponseDto{T}"/></returns>
+        EmailResponseDto<string> DeleteEmailQuota(string channelID);
+        #endregion
+
 
         /// <summary>
         /// Method to send an email.
