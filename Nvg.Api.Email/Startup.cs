@@ -211,10 +211,10 @@ namespace Nvg.Api.Email
             {
 #if !DEBUG
                 c.RouteTemplate = "email/swagger/{documentname}/swagger.json";
-                //c.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Servers = new System.Collections.Generic.List<OpenApiServer>
-                //{
-                //    new OpenApiServer { Url = $"https://{httpReq.Host.Value}/Idraft" }
-                //});
+                c.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Servers = new System.Collections.Generic.List<OpenApiServer>
+                {
+                    new OpenApiServer { Url = $"https://{httpReq.Host.Value}/email" }
+                });
 #else
                 c.RouteTemplate = "/swagger/{documentname}/swagger.json";
 #endif
@@ -225,7 +225,8 @@ namespace Nvg.Api.Email
 #if DEBUG
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Email API V1");
 #else
-                c.SwaggerEndpoint("../swagger/v1/swagger.json", "Email API V1"); // works for iis deployment, fails for kubernetes deployment(need to test with route prefix)
+                c.SwaggerEndpoint("./swagger/v1/swagger.json", "Email API V1");
+                //c.SwaggerEndpoint("../swagger/v1/swagger.json", "Email API V1"); // works for iis deployment, fails for kubernetes deployment(need to test with route prefix)
                 c.RoutePrefix = "email/swagger";
 #endif
 
