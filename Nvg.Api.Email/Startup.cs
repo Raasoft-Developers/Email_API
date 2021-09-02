@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -175,6 +176,15 @@ namespace Nvg.Api.Email
                 services.RegisterEventBus(Configuration);
             }
 
+            // The following line enables Application Insights telemetry collection.
+            string instrumentationKey = Configuration.GetValue<string>("InstrumentationKey", string.Empty);
+            if (!string.IsNullOrEmpty(instrumentationKey))
+                services.AddApplicationInsightsTelemetry(instrumentationKey);
+
+            string apiKey = Configuration.GetValue<string>("AuthenticationApiKey", string.Empty);
+            if (!string.IsNullOrEmpty(apiKey))
+                services.ConfigureTelemetryModule<QuickPulseTelemetryModule>((module, o) => module.AuthenticationApiKey = apiKey);
+
             var container = new ContainerBuilder();
             container.RegisterModule(new ApplicationModule());
             container.Populate(services);
@@ -197,28 +207,40 @@ namespace Nvg.Api.Email
             //{
             //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             //});
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+#if !DEBUG
+                c.RouteTemplate = "email/swagger/{documentname}/swagger.json";
+                //c.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Servers = new System.Collections.Generic.List<OpenApiServer>
+                //{
+                //    new OpenApiServer { Url = $"https://{httpReq.Host.Value}/Idraft" }
+                //});
+#else
+                c.RouteTemplate = "/swagger/{documentname}/swagger.json";
+#endif
+            });
 
-            app.UseSwaggerUI(c =>
+                app.UseSwaggerUI(c =>
             {
 #if DEBUG
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Email API V1");
 #else
-                c.SwaggerEndpoint("../swagger/v1/swagger.json", "Email API V1");
+                c.SwaggerEndpoint("../swagger/v1/swagger.json", "Email API V1"); // works for iis deployment, fails for kubernetes deployment(need to test with route prefix)
+                c.RoutePrefix = "email/swagger";
 #endif
-                //c.RoutePrefix = string.Empty;
+
             });
 
-            app.UseHttpsRedirection();
+                app.UseHttpsRedirection();
 
-            app.UseRouting();
-            app.UseCors("VueCorsPolicy");
-            app.UseAuthorization();
-            app.UseSerilogRequestLogging();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
+                app.UseRouting();
+                app.UseCors("VueCorsPolicy");
+                app.UseAuthorization();
+                app.UseSerilogRequestLogging();
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
+            }
     }
-}
+    }
