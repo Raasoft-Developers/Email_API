@@ -225,7 +225,7 @@ namespace Nvg.Api.Email
 #if DEBUG
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Email API V1");
 #else
-                c.SwaggerEndpoint("./swagger/v1/swagger.json", "Email API V1");
+                c.SwaggerEndpoint("./v1/swagger.json", "Email API V1");
                 //c.SwaggerEndpoint("../swagger/v1/swagger.json", "Email API V1"); // works for iis deployment, fails for kubernetes deployment(need to test with route prefix)
                 c.RoutePrefix = "email/swagger";
 #endif
