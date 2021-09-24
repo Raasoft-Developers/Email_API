@@ -99,7 +99,7 @@ namespace Nvg.EmailService.EmailServiceProviders
 
             if (_emailProviderCS.Fields.ContainsKey("EncodedPassword"))
             {
-                password = Base64Decode(_emailProviderCS.Fields["EncodedPassword"]);
+                password = Base64Decoder(_emailProviderCS.Fields["EncodedPassword"]);
             }
             else if (_emailProviderCS.Fields.ContainsKey("Password"))
             {
@@ -175,9 +175,9 @@ namespace Nvg.EmailService.EmailServiceProviders
         /// <summary>
         /// Converts base 64 string to utf-8 string
         /// </summary>
-        /// <param name="base64EncodedData">vase 64 encoded string</param>
+        /// <param name="base64EncodedData">base 64 encoded string</param>
         /// <returns>utf-8 string</returns>
-        private static string Base64Decode(string base64EncodedData)
+        private static string Base64Decoder(string base64EncodedData)
         {
             var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
