@@ -95,7 +95,17 @@ namespace Nvg.EmailService.EmailServiceProviders
         private async Task SendAsync(/*MimeMessage*/ MailMessage mailMessage, string sender)
         {
             var smtpServer = _emailProviderCS.Fields["SmtpServer"];
-            var password = _emailProviderCS.Fields["Password"];
+            string password = string.Empty;
+
+            if (_emailProviderCS.Fields.ContainsKey("EncodedPassword"))
+            {
+                password = Base64Decode(_emailProviderCS.Fields["EncodedPassword"]);
+            }
+            else if (_emailProviderCS.Fields.ContainsKey("Password"))
+            {
+                password = _emailProviderCS.Fields["Password"];
+            }
+
             var port = _emailProviderCS.Fields["Port"];
             _logger.LogInformation("smtpServer: " + smtpServer);
             _logger.LogInformation("sender: " + sender);
@@ -160,6 +170,12 @@ namespace Nvg.EmailService.EmailServiceProviders
                 }
             }
             */
+        }
+
+        private static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
     }
 }

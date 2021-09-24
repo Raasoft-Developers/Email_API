@@ -24,16 +24,15 @@ namespace Nvg.EmailService.EmailServiceProviders
 
         private void LoadConnectionStringParts(string connectionString)
         {
-            var connString = connectionString.Split(";", StringSplitOptions.RemoveEmptyEntries);
+            var connString = connectionString.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var part in connString)
             {
                 if (part != "")
                 {
-                    var splitString = part.Split("=");
+                    var splitString = part.Split(new[] { '=' },2);
                     var key = splitString[0];
                     var value = splitString[1];
                     Fields[key] = value;
-
                 }
             }
         }
