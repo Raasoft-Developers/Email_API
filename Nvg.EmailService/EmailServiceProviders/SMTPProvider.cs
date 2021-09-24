@@ -172,6 +172,11 @@ namespace Nvg.EmailService.EmailServiceProviders
             */
         }
 
+        /// <summary>
+        /// Converts base 64 string to utf-8 string
+        /// </summary>
+        /// <param name="base64EncodedData">vase 64 encoded string</param>
+        /// <returns>utf-8 string</returns>
         private static string Base64Decode(string base64EncodedData)
         {
             var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
