@@ -87,6 +87,7 @@ namespace Nvg.EmailService.EmailQuota
                     //}
                 }
                 _logger.LogDebug("Status: " + emailQuotaResponse.Status + ", Message: " + emailQuotaResponse.Message);
+                _logger.LogDebug("IsExceed: " + response.IsExceeded + ", RemainingLimit: " + response.RemainingLimit + ", HasLimit: " + response.HasLimit);
                 return response;
             }
             catch (Exception ex)
