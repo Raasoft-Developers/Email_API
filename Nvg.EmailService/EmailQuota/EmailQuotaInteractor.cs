@@ -44,10 +44,10 @@ namespace Nvg.EmailService.EmailQuota
                 return response;
             }
         }
-        public bool CheckIfQuotaExceeded(string channelKey)
+        public EmailQuotaResponseDto CheckIfQuotaExceeded(string channelKey)
         {
             _logger.LogInformation("CheckIfQuotaExceeded interactor method.");
-            var response = false;
+            var response = new EmailQuotaResponseDto();
             try
             {
                 var emailQuotaResponse = _emailQuotaRepository.GetEmailQuota(channelKey);
@@ -55,33 +55,36 @@ namespace Nvg.EmailService.EmailQuota
                 {
                     var emailQuota = emailQuotaResponse.Result;
                     var currentMonth = DateTime.Now.ToString("MMM").ToUpper();
-                    //Check if Quota is set for current month
-                    if(emailQuota.CurrentMonth == currentMonth)
+                    //Check if Current Month in Table is set to the actual current month else update the table value
+                    if (emailQuota.CurrentMonth != currentMonth)
                     {
-                        //Check if quota is exceeded for current month
-                        if (emailQuota.TotalQuota != -1 && (emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota || emailQuota.TotalConsumption >= emailQuota.TotalQuota))
-                        {
-                            response = true;
-                        }
-                    }
-                    else
-                    {   //Reset Quota for Current month and Update the Current Month
                         var updatedQuotaResponse = _emailQuotaRepository.UpdateCurrentMonth(channelKey, currentMonth);
                         if (updatedQuotaResponse.Status)
                         {
                             _logger.LogDebug("Status: " + updatedQuotaResponse.Status + ", Message: " + updatedQuotaResponse.Message);
                             emailQuota = updatedQuotaResponse.Result;
-                            //Check if quota is exceeded for current month
-                            if (emailQuota.TotalQuota != -1 && (emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota || emailQuota.TotalConsumption >= emailQuota.TotalQuota))
-                            {
-                                response = true;
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception(updatedQuotaResponse.Message);
                         }
                     }
+                    if (emailQuota.TotalQuota != -1)
+                    {
+                        response.HasLimit = true;
+                        response.RemainingLimit = emailQuota.TotalQuota - emailQuota.TotalConsumption;
+                        //Replace Remaining Limit with the lower value from the Total and Monthly Limit
+                        var remainingPerMonth = emailQuota.MonthlyQuota - emailQuota.MonthlyConsumption;
+                        if (response.RemainingLimit > remainingPerMonth)
+                        {
+                            response.RemainingLimit = remainingPerMonth;
+                        }
+                        if (emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota || emailQuota.TotalConsumption >= emailQuota.TotalQuota)
+                        {
+                            response.IsExceeded = true;
+                        }
+                    }
+                    //else
+                    //{
+                    //    response.HasLimit = false;
+                    //    response.IsExceeded = false;
+                    //}
                 }
                 _logger.LogDebug("Status: " + emailQuotaResponse.Status + ", Message: " + emailQuotaResponse.Message);
                 return response;
@@ -89,7 +92,7 @@ namespace Nvg.EmailService.EmailQuota
             catch (Exception ex)
             {
                 _logger.LogError("Failed to get Email Quota" + ex.Message);
-                response = true;
+                response.IsExceeded = true;
                 return response;
             }
         }

@@ -13,13 +13,13 @@ namespace Nvg.EmailService.EmailQuota
         /// <param name="channelKey">Channel Key</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
         EmailResponseDto<EmailQuotaDto> GetEmailQuota(string channelKey);
-        
+
         /// <summary>
         /// Check if Email Quota of the channel is exceeded.Status is set to true or false based on value
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
-        /// <returns><see cref="bool"/></returns>
-        bool CheckIfQuotaExceeded(string channelKey);
+        /// <returns><see cref="EmailQuotaResponseDto"/></returns>
+        EmailQuotaResponseDto CheckIfQuotaExceeded(string channelKey);
 
 
         /// <summary>

@@ -314,10 +314,10 @@ namespace Nvg.EmailService.Email
             }
         }
 
-        public EmailResponseDto<string> SendMail(EmailDto emailInputs)
+        public EmailResponseDto<EmailQuotaResponseDto> SendMail(EmailDto emailInputs)
         {
             _logger.LogInformation("SendMail interactor method.");
-            var response = new EmailResponseDto<string>();
+            var response = new EmailResponseDto<EmailQuotaResponseDto>();
             try
             {
                 if (string.IsNullOrEmpty(emailInputs.ChannelKey))
@@ -356,18 +356,19 @@ namespace Nvg.EmailService.Email
                         return response;
                     }
                 }
-                var isExceeded = _emailQuotaInteractor.CheckIfQuotaExceeded(emailInputs.ChannelKey);
-                if (isExceeded)
+                var emailQuota = _emailQuotaInteractor.CheckIfQuotaExceeded(emailInputs.ChannelKey);
+                if (emailQuota != null && emailQuota.IsExceeded)
                 {
                     _logger.LogError($"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.");
-                    response.Status = !isExceeded;
+                    response.Status = !emailQuota.IsExceeded;
+                    response.Result = emailQuota;
                     response.Message = $"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.";
                     return response;
                 }
-
                 _logger.LogInformation("Trying to send Email.");
                 _emailEventInteractor.SendMail(emailInputs);
                 response.Status = true;
+                response.Result = emailQuota;
                 response.Message = $"Email is sent successfully to {string.Join(",", emailInputs.Recipients)}.";
                 _logger.LogDebug("" + response.Message);
                 return response;
@@ -381,10 +382,10 @@ namespace Nvg.EmailService.Email
             }
         }
 
-        public EmailResponseDto<string> SendMailWithAttachments(EmailDto emailInputs)
+        public EmailResponseDto<EmailQuotaResponseDto> SendMailWithAttachments(EmailDto emailInputs)
         {
             _logger.LogInformation("SendMailWithAttachments interactor method.");
-            var response = new EmailResponseDto<string>();
+            var response = new EmailResponseDto<EmailQuotaResponseDto>();
             try
             {
                 if (string.IsNullOrEmpty(emailInputs.ChannelKey))
@@ -423,17 +424,17 @@ namespace Nvg.EmailService.Email
                         return response;
                     }
                 }
-                var isExceeded = _emailQuotaInteractor.CheckIfQuotaExceeded(emailInputs.ChannelKey);
-                if (isExceeded)
+                var emailQuota = _emailQuotaInteractor.CheckIfQuotaExceeded(emailInputs.ChannelKey);
+                if (emailQuota != null && emailQuota.IsExceeded)
                 {
                     _logger.LogError($"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.");
-                    response.Status = !isExceeded;
+                    response.Status = !emailQuota.IsExceeded;
                     response.Message = $"Email Quota for Channel {emailInputs.ChannelKey} has exceeded.";
                     return response;
                 }
                 _logger.LogInformation("Trying to send Email.");
                 _emailEventInteractor.SendMailWithAttachment(emailInputs);
-
+                response.Result = emailQuota;
                 response.Status = true;
                 response.Message = $"Email is sent successfully to {string.Join(",", emailInputs.Recipients)}.";
                 _logger.LogDebug("" + response.Message);

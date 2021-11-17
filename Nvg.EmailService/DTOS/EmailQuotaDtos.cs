@@ -18,6 +18,12 @@ namespace Nvg.EmailService.DTOS
         public int MonthlyQuota { get; set; }
     }
 
+    public class EmailQuotaResponseDto
+    {
+        public bool HasLimit { get; set; }
+        public bool IsExceeded { get; set; }
+        public int RemainingLimit { get; set; }
+    }
     public class EmailQuotaProfile : Profile
     {
         public EmailQuotaProfile()
