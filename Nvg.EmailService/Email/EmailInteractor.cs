@@ -314,10 +314,10 @@ namespace Nvg.EmailService.Email
             }
         }
 
-        public EmailResponseDto<EmailQuotaResponseDto> SendMail(EmailDto emailInputs)
+        public EmailResponseDto<EmailBalanceDto> SendMail(EmailDto emailInputs)
         {
             _logger.LogInformation("SendMail interactor method.");
-            var response = new EmailResponseDto<EmailQuotaResponseDto>();
+            var response = new EmailResponseDto<EmailBalanceDto>();
             try
             {
                 if (string.IsNullOrEmpty(emailInputs.ChannelKey))
@@ -382,10 +382,10 @@ namespace Nvg.EmailService.Email
             }
         }
 
-        public EmailResponseDto<EmailQuotaResponseDto> SendMailWithAttachments(EmailDto emailInputs)
+        public EmailResponseDto<EmailBalanceDto> SendMailWithAttachments(EmailDto emailInputs)
         {
             _logger.LogInformation("SendMailWithAttachments interactor method.");
-            var response = new EmailResponseDto<EmailQuotaResponseDto>();
+            var response = new EmailResponseDto<EmailBalanceDto>();
             try
             {
                 if (string.IsNullOrEmpty(emailInputs.ChannelKey))

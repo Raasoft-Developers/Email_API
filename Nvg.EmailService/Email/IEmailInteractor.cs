@@ -13,14 +13,14 @@ namespace Nvg.EmailService.Email
         /// </summary>
         /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
-        EmailResponseDto<EmailQuotaResponseDto> SendMail(EmailDto emailInputs);
+        EmailResponseDto<EmailBalanceDto> SendMail(EmailDto emailInputs);
 
         /// <summary>
         /// Method to send an email.
         /// </summary>
         /// <param name="emailInputs"><see cref="EmailDto"/> model</param>
         /// <returns><see cref="EmailResponseDto{T}"/></returns>
-        EmailResponseDto<EmailQuotaResponseDto> SendMailWithAttachments(EmailDto emailInputs);
+        EmailResponseDto<EmailBalanceDto> SendMailWithAttachments(EmailDto emailInputs);
 
 
         /// <summary>

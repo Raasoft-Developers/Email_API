@@ -20,6 +20,12 @@ namespace Nvg.EmailService.DTOS
         public List<EmailAttachment> Files { get; set; }
         public string Tag { get; set; }
     }
+    public class EmailBalanceDto
+    {
+        public bool HasLimit { get; set; }
+        public bool IsExceeded { get; set; }
+        public int Balance { get; set; }
+    }
     public class EmailAttachment 
     {
         public string FileContent { get; set; }

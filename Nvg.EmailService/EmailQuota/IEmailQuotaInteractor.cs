@@ -18,8 +18,8 @@ namespace Nvg.EmailService.EmailQuota
         /// Check if Email Quota of the channel is exceeded.Status is set to true or false based on value
         /// </summary>
         /// <param name="channelKey">Channel Key</param>
-        /// <returns><see cref="EmailQuotaResponseDto"/></returns>
-        EmailQuotaResponseDto CheckIfQuotaExceeded(string channelKey);
+        /// <returns><see cref="EmailBalanceDto"/></returns>
+        EmailBalanceDto CheckIfQuotaExceeded(string channelKey);
 
 
         /// <summary>

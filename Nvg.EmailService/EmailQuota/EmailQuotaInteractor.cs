@@ -44,10 +44,10 @@ namespace Nvg.EmailService.EmailQuota
                 return response;
             }
         }
-        public EmailQuotaResponseDto CheckIfQuotaExceeded(string channelKey)
+        public EmailBalanceDto CheckIfQuotaExceeded(string channelKey)
         {
             _logger.LogInformation("CheckIfQuotaExceeded interactor method.");
-            var response = new EmailQuotaResponseDto();
+            var response = new EmailBalanceDto();
             try
             {
                 var emailQuotaResponse = _emailQuotaRepository.GetEmailQuota(channelKey);
@@ -68,26 +68,21 @@ namespace Nvg.EmailService.EmailQuota
                     if (emailQuota.TotalQuota != -1)
                     {
                         response.HasLimit = true;
-                        response.RemainingLimit = emailQuota.TotalQuota - emailQuota.TotalConsumption;
-                        //Replace Remaining Limit with the lower value from the Total and Monthly Limit
-                        var remainingPerMonth = emailQuota.MonthlyQuota - emailQuota.MonthlyConsumption;
-                        if (response.RemainingLimit > remainingPerMonth)
+                        response.Balance = emailQuota.TotalQuota - emailQuota.TotalConsumption;
+                        //Replace Balance with the lower value from the Total and Monthly Balance
+                        var monthlyBalance = emailQuota.MonthlyQuota - emailQuota.MonthlyConsumption;
+                        if (response.Balance > monthlyBalance)
                         {
-                            response.RemainingLimit = remainingPerMonth;
+                            response.Balance = monthlyBalance;
                         }
                         if (emailQuota.MonthlyConsumption >= emailQuota.MonthlyQuota || emailQuota.TotalConsumption >= emailQuota.TotalQuota)
                         {
                             response.IsExceeded = true;
                         }
                     }
-                    //else
-                    //{
-                    //    response.HasLimit = false;
-                    //    response.IsExceeded = false;
-                    //}
                 }
                 _logger.LogDebug("Status: " + emailQuotaResponse.Status + ", Message: " + emailQuotaResponse.Message);
-                _logger.LogDebug("IsExceed: " + response.IsExceeded + ", RemainingLimit: " + response.RemainingLimit + ", HasLimit: " + response.HasLimit);
+                _logger.LogDebug("IsExceed: " + response.IsExceeded + ", Balance: " + response.Balance + ", HasLimit: " + response.HasLimit);
                 return response;
             }
             catch (Exception ex)
