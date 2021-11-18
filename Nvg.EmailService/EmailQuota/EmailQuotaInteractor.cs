@@ -70,7 +70,6 @@ namespace Nvg.EmailService.EmailQuota
                         response.HasLimit = true;
                         response.Balance = emailQuota.TotalQuota - emailQuota.TotalConsumption;
                         //Replace Balance with the lower value from the Total and Monthly Balance
-                        
                         var monthlyBalance = emailQuota.MonthlyQuota - emailQuota.MonthlyConsumption;
                         if (response.Balance > monthlyBalance)
                         {
