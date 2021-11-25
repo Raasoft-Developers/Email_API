@@ -41,6 +41,7 @@ namespace Nvg.EmailService.EmailServiceProviders
 
             MailMessage emailMessage = new MailMessage();
             foreach (var recipient in recipients)
+            if (!string.IsNullOrEmpty(recipient))       
                 emailMessage.To.Add(new MailAddress(recipient));
             emailMessage.From = new MailAddress(sender);
             emailMessage.Subject = subject;
@@ -67,6 +68,7 @@ namespace Nvg.EmailService.EmailServiceProviders
 
             MailMessage emailMessage = new MailMessage();
             foreach (var recipient in recipients)
+            if (!string.IsNullOrEmpty(recipient))
                 emailMessage.To.Add(new MailAddress(recipient));
             emailMessage.From = new MailAddress(sender);
             emailMessage.Subject = subject;

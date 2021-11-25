@@ -320,6 +320,13 @@ namespace Nvg.EmailService.Email
             var response = new EmailResponseDto<EmailBalanceDto>();
             try
             {
+                if (string.IsNullOrEmpty(emailInputs.Subject))
+                {
+                    _logger.LogError("Subject is mandatory.");
+                    response.Status = false;
+                    response.Message = "Subject is mandatory.";
+                    return response;
+                }
                 if (string.IsNullOrEmpty(emailInputs.ChannelKey))
                 {
                     _logger.LogError("Channel key cannot be blank.");
@@ -388,6 +395,14 @@ namespace Nvg.EmailService.Email
             var response = new EmailResponseDto<EmailBalanceDto>();
             try
             {
+
+                if (string.IsNullOrEmpty(emailInputs.Subject))
+                {
+                    _logger.LogError($"Subject is mandatory.");
+                    response.Status = false;
+                    response.Message = "Subject is mandatory.";
+                    return response;
+                }
                 if (string.IsNullOrEmpty(emailInputs.ChannelKey))
                 {
                     _logger.LogError("Channel key cannot be blank.");

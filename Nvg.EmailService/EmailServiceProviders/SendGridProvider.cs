@@ -34,6 +34,7 @@ namespace Nvg.EmailService.EmailServiceProviders
             var from = new EmailAddress(sender);
             var to = new List<EmailAddress>();
             foreach (var recipient in recipients)
+            if (!string.IsNullOrEmpty(recipient))
                 to.Add(new EmailAddress(recipient));
             bool showAllRecipients = true;
             var email = MailHelper.CreateSingleEmailToMultipleRecipients(
@@ -69,7 +70,8 @@ namespace Nvg.EmailService.EmailServiceProviders
             var from = new EmailAddress(sender);
             var to = new List<EmailAddress>();
             foreach (var recipient in recipients)
-                to.Add(new EmailAddress(recipient));
+                if (!string.IsNullOrEmpty(recipient))
+                    to.Add(new EmailAddress(recipient));
             bool showAllRecipients = true;
             var email = MailHelper.CreateSingleEmailToMultipleRecipients(
                 from,
