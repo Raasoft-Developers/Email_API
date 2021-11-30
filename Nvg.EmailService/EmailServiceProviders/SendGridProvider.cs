@@ -4,8 +4,11 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Nvg.EmailService.EmailServiceProviders
 {
@@ -34,8 +37,7 @@ namespace Nvg.EmailService.EmailServiceProviders
             var from = new EmailAddress(sender);
             var to = new List<EmailAddress>();
             foreach (var recipient in recipients)
-            if (!string.IsNullOrEmpty(recipient))
-                to.Add(new EmailAddress(recipient));
+                 to.Add(new EmailAddress(recipient));
             bool showAllRecipients = true;
             var email = MailHelper.CreateSingleEmailToMultipleRecipients(
                 from,
@@ -53,12 +55,12 @@ namespace Nvg.EmailService.EmailServiceProviders
             email.SetClickTracking(enable: false, enableText: false);
 
             var apiResponse = await client.SendEmailAsync(email);
+            var emailRes = ProcessResponse(apiResponse);
+            _logger.LogInformation("Response: " + emailRes.Message);
+            return emailRes.Message;
 
-
-            _logger.LogInformation("Response: " + apiResponse.ToString());
-            return apiResponse.ToString();
         }
-
+       
         public async Task<string> SendEmailWithAttachments(List<string> recipients, List<EmailAttachment> files, string message, string subject, string sender = "")
         {
             // _logger.LogInformation("SendEmail method.");
@@ -70,8 +72,7 @@ namespace Nvg.EmailService.EmailServiceProviders
             var from = new EmailAddress(sender);
             var to = new List<EmailAddress>();
             foreach (var recipient in recipients)
-                if (!string.IsNullOrEmpty(recipient))
-                    to.Add(new EmailAddress(recipient));
+                 to.Add(new EmailAddress(recipient));
             bool showAllRecipients = true;
             var email = MailHelper.CreateSingleEmailToMultipleRecipients(
                 from,
@@ -112,9 +113,40 @@ namespace Nvg.EmailService.EmailServiceProviders
             email.SetClickTracking(enable: false, enableText: false);
 
             var apiResponse = await client.SendEmailAsync(email);
-
-            _logger.LogInformation("Response: " + apiResponse.ToString());
-            return apiResponse.ToString();
+            var emailRes = ProcessResponse(apiResponse);
+            _logger.LogInformation("Response: " + emailRes.Message);
+            return emailRes.Message;
+        }
+        private EmailResponseDto<string> ProcessResponse(Response response)
+        {
+            var emailResponse = new EmailResponseDto<string>();
+            if (response.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)
+                || response.StatusCode.Equals(System.Net.HttpStatusCode.OK))
+            {
+                emailResponse.Status = true;
+                emailResponse.Message = "Email has been successfully sent.";
+                return emailResponse;
+            }
+            string errorResponse = response.Body.ReadAsStringAsync().Result;
+            if (!string.IsNullOrEmpty(errorResponse))
+            {
+                JObject json = JObject.Parse(errorResponse);
+                var errors = json["errors"].Children().ToList();
+                var errorMsgs = new List<string>();
+                foreach (var error in errors)
+                {
+                    var message = error["message"].ToString();
+                    errorMsgs.Add(message);
+                }
+                emailResponse.Message = string.Join(".", errorMsgs);
+                emailResponse.Status = false;
+            }
+            else
+            {
+                emailResponse.Status = false;
+                emailResponse.Message = "Failed to send Email.";
+            }
+            return emailResponse;
         }
     }
 }
