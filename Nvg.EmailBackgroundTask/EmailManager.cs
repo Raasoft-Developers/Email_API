@@ -48,7 +48,7 @@ namespace Nvg.EmailBackgroundTask
             if (string.IsNullOrEmpty(sender))
                 sender = _emailProviderConnectionString.Fields["Sender"];
             _logger.LogInformation($"Sender: {sender}");
-            string emailResponseStatus = _emailProvider.SendEmail(email.Recipients, message, email.Subject, sender).Result;
+            string emailResponseStatus = _emailProvider.SendEmail(email.ChannelKey,email.Recipients, message, email.Subject, sender).Result;
             _logger.LogDebug($"Email response status: {emailResponseStatus}");
             
             foreach(var recipient in email.Recipients)
@@ -69,6 +69,7 @@ namespace Nvg.EmailBackgroundTask
                 };
                 _emailHistoryInteractor.AddEmailHistory(emailObj);
 
+                
                 _emailQuotaInteractor.IncrementEmailQuota(email.ChannelKey);
             }
         }
@@ -92,7 +93,7 @@ namespace Nvg.EmailBackgroundTask
             if (string.IsNullOrEmpty(sender))
                 sender = _emailProviderConnectionString.Fields["Sender"];
             _logger.LogInformation($"Sender: {sender}");
-            string emailResponseStatus = _emailProvider.SendEmailWithAttachments(email.Recipients,email.Files, message, email.Subject, sender).Result;
+            string emailResponseStatus = _emailProvider.SendEmailWithAttachments(email.ChannelKey,email.Recipients,email.Files, message, email.Subject, sender).Result;
             _logger.LogDebug($"Email response status: {emailResponseStatus}");
 
             foreach (var recipient in email.Recipients)

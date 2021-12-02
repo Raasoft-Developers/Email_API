@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
+using Nvg.EmailService.Data.EmailErrorLog;
+using Nvg.EmailService.Data.Entities;
 using Nvg.EmailService.DTOS;
+using Nvg.EmailService.EmailErrorLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,81 +19,133 @@ namespace Nvg.EmailService.EmailServiceProviders
     {
         private readonly EmailProviderConnectionString _emailProviderCS;
         private readonly ILogger<SMTPProvider> _logger;
+        private readonly IEmailErrorLogInteractor _emailErrorLogInteractor;
 
-        public SMTPProvider(EmailProviderConnectionString emailProviderConnectionString, ILogger<SMTPProvider> logger)
+
+        public SMTPProvider(EmailProviderConnectionString emailProviderConnectionString, ILogger<SMTPProvider> logger, IEmailErrorLogInteractor emailErrorLogInteractor)
         {
             _emailProviderCS = emailProviderConnectionString;
+            _emailErrorLogInteractor = emailErrorLogInteractor;
             _logger = logger;
         }
 
-        public async Task<string> SendEmail(List<string> recipients, string message, string subject, string sender = null)
+        public async Task<string> SendEmail(string channelKey,List<string> recipients, string message, string subject, string sender = null)
         {
-            //_logger.LogInformation("SendEmail method.");
-            if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
-                sender = _emailProviderCS.Fields["Sender"];
-
-            //_logger.LogInformation("Sender: " + sender);
-            /*
-            // Gmail SMTP implementation
-            var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress(sender, sender));
-            emailMessage.To.Add(new MailboxAddress(recipients, recipients));
-            emailMessage.Subject = subject;
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = string.Format("{0} : {1}", message, htmlContent) };
-            */
-
-            MailMessage emailMessage = new MailMessage();
-            foreach (var recipient in recipients)
-                emailMessage.To.Add(new MailAddress(recipient));            
-            emailMessage.From = new MailAddress(sender);
-            emailMessage.Subject = subject;
-            emailMessage.Body = message;
-            emailMessage.IsBodyHtml = true;
-            await SendAsync(emailMessage, sender);
-            return "Success";
-        }
-        public async Task<string> SendEmailWithAttachments(List<string> recipients, List<EmailAttachment> files, string message, string subject, string sender = null)
-        {
-            // _logger.LogInformation("SendEmail method.");
-            if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
-                sender = _emailProviderCS.Fields["Sender"];
-
-            //_logger.LogInformation("Sender: " + sender);
-            /*
-            // Gmail SMTP implementation
-            var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress(sender, sender));
-            emailMessage.To.Add(new MailboxAddress(recipients, recipients));
-            emailMessage.Subject = subject;
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = string.Format("{0} : {1}", message, htmlContent) };
-            */
-
-            MailMessage emailMessage = new MailMessage();
-            foreach (var recipient in recipients)
-                emailMessage.To.Add(new MailAddress(recipient));          
-            emailMessage.From = new MailAddress(sender);
-            emailMessage.Subject = subject;
-            emailMessage.Body = message;
-            emailMessage.IsBodyHtml = true;
-            if (files != null)
+            try
             {
-                foreach (var file in files)
+                //_logger.LogInformation("SendEmail method.");
+                if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
+                    sender = _emailProviderCS.Fields["Sender"];
+
+                //_logger.LogInformation("Sender: " + sender);
+                /*
+                // Gmail SMTP implementation
+                var emailMessage = new MimeMessage();
+                emailMessage.From.Add(new MailboxAddress(sender, sender));
+                emailMessage.To.Add(new MailboxAddress(recipients, recipients));
+                emailMessage.Subject = subject;
+                emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = string.Format("{0} : {1}", message, htmlContent) };
+                */
+
+                MailMessage emailMessage = new MailMessage();
+                foreach (var recipient in recipients)
+                    emailMessage.To.Add(new MailAddress(recipient));
+                emailMessage.From = new MailAddress(sender);
+                emailMessage.Subject = subject;
+                emailMessage.Body = message;
+                emailMessage.IsBodyHtml = true;
+                await SendAsync(emailMessage, sender);
+                return "Success";
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Exception : " + ex.Message);
+                var emailErrorLog = new EmailErrorLogTable
                 {
-                    try
+                    Description = ex.Message.ToString(),
+                    ErrorType = ex.GetType().Name.ToString(),
+                    Recipients = recipients.ToString(),
+                    Subject = subject,
+                    StackTrace = ex.StackTrace.ToString(),
+                    ChannelKey = channelKey
+                };
+                _emailErrorLogInteractor.AddEmailErrorLog(emailErrorLog);
+                return "Excpetion Occured. Failed to send email. Check Error Log Table for details";
+                throw ex;
+            }
+        }
+        public async Task<string> SendEmailWithAttachments(string channelKey, List<string> recipients, List<EmailAttachment> files, string message, string subject, string sender = null)
+        {
+            try
+            {
+                // _logger.LogInformation("SendEmail method.");
+                if (!string.IsNullOrEmpty(_emailProviderCS.Fields["Sender"]))
+                    sender = _emailProviderCS.Fields["Sender"];
+
+                //_logger.LogInformation("Sender: " + sender);
+                /*
+                // Gmail SMTP implementation
+                var emailMessage = new MimeMessage();
+                emailMessage.From.Add(new MailboxAddress(sender, sender));
+                emailMessage.To.Add(new MailboxAddress(recipients, recipients));
+                emailMessage.Subject = subject;
+                emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = string.Format("{0} : {1}", message, htmlContent) };
+                */
+
+                MailMessage emailMessage = new MailMessage();
+                foreach (var recipient in recipients)
+                    emailMessage.To.Add(new MailAddress(recipient));
+                emailMessage.From = new MailAddress(sender);
+                emailMessage.Subject = subject;
+                emailMessage.Body = message;
+                emailMessage.IsBodyHtml = true;
+                if (files != null)
+                {
+                    foreach (var file in files)
                     {
-                        MemoryStream ms = new MemoryStream(Convert.FromBase64String(file.FileContent));
-                        Attachment attachment = new Attachment(ms, file.FileName, file.ContentType);
-                        emailMessage.Attachments.Add(attachment);
-                    }
-                    catch (Exception ex)
-                    {
-                        // _logger.LogInformation("Failed to Attach File: " + ex.Message);
-                        throw ex;
+                        try
+                        {
+                            MemoryStream ms = new MemoryStream(Convert.FromBase64String(file.FileContent));
+                            Attachment attachment = new Attachment(ms, file.FileName, file.ContentType);
+                            emailMessage.Attachments.Add(attachment);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError("Exception : " + ex.Message);
+                            var emailErrorLog = new EmailErrorLogTable
+                            {
+                                Description = ex.Message.ToString(),
+                                ErrorType = ex.GetType().Name.ToString(),
+                                Recipients = string.Join(",", recipients),
+                                Subject = subject,
+                                StackTrace = ex.StackTrace.ToString(),
+                                ChannelKey = channelKey
+                            };
+                            _emailErrorLogInteractor.AddEmailErrorLog(emailErrorLog);
+                            return "Excpetion Occured while attaching files. Failed to send email. Check Error Log Table for details";
+                            throw ex;
+                        }
                     }
                 }
+                await SendAsync(emailMessage, sender);
+                return "Success";
             }
-            await SendAsync(emailMessage, sender);
-            return "Success";
+            catch (Exception ex)
+            {
+                _logger.LogError("Exception : " + ex.Message);
+                var emailErrorLog = new EmailErrorLogTable
+                {
+                    Description = ex.Message.ToString(),
+                    ErrorType = ex.GetType().Name.ToString(),
+                    Recipients = string.Join(",", recipients),
+                    Subject = subject,
+                    StackTrace = ex.StackTrace.ToString(),
+                    ChannelKey = channelKey
+                };
+                _emailErrorLogInteractor.AddEmailErrorLog(emailErrorLog);
+                return "Excpetion Occured. Failed to send email. Check Error Log Table for details";
+                throw ex;
+            }
         }
         private async Task SendAsync(/*MimeMessage*/ MailMessage mailMessage, string sender)
         {

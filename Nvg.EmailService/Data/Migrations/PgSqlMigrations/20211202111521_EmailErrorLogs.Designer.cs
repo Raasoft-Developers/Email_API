@@ -2,36 +2,39 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Nvg.EmailService.Data;
 
-namespace Nvg.EmailService.data.Migrations.SqlServerMigrations
+namespace Nvg.EmailService.Data.Migrations.PgSqlMigrations
 {
-    [DbContext(typeof(EmailSqlServerDBContext))]
-    partial class EmailSqlServerDBContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(EmailPgSqlDBContext))]
+    [Migration("20211202111521_EmailErrorLogs")]
+    partial class EmailErrorLogs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("Email")
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "3.1.6")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailChannelTable", b =>
                 {
                     b.Property<string>("ID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("EmailPoolID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("EmailProviderID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Key")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("ID");
 
@@ -40,8 +43,7 @@ namespace Nvg.EmailService.data.Migrations.SqlServerMigrations
                     b.HasIndex("EmailProviderID");
 
                     b.HasIndex("Key")
-                        .IsUnique()
-                        .HasFilter("[Key] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("EmailChannel");
                 });
@@ -50,26 +52,26 @@ namespace Nvg.EmailService.data.Migrations.SqlServerMigrations
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("EmailChannelID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ErrorType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Recipients")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("StackTrace")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Subject")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("ID");
 
@@ -81,40 +83,40 @@ namespace Nvg.EmailService.data.Migrations.SqlServerMigrations
             modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailHistoryTable", b =>
                 {
                     b.Property<string>("ID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Attempts")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("EmailChannelID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("EmailProviderID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("MessageSent")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Recipients")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Sender")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("SentOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Tags")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("TemplateName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("TemplateVariant")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("ID");
 
@@ -128,16 +130,15 @@ namespace Nvg.EmailService.data.Migrations.SqlServerMigrations
             modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailPoolTable", b =>
                 {
                     b.Property<string>("ID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("ID");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasFilter("[Name] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("EmailPool");
                 });
@@ -145,27 +146,26 @@ namespace Nvg.EmailService.data.Migrations.SqlServerMigrations
             modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailProviderSettingsTable", b =>
                 {
                     b.Property<string>("ID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Configuration")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("EmailPoolID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("ID");
 
                     b.HasIndex("EmailPoolID");
 
                     b.HasIndex("Name", "EmailPoolID")
-                        .IsUnique()
-                        .HasFilter("[Name] IS NOT NULL AND [EmailPoolID] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("EmailProviderSettings");
                 });
@@ -175,25 +175,25 @@ namespace Nvg.EmailService.data.Migrations.SqlServerMigrations
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("CurrentMonth")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("EmailChannelID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("MonthlyConsumption")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("MonthlyQuota")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TotalConsumption")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TotalQuota")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("ID");
 
@@ -205,30 +205,29 @@ namespace Nvg.EmailService.data.Migrations.SqlServerMigrations
             modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailTemplateTable", b =>
                 {
                     b.Property<string>("ID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("EmailPoolID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("MessageTemplate")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Sender")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Variant")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("ID");
 
                     b.HasIndex("EmailPoolID");
 
                     b.HasIndex("Name", "EmailPoolID")
-                        .IsUnique()
-                        .HasFilter("[Name] IS NOT NULL AND [EmailPoolID] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("EmailTemplate");
                 });

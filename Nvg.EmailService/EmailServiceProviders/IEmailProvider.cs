@@ -14,7 +14,7 @@ namespace Nvg.EmailService.EmailServiceProviders
         /// <param name="subject">Subject</param>
         /// <param name="sender">Sender</param>
         /// <returns><see cref="Task{TResult}"/></returns>
-        public Task<string> SendEmail(List<string> recipients, string message, string subject, string sender = null);
+        public Task<string> SendEmail(string channelKey,List<string> recipients, string message, string subject, string sender = null);
 
 
         /// <summary>
@@ -26,6 +26,6 @@ namespace Nvg.EmailService.EmailServiceProviders
         /// <param name="subject">Subject</param>
         /// <param name="sender">Sender</param>
         /// <returns><see cref="Task{TResult}"/></returns>
-        public Task<string> SendEmailWithAttachments(List<string> recipients, List<EmailAttachment> files, string message, string subject, string sender = null);
+        public Task<string> SendEmailWithAttachments(string channelKey,List<string> recipients, List<EmailAttachment> files, string message, string subject, string sender = null);
     }
 }

@@ -121,8 +121,6 @@ namespace Nvg.EmailService.Data.EmailHistory
                                     TemplateName=h.TemplateName,
                                     TemplateVariant=h.TemplateVariant
                                     }).ToList();
-
-                
                 response.Status = true;
                 response.Message = $"Retrieved {emailHistories.Count} Email histories data for pool";
                 response.Result = emailHistories;

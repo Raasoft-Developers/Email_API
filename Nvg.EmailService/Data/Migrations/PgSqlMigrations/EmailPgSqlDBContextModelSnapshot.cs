@@ -46,6 +46,38 @@ namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
                     b.ToTable("EmailChannel");
                 });
 
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailErrorLogTable", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmailChannelID")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ErrorType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Recipients")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StackTrace")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmailChannelID");
+
+                    b.ToTable("EmailErrorLogTable");
+                });
+
             modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailHistoryTable", b =>
                 {
                     b.Property<string>("ID")
@@ -207,6 +239,13 @@ namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
                     b.HasOne("Nvg.EmailService.Data.Entities.EmailProviderSettingsTable", "EmailProvider")
                         .WithMany()
                         .HasForeignKey("EmailProviderID");
+                });
+
+            modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailErrorLogTable", b =>
+                {
+                    b.HasOne("Nvg.EmailService.Data.Entities.EmailChannelTable", "EmailChannel")
+                        .WithMany()
+                        .HasForeignKey("EmailChannelID");
                 });
 
             modelBuilder.Entity("Nvg.EmailService.Data.Entities.EmailHistoryTable", b =>

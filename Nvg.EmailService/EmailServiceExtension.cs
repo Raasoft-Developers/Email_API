@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Nvg.EmailService.Data;
 using Nvg.EmailService.Data.EmailChannel;
+using Nvg.EmailService.Data.EmailErrorLog;
 using Nvg.EmailService.Data.EmailHistory;
 using Nvg.EmailService.Data.EmailPool;
 using Nvg.EmailService.Data.EmailProvider;
@@ -12,6 +13,7 @@ using Nvg.EmailService.Data.Entities;
 using Nvg.EmailService.DTOS;
 using Nvg.EmailService.Email;
 using Nvg.EmailService.EmailChannel;
+using Nvg.EmailService.EmailErrorLog;
 using Nvg.EmailService.EmailHistory;
 using Nvg.EmailService.EmailPool;
 using Nvg.EmailService.EmailProvider;
@@ -49,6 +51,10 @@ namespace Nvg.EmailService
 
             services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
             services.AddScoped<IEmailTemplateInteractor, EmailTemplateInteractor>();
+
+            services.AddScoped<IEmailErrorLogRepository, EmailErrorLogRepository>();
+            services.AddScoped<IEmailErrorLogInteractor, EmailErrorLogInteractor>();
+
             databaseProvider ??= string.Empty;
             switch (databaseProvider.ToLower())
             {

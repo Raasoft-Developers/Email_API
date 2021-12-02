@@ -5,6 +5,8 @@ using EventBusRabbitMQ;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Nvg.EmailService.Data.EmailErrorLog;
+using Nvg.EmailService.EmailErrorLog;
 using Nvg.EmailService.EmailProvider;
 using Nvg.EmailService.EmailServiceProviders;
 using RabbitMQ.Client;
@@ -105,14 +107,15 @@ namespace Nvg.EmailBackgroundTask.Extensions
             {
                 var cs = provider.GetService<EmailProviderConnectionString>();                
                 var emailProviderService = provider.GetService<IEmailProviderInteractor>();
+                var emailErrorLogService = provider.GetService<IEmailErrorLogInteractor>();
                 var emailProviderConfiguration = emailProviderService.GetEmailProviderByChannel(channelKey)?.Result;
                 if (emailProviderConfiguration != null && emailProviderConfiguration.Type.ToLowerInvariant().Equals("sendgrid"))
                 {
                     var loggerSendGrid = provider.GetRequiredService<ILogger<SendGridProvider>>();
-                    return new SendGridProvider(cs, loggerSendGrid);
+                    return new SendGridProvider(cs, loggerSendGrid, emailErrorLogService);
                 }
                 var loggerSmtp = provider.GetRequiredService<ILogger<SMTPProvider>>();
-                return new SMTPProvider(cs, loggerSmtp);
+                return new SMTPProvider(cs, loggerSmtp, emailErrorLogService);
             });
         }
 

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nvg.EmailService.Data.EmailErrorLog;
 using Nvg.EmailService.DTOS;
+using Nvg.EmailService.EmailErrorLog;
 using Nvg.EmailService.EmailHistory;
 using Nvg.EmailService.EmailProvider;
 using Nvg.EmailService.EmailQuota;
@@ -26,6 +28,8 @@ namespace Nvg.EmailService.Email
         private readonly IEmailHistoryInteractor _emailHistoryInteractor;
         private readonly ILogger<SMTPProvider> _smtpLogger;
         private readonly ILogger<SendGridProvider> _sendgridLogger;
+        private readonly IEmailErrorLogInteractor _emailErrorLogInteractor;
+
         private EmailProviderConnectionString _emailProviderConnectionString;
 
         //public EmailEventInteractor(IEventBus eventBus, ILogger<EmailEventInteractor> logger)
@@ -37,7 +41,7 @@ namespace Nvg.EmailService.Email
         // This constructor is used when EmailEventBusEnabled = true in appsettings
         public EmailEventInteractor(IEventBus eventBus, ILogger<EmailEventInteractor> logger, IEmailProviderInteractor emailProviderService, IConfiguration configuration,
             IEmailTemplateInteractor emailTemplateInteractor, IEmailQuotaInteractor emailQuotaInteractor,
-            IEmailHistoryInteractor emailHistoryInteractor, ILogger<SMTPProvider> smtpLogger, ILogger<SendGridProvider> sendgridLogger)
+            IEmailHistoryInteractor emailHistoryInteractor, ILogger<SMTPProvider> smtpLogger, ILogger<SendGridProvider> sendgridLogger, IEmailErrorLogInteractor emailErrorLogInteractor)
         {
             _eventBus = eventBus;
             _logger = logger;
@@ -48,6 +52,7 @@ namespace Nvg.EmailService.Email
             _emailHistoryInteractor = emailHistoryInteractor;
             _smtpLogger = smtpLogger;
             _sendgridLogger = sendgridLogger;
+            _emailErrorLogInteractor = emailErrorLogInteractor;
         }
 
         // This constructor is used when EmailEventBusEnabled = false in appsettings
@@ -119,7 +124,7 @@ namespace Nvg.EmailService.Email
                 _logger.LogInformation("***** GetMessage *****");
                 string message = email.GetMessage(_emailTemplateInteractor);
                 _logger.LogInformation("***** SendEmail *****");
-                var result = emailProvider.SendEmail(emailInputs.Recipients, message, emailInputs.Subject, sender).Result;
+                var result = emailProvider.SendEmail(emailInputs.ChannelKey,emailInputs.Recipients, message, emailInputs.Subject, sender).Result;
 
                 if (string.IsNullOrEmpty(sender) && !string.IsNullOrEmpty(_emailProviderConnectionString.Fields["Sender"]))
                     sender = _emailProviderConnectionString.Fields["Sender"];
@@ -208,7 +213,7 @@ namespace Nvg.EmailService.Email
                 _logger.LogInformation("***** GetMessage *****");
                 string message = email.GetMessage(_emailTemplateInteractor);
                 _logger.LogInformation("***** SendEmailWithAttachments *****");
-                var result = emailProvider.SendEmailWithAttachments(emailInputs.Recipients, emailInputs.Files, message, emailInputs.Subject, emailInputs.Sender).Result;
+                var result = emailProvider.SendEmailWithAttachments(email.ChannelKey,emailInputs.Recipients, emailInputs.Files, message, emailInputs.Subject, emailInputs.Sender).Result;
 
                 if (string.IsNullOrEmpty(sender) && !string.IsNullOrEmpty(_emailProviderConnectionString.Fields["Sender"]))
                     sender = _emailProviderConnectionString.Fields["Sender"];
@@ -247,13 +252,13 @@ namespace Nvg.EmailService.Email
             switch (providerType.ToLower())
             {
                 case "sendgrid":
-                    emailProvider = new SendGridProvider(_emailProviderConnectionString, _sendgridLogger);
+                    emailProvider = new SendGridProvider(_emailProviderConnectionString, _sendgridLogger, _emailErrorLogInteractor);
                     break;
                 case "smtp":
-                    emailProvider = new SMTPProvider(_emailProviderConnectionString, _smtpLogger);
+                    emailProvider = new SMTPProvider(_emailProviderConnectionString, _smtpLogger, _emailErrorLogInteractor);
                     break;
                 default:
-                    emailProvider = new SMTPProvider(_emailProviderConnectionString, _smtpLogger);
+                    emailProvider = new SMTPProvider(_emailProviderConnectionString, _smtpLogger, _emailErrorLogInteractor);
                     break;
             }
             _logger.LogInformation("Fetched appropriate Provider for " + providerType);

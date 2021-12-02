@@ -14,6 +14,8 @@ namespace Nvg.EmailService.Data
         public virtual DbSet<EmailProviderSettingsTable> EmailProviders { get; set; }
         public virtual DbSet<EmailQuotaTable> EmailQuotas { get; set; }
         public virtual DbSet<EmailTemplateTable> EmailTemplates { get; set; }
+        public virtual DbSet<EmailErrorLogTable> EmailErrorLogs { get; set; }
+
 
         public string _schema { get; set; }
 

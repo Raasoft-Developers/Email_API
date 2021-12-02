@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nvg.EmailService.Data;
 
-namespace Nvg.EmailService.data.Migrations.SqlServerMigrations
+namespace Nvg.EmailService.Data.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(EmailSqlServerDBContext))]
-    partial class EmailSqlServerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20211202111726_EmailErrorLogs")]
+    partial class EmailErrorLogs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
