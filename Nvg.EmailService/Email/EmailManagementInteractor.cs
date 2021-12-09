@@ -713,6 +713,21 @@ namespace Nvg.EmailService.Email
             var response = new EmailResponseDto<string>();
             try
             {
+                emailInputs.Recipients.RemoveAll(x => string.IsNullOrEmpty(x));
+                if (emailInputs.Recipients.Count == 0)
+                {
+                    _logger.LogError("Recipient cannot be null or empty.");
+                    response.Status = false;
+                    response.Message = "Recipient cannot be null or empty.";
+                    return response;
+                }
+                if (string.IsNullOrEmpty(emailInputs.Subject))
+                {
+                    _logger.LogError("Subject is mandatory.");
+                    response.Status = false;
+                    response.Message = "Subject is mandatory.";
+                    return response;
+                }
                 if (string.IsNullOrEmpty(emailInputs.ChannelKey))
                 {
                     _logger.LogError("Channel key cannot be blank.");
