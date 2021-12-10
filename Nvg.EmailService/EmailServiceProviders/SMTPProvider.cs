@@ -66,6 +66,7 @@ namespace Nvg.EmailService.EmailServiceProviders
                     ErrorType = ex.GetType().Name.ToString(),
                     Recipients = recipients.ToString(),
                     Subject = subject,
+                    CreationTime = DateTime.UtcNow,
                     StackTrace = ex.StackTrace.ToString(),
                     ChannelKey = channelKey
                 };
@@ -118,6 +119,7 @@ namespace Nvg.EmailService.EmailServiceProviders
                                 ErrorType = ex.GetType().Name.ToString(),
                                 Recipients = string.Join(",", recipients),
                                 Subject = subject,
+                                CreationTime = DateTime.UtcNow,
                                 StackTrace = ex.StackTrace.ToString(),
                                 ChannelKey = channelKey
                             };
@@ -140,6 +142,7 @@ namespace Nvg.EmailService.EmailServiceProviders
                     Recipients = string.Join(",", recipients),
                     Subject = subject,
                     StackTrace = ex.StackTrace.ToString(),
+                    CreationTime = DateTime.UtcNow,
                     ChannelKey = channelKey
                 };
                 _emailErrorLogInteractor.AddEmailErrorLog(emailErrorLog);

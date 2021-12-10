@@ -18,6 +18,7 @@ namespace Nvg.EmailService.Data.Entities
         public string StackTrace { get; set; }
         public string Recipients { get; set; }
         public string Subject { get; set; }
+        public DateTime CreationTime { get; set; }
         public string EmailChannelID { get; set; }
         [NotMapped]
         public string ChannelKey { get; set; }

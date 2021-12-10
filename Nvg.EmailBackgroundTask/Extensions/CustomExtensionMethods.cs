@@ -114,6 +114,12 @@ namespace Nvg.EmailBackgroundTask.Extensions
                     var loggerSendGrid = provider.GetRequiredService<ILogger<SendGridProvider>>();
                     return new SendGridProvider(cs, loggerSendGrid, emailErrorLogService);
                 }
+                else if (emailProviderConfiguration != null && emailProviderConfiguration.Type.ToLowerInvariant().Equals("sendinblue"))
+                {
+
+                    var loggerSendInBlue = provider.GetRequiredService<ILogger<SendInBlueProvider>>();
+                    return new SendInBlueProvider(cs, loggerSendInBlue, emailErrorLogService);
+                }
                 var loggerSmtp = provider.GetRequiredService<ILogger<SMTPProvider>>();
                 return new SMTPProvider(cs, loggerSmtp, emailErrorLogService);
             });

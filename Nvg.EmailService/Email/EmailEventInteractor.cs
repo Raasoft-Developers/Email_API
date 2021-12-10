@@ -28,6 +28,7 @@ namespace Nvg.EmailService.Email
         private readonly IEmailHistoryInteractor _emailHistoryInteractor;
         private readonly ILogger<SMTPProvider> _smtpLogger;
         private readonly ILogger<SendGridProvider> _sendgridLogger;
+        private readonly ILogger<SendInBlueProvider> _sendInBlueLogger;
         private readonly IEmailErrorLogInteractor _emailErrorLogInteractor;
 
         private EmailProviderConnectionString _emailProviderConnectionString;
@@ -41,7 +42,7 @@ namespace Nvg.EmailService.Email
         // This constructor is used when EmailEventBusEnabled = true in appsettings
         public EmailEventInteractor(IEventBus eventBus, ILogger<EmailEventInteractor> logger, IEmailProviderInteractor emailProviderService, IConfiguration configuration,
             IEmailTemplateInteractor emailTemplateInteractor, IEmailQuotaInteractor emailQuotaInteractor,
-            IEmailHistoryInteractor emailHistoryInteractor, ILogger<SMTPProvider> smtpLogger, ILogger<SendGridProvider> sendgridLogger, IEmailErrorLogInteractor emailErrorLogInteractor)
+            IEmailHistoryInteractor emailHistoryInteractor, ILogger<SMTPProvider> smtpLogger, ILogger<SendGridProvider> sendgridLogger, ILogger<SendInBlueProvider> sendInBlueLogger, IEmailErrorLogInteractor emailErrorLogInteractor)
         {
             _eventBus = eventBus;
             _logger = logger;
@@ -52,13 +53,14 @@ namespace Nvg.EmailService.Email
             _emailHistoryInteractor = emailHistoryInteractor;
             _smtpLogger = smtpLogger;
             _sendgridLogger = sendgridLogger;
+            _sendInBlueLogger = sendInBlueLogger;
             _emailErrorLogInteractor = emailErrorLogInteractor;
         }
 
         // This constructor is used when EmailEventBusEnabled = false in appsettings
         public EmailEventInteractor(ILogger<EmailEventInteractor> logger, IEmailProviderInteractor emailProviderService, IConfiguration configuration,
            IEmailTemplateInteractor emailTemplateInteractor, IEmailQuotaInteractor emailQuotaInteractor,
-           IEmailHistoryInteractor emailHistoryInteractor, ILogger<SMTPProvider> smtpLogger, ILogger<SendGridProvider> sendgridLogger)
+           IEmailHistoryInteractor emailHistoryInteractor, ILogger<SMTPProvider> smtpLogger, ILogger<SendGridProvider> sendgridLogger, ILogger<SendInBlueProvider> sendInBlueLogger, IEmailErrorLogInteractor emailErrorLogInteractor)
         {
             _logger = logger;
             _emailProviderService = emailProviderService;
@@ -68,6 +70,8 @@ namespace Nvg.EmailService.Email
             _emailHistoryInteractor = emailHistoryInteractor;
             _smtpLogger = smtpLogger;
             _sendgridLogger = sendgridLogger;
+            _sendInBlueLogger = sendInBlueLogger;
+            _emailErrorLogInteractor = emailErrorLogInteractor;
         }
 
         public void SendMail(EmailDto emailInputs)
@@ -253,6 +257,9 @@ namespace Nvg.EmailService.Email
             {
                 case "sendgrid":
                     emailProvider = new SendGridProvider(_emailProviderConnectionString, _sendgridLogger, _emailErrorLogInteractor);
+                    break;
+                case "sendinblue":
+                    emailProvider = new SendInBlueProvider(_emailProviderConnectionString, _sendInBlueLogger, _emailErrorLogInteractor);
                     break;
                 case "smtp":
                     emailProvider = new SMTPProvider(_emailProviderConnectionString, _smtpLogger, _emailErrorLogInteractor);

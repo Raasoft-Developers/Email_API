@@ -2,16 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Nvg.EmailService.Data;
 
-namespace Nvg.EmailService.data.Migrations.PgSqlMigrations
+namespace Nvg.EmailService.Data.Migrations.PgSqlMigrations
 {
     [DbContext(typeof(EmailPgSqlDBContext))]
-    partial class EmailPgSqlDBContextModelSnapshot : ModelSnapshot
+    [Migration("20211210120748_AddedCreationTimeToErrorLogs")]
+    partial class AddedCreationTimeToErrorLogs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
