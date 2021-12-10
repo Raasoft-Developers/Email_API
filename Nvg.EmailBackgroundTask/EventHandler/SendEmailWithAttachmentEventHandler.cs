@@ -94,7 +94,6 @@ namespace Nvg.EmailBackgroundTask.EventHandler
                 //_logger.LogDebug($"emailProviderConfiguration : {emailProviderConfiguration}");
                 return new EmailProviderConnectionString(emailProviderConfiguration);
             });
-
             var scope = services.BuildServiceProvider().CreateScope();
             return scope;
         }
