@@ -84,7 +84,7 @@ namespace Nvg.EmailBackgroundTask.EventHandler
             {
                 var emailProviderService = provider.GetService<IEmailProviderInteractor>();
                 var emailProviderConfiguration = emailProviderService.GetEmailProviderByChannel(channelKey)?.Result?.Configuration;
-                _logger.LogDebug($"emailProviderConfiguration : {emailProviderConfiguration}");
+                //_logger.LogDebug($"emailProviderConfiguration : {emailProviderConfiguration}");
                 return new EmailProviderConnectionString(emailProviderConfiguration);
             });
 
