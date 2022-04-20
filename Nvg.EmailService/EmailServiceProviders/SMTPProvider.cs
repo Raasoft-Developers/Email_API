@@ -64,7 +64,7 @@ namespace Nvg.EmailService.EmailServiceProviders
                 {
                     Description = ex.Message.ToString(),
                     ErrorType = ex.GetType().Name.ToString(),
-                    Recipients = recipients.ToString(),
+                    Recipients = string.Join(",", recipients),
                     Subject = subject,
                     CreationTime = DateTime.UtcNow,
                     StackTrace = ex.StackTrace.ToString(),

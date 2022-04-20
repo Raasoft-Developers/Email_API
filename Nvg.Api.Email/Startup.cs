@@ -96,6 +96,12 @@ namespace Nvg.Api.Email
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            if (Configuration["logsService"] == "Azure")
+            {
+                // The following line enables Application Insights telemetry collection.
+                services.AddApplicationInsightsTelemetry();
+            }
             ConfigureIdentityServer(services);
             //services.RegisterEventBus(Configuration);
             //services.ConfigureAutoMapper();
