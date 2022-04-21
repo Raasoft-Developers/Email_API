@@ -243,7 +243,7 @@ namespace Nvg.Api.Email
                 app.UseRouting();
                 app.UseCors("VueCorsPolicy");
                 app.UseAuthorization();
-                app.UseSerilogRequestLogging();
+                //app.UseSerilogRequestLogging();
                 app.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
