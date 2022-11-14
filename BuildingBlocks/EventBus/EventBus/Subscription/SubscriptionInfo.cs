@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EventBus.Subscription
 {
@@ -12,7 +10,7 @@ namespace EventBus.Subscription
         public string CorrelationId { get; set; }
         public bool IsReponse { get; set; }
 
-        private SubscriptionInfo(bool isDynamic, Type handlerType,bool isResponse = false , string correlationId = "")
+        private SubscriptionInfo(bool isDynamic, Type handlerType, bool isResponse = false, string correlationId = "")
         {
             IsDynamic = isDynamic;
             HandlerType = handlerType;
@@ -27,7 +25,7 @@ namespace EventBus.Subscription
         {
             return new SubscriptionInfo(false, handlerType);
         }
-        public static SubscriptionInfo Response(Type handlerType,string correlationId)
+        public static SubscriptionInfo Response(Type handlerType, string correlationId)
         {
             return new SubscriptionInfo(false, handlerType, true, correlationId);
         }

@@ -1,0 +1,9 @@
+[
+  {
+    "id": "default-provider",
+    "name": "MasterEmailProvider",
+    "type": "smtp",
+    "configuration": "SmtpServer=smtp.gmail.com;Sender=raasoft.developer@gmail.com;Password=qpvbzfaengeczyng;Port=587",
+    "emailPoolID": "f6aee3d2-5b17-4a4d-be0e-71f8bf81bda0"
+  }
+]

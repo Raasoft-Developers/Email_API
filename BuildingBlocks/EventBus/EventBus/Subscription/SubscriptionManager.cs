@@ -2,7 +2,6 @@
 using EventBus.Events;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 
 namespace EventBus.Subscription
@@ -61,8 +60,8 @@ namespace EventBus.Subscription
             }
 
             if (_handlers[eventName].Any(s => s.HandlerType == handlerType))
-                    throw new ArgumentException(
-                        $"Handler Type {handlerType.Name} already registered for '{eventName}'", nameof(handlerType));
+                throw new ArgumentException(
+                    $"Handler Type {handlerType.Name} already registered for '{eventName}'", nameof(handlerType));
             if (isResponse)
                 _handlers[eventName].Add(SubscriptionInfo.Response(handlerType, correlationId));
             else

@@ -17,7 +17,7 @@ if($tag -eq ""){
 }
 
 #select services to push
-$allservices = @("nvgapiemail","nvgemailbackgroundtask")
+$allservices = @("apiemail","emailbackgroundtask")
 if($num -eq "*"){
 For($i=0;$i -lt $allservices.Count;$i++){
 	$name=$allservices[$i];

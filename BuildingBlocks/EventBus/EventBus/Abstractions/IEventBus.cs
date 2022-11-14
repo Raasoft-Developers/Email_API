@@ -1,7 +1,4 @@
 ﻿using EventBus.Events;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EventBus.Abstractions
 {
@@ -27,6 +24,6 @@ namespace EventBus.Abstractions
         void Subscribe<T, TH>()
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>;
-     
+
     }
 }

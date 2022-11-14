@@ -1,10 +1,10 @@
 ﻿using Autofac;
-using EventBus;
 using EventBus.Abstractions;
 using EventBus.Events;
+using EventBus.Extensions;
 using EventBus.Subscription;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Polly;
 using Polly.Retry;
 using RabbitMQ.Client;
@@ -13,12 +13,10 @@ using RabbitMQ.Client.Exceptions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using EventBus.Extensions;
 
 namespace EventBusRabbitMQ
 {
@@ -37,7 +35,7 @@ namespace EventBusRabbitMQ
         private readonly BlockingCollection<Dictionary<string, string>> _responseMessage = new BlockingCollection<Dictionary<string, string>>();
 
         public EventBusRabbitMQ(IRabbitMQPersistentConnection persistentConnection, ILogger<EventBusRabbitMQ> logger,
-            ILifetimeScope autofac, ISubscriptionManager subsManager, string queueName = null, int retryCount = 5, 
+            ILifetimeScope autofac, ISubscriptionManager subsManager, string queueName = null, int retryCount = 5,
             string xchangeSuffix = "", string xchangeType = "direct")
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -48,7 +46,7 @@ namespace EventBusRabbitMQ
             _queueName = queueName;
             _consumerChannel = CreateConsumerChannel();
             _autofac = autofac;
-            _retryCount = retryCount;            
+            _retryCount = retryCount;
         }
 
         #region Public method
@@ -61,7 +59,7 @@ namespace EventBusRabbitMQ
         {
             _logger.LogDebug($"Publish<T> -> EVENTID - {@event.Id}");
             string guidId = Guid.NewGuid().ToString();
-            
+
             PublishEvent(@event, true, guidId);
 
             string responseMsg = string.Empty;
@@ -108,7 +106,7 @@ namespace EventBusRabbitMQ
         #endregion
 
         #region private methods
-        private void PublishEvent(IntegrationEvent @event, bool isResponse = false,string guidId = "")
+        private void PublishEvent(IntegrationEvent @event, bool isResponse = false, string guidId = "")
         {
             _logger.LogDebug("PublishEvent");
             _logger.LogDebug($"EVENTID - {@event.Id}, ISRESPONSE ? {isResponse}, GUIDID {guidId}");
@@ -127,11 +125,11 @@ namespace EventBusRabbitMQ
 
             var eventName = string.IsNullOrEmpty(@event.ReplayRoutingId) || isResponse ? @event.GetType().Name : @event.ReplayRoutingId;
 
-             _logger.LogDebug("Creating RabbitMQ channel to publish event: {EventId} ({EventName})", @event.Id, eventName);
-            
+            _logger.LogDebug("Creating RabbitMQ channel to publish event: {EventId} ({EventName})", @event.Id, eventName);
+
             using (var channel = _persistentConnection.CreateModel())
             {
-                 _logger.LogDebug("Declaring RabbitMQ exchange to publish event: {EventId}", @event.Id);
+                _logger.LogDebug("Declaring RabbitMQ exchange to publish event: {EventId}", @event.Id);
 
                 channel.ExchangeDeclare(exchange: RABITMQ_EXCHANGE, type: _xchangeType);
 
@@ -238,7 +236,7 @@ namespace EventBusRabbitMQ
 
                 await ProcessEvent(routingKey, message, eventArgs.BasicProperties);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogWarning(ex, "----- ERROR Processing message \"{Message}\"", message);
             }
@@ -290,7 +288,7 @@ namespace EventBusRabbitMQ
                     foreach (var subscription in subscriptions)
                     {
                         _logger.LogDebug("Subscription details for the event {eventName}: {subscription}", eventName, subscription);
-                        
+
                         if (subscription.IsReponse)
                         {
                             var resData = new Dictionary<string, string>();
@@ -315,7 +313,7 @@ namespace EventBusRabbitMQ
 
                                 await responseTask.ConfigureAwait(false);
                                 var resultProperty = responseTask.GetType().GetProperty("Result");
-                                var response =resultProperty.GetValue(responseTask);
+                                var response = resultProperty.GetValue(responseTask);
 
                                 if (!string.IsNullOrEmpty(properties.ReplyTo))
                                 {
@@ -325,11 +323,11 @@ namespace EventBusRabbitMQ
                                     Publish(responseData);
                                 }
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 _logger.LogError("Error Resolving the IIntegrationEventHandler {ex}", ex);
                             }
-                           
+
                         }
 
                     }

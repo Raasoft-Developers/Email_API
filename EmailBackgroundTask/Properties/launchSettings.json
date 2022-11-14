@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "EmailBackgroundTask": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

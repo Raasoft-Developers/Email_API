@@ -3,7 +3,7 @@ Param(
 	[parameter(Mandatory=$false)][string]$num ="*"
 
     )
-$rollout=@("nvgapiemail","nvgemailbackgroundtask")
+$rollout=@("apiemail","emailbackgroundtask")
 
 if($num -eq "*"){
 $contexts=@("dev","test","stag","prod");

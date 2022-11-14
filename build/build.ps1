@@ -3,8 +3,8 @@ Param(
 )
 #$basePath=".."
 $dockerFiles=@(
-@{name='nvgapiemail';path='Nvg.Api.Email/Dockerfile'}
-@{name='nvgemailbackgroundtask';path='Nvg.EmailBackgroundTask/Dockerfile'}
+@{name='apiemail';path='Api.Email/Dockerfile'}
+@{name='emailbackgroundtask';path='EmailBackgroundTask/Dockerfile'}
 )
 if($num -eq "*"){
 $basePath=".."
